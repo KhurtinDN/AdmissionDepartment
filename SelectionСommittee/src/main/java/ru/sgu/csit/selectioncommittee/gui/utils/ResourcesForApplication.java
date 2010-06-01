@@ -2,6 +2,8 @@ package ru.sgu.csit.selectioncommittee.gui.utils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Date: 03.05.2010
@@ -32,18 +34,17 @@ public class ResourcesForApplication {
     public final static String tABOUT_DESCRIPTION = "О программе \"Приемная комиссия\"";
 
 
-    public final static String pathToIcons = "/home/hd/IdeaProjects/SelectionСommittee/src/main/resources/icons/";
-
-    public final static Image iAPP16 = Toolkit.getDefaultToolkit().getImage(pathToIcons + "app16.png");
-    public final static Icon iABOUT = new ImageIcon(pathToIcons + "app16.png");
-    public final static Icon iAPP48 = new ImageIcon(pathToIcons + "app48.png");
-    public final static Icon iPRINT16 = new ImageIcon(pathToIcons + "printer16.png");
-    public final static Icon iEXIT16 = new ImageIcon(pathToIcons + "exit16.png");
-    public final static Icon iADD16 = new ImageIcon(pathToIcons + "add16.png");
-    public final static Icon iEDIT16 = new ImageIcon(pathToIcons + "edit16.png");
-    public final static Icon iDELETE16 = new ImageIcon(pathToIcons + "delete16.png");
-    public final static Icon iOK = new ImageIcon(pathToIcons + "ok.png");
-    public final static Icon iCANCEL = new ImageIcon(pathToIcons + "cancel.png");
+    public final static Image iAPP16 = Toolkit.getDefaultToolkit().getImage(
+            ResourcesForApplication.class.getResource("/icons/app16.png"));
+    public final static Icon iABOUT = new ImageIcon(ResourcesForApplication.class.getResource("/icons/app16.png"));
+    public final static Icon iAPP48 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/app48.png"));
+    public final static Icon iPRINT16 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/printer16.png"));
+    public final static Icon iEXIT16 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/exit16.png"));
+    public final static Icon iADD16 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/add16.png"));
+    public final static Icon iEDIT16 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/edit16.png"));
+    public final static Icon iDELETE16 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/delete16.png"));
+    public final static Icon iOK = new ImageIcon(ResourcesForApplication.class.getResource("/icons/ok.png"));
+    public final static Icon iCANCEL = new ImageIcon(ResourcesForApplication.class.getResource("/icons/cancel.png"));
 
 
     //
