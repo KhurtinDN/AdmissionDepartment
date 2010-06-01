@@ -43,8 +43,8 @@ public class MatriculantDialog extends JDialog {
 
     // HowMatriculatePanel
     private ButtonGroup radionButtonGroup = new ButtonGroup();
-    private JRadioButton examineRadioButton = new JRadioButton("По экзаминам", false);
-    private JRadioButton noExamineRadioButton = new JRadioButton("Без экзаминов", false);
+    private JRadioButton examineRadioButton = new JRadioButton("По экзаменам", false);
+    private JRadioButton noExamineRadioButton = new JRadioButton("Без экзаменов", false);
     private JRadioButton outExamineRadioButton = new JRadioButton("Вне конкурса", false);
 
     // specialityPanel
