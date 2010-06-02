@@ -7,6 +7,8 @@ import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ public class MatriculantTable extends JTable {
 
     public MatriculantTable() {
         super(matriculantTableModel);
+        setDefaultRenderer(Object.class, new MatriculantTableCellRenderer());
         setAutoCreateRowSorter(true);
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setColumnWidths();
@@ -112,8 +115,8 @@ public class MatriculantTable extends JTable {
 
             index = columnIndex - (DataAccessFactory.getSpecialities().size() + 2);
             if (index >= 0 && index < DataAccessFactory.getExamines().size()) {
-                Integer value = matriculant.getBalls().get(DataAccessFactory.getExamines().get(index));
-                
+                Integer value = matriculant.getBalls().get(DataAccessFactory.getExamines().get(index).getName());
+
                 if (value != null) {
                     return value.toString();
                 }
@@ -121,9 +124,9 @@ public class MatriculantTable extends JTable {
 
             index = DataAccessFactory.getExamines().size() + DataAccessFactory.getSpecialities().size() + 2;
             if (columnIndex == index) {
-                    return matriculant.getPhoneNumbers();
+                return matriculant.getPhoneNumbers();
             }
-            
+
             if (columnIndex == index + 1) {
                 return dateFormat.format(matriculant.getFilingDate());
             }
@@ -134,6 +137,25 @@ public class MatriculantTable extends JTable {
         @Override
         public String getColumnName(int column) {
             return columnNames.get(column);
+        }
+    }
+
+    private static class MatriculantTableCellRenderer extends DefaultTableCellRenderer {
+        public Component getTableCellRendererComponent(JTable table,
+                                                       Object value,
+                                                       boolean isSelected,
+                                                       boolean hasFocus,
+                                                       int row,
+                                                       int column) {
+            Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            Matriculant matriculant = DataAccessFactory.getMatriculants().get(row);
+
+            if (!isSelected) {
+                if (matriculant != null && !matriculant.completeAllDocuments()) {
+                    cell.setBackground(new Color(180, 250, 200));
+                }
+            }
+            return cell;
         }
     }
 }

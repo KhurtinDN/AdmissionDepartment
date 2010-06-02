@@ -29,7 +29,7 @@ public class Matriculant extends Person {
             @AttributeOverride(name = "phoneNumbers", column = @Column(name = "fatherPhoneNumbers"))
     })
     private Person father;
-    
+
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "name", column = @Column(name = "motherName")),
@@ -51,6 +51,10 @@ public class Matriculant extends Person {
 
     private String schoolName;
     private String info;
+
+    public Boolean completeAllDocuments() {
+        return documents != null && documents.completeAllDocuments();
+    }
 
     public Long getId() {
         return id;
@@ -206,6 +210,16 @@ public class Matriculant extends Person {
 
         public void setCopyMedicalPolicy(Boolean copyMedicalPolicy) {
             this.copyMedicalPolicy = copyMedicalPolicy;
+        }
+
+        public Boolean completeAllDocuments() {
+            return originalAttestat
+                    && attestatInsert
+                    && originalEge
+                    && allPhotos
+                    && allPassportCopy
+                    && originalMedicalCertificate
+                    && copyMedicalPolicy;
         }
 
         @Override
