@@ -40,6 +40,7 @@ public class MainFrame extends JFrame {
         add(createJToolBar(), BorderLayout.NORTH);
 
         mainTable = new MatriculantTable();
+        mainTable.setComponentPopupMenu(createRowPopupMenu());
         add(new JScrollPane(mainTable), BorderLayout.CENTER);
 
         add(createButtonPanel(), BorderLayout.SOUTH);
@@ -89,6 +90,16 @@ public class MainFrame extends JFrame {
         jMenuBar.add(editMenu);
         jMenuBar.add(helpMenu);
         return jMenuBar;
+    }
+
+    private JPopupMenu createRowPopupMenu() {
+        JPopupMenu jPopupMenu = new JPopupMenu();
+
+        jPopupMenu.add(addAction);
+        jPopupMenu.add(editAction);
+//        jPopupMenu.add(deleteAction);
+
+        return jPopupMenu;
     }
 
     private JToolBar createJToolBar() {
