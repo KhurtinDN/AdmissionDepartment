@@ -152,7 +152,11 @@ public class MatriculantTable extends JTable {
 
             if (!isSelected) {
                 if (matriculant != null && !matriculant.completeAllDocuments()) {
-                    cell.setBackground(new Color(180, 250, 200));
+                    cell.setBackground(new Color(150, 150, 150));//Color(180, 250, 200));
+                    cell.setForeground(new Color(250, 250, 250));
+                } else {
+                    cell.setBackground(Color.WHITE);
+                    cell.setForeground(Color.BLACK);
                 }
             }
             return cell;
