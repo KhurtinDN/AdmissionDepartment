@@ -1,8 +1,6 @@
 package ru.sgu.csit.selectioncommittee.gui;
 
 import ru.sgu.csit.selectioncommittee.common.Matriculant;
-import ru.sgu.csit.selectioncommittee.common.ReceiptExamine;
-import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 
 import javax.swing.*;
