@@ -146,19 +146,21 @@ public class MatriculantTable extends JTable {
                                                        int row,
                                                        int column) {
             Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            Matriculant matriculant = DataAccessFactory.getMatriculants().get(row);
+            Matriculant matriculant = DataAccessFactory.getMatriculants().get(table.convertRowIndexToModel(row));
 
             if (!isSelected) {
-                if (matriculant != null && !matriculant.completeAllDocuments()) {
-//                    cell.setBackground(new Color(255, 255, 210));
-                    cell.setFont(cell.getFont().deriveFont(Font.PLAIN));
-///                    cell.setBackground(new Color(150, 150, 150));//Color(180, 250, 200));
-///                    cell.setForeground(new Color(250, 250, 250));
+                if (!matriculant.completeAllDocuments()) {
+                    cell.setBackground(new Color(255, 245, 210));
+//                        cell.setFont(cell.getFont().deriveFont(Font.PLAIN));
+///                       cell.setBackground(new Color(150, 150, 150));//Color(180, 250, 200));
+///                       cell.setForeground(new Color(250, 250, 250));
+                } else if (matriculant.getDocuments() != null && matriculant.getDocuments().isTookDocuments()) {
+                    cell.setBackground(new Color(255, 210, 210));
                 } else {
 ///                    cell.setBackground(Color.WHITE);
 ///                    cell.setForeground(Color.BLACK);
-                    cell.setFont(cell.getFont().deriveFont(Font.BOLD));
-//                    cell.setBackground(new Color(200, 255, 220));
+//                    cell.setFont(cell.getFont().deriveFont(Font.BOLD));
+                    cell.setBackground(new Color(210, 255, 210));
                 }
             }
             return cell;
