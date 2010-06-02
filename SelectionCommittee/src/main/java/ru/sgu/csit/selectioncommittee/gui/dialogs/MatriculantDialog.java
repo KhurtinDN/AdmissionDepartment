@@ -242,7 +242,7 @@ public class MatriculantDialog extends JDialog {
             Matriculant matriculant = getMatriculantFromFields();
 
             if (validateForm()) {
-                DataAccessFactory.getMatriculantDAO().create(matriculant);
+                DataAccessFactory.getMatriculantDAO().save(matriculant);
                 DataAccessFactory.reloadMatriculants();
                 mainFrame.refresh();
             } else {

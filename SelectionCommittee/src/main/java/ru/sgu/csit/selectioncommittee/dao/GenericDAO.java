@@ -13,9 +13,10 @@ import java.util.List;
  * @author xx & hd
  */
 public interface GenericDAO<T, PK extends Serializable> {
-    PK create(T newInstance);
+    PK save(T newInstance);
     T findById(PK id);
     List<T> findAll();
     void update(T transientObject);
+    void saveOrUpdate(T transientObject);
     void delete(T transientObject);
 }

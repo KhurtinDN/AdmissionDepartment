@@ -34,7 +34,7 @@ public class GenericDAOImpl<T, PK extends Serializable> implements GenericDAO<T,
 
     @Override
     @SuppressWarnings("unchecked")
-    public PK create(T newInstance) {
+    public PK save(T newInstance) {
         PK primaryKey = null;
         Transaction transaction = null;
 
@@ -55,6 +55,7 @@ public class GenericDAOImpl<T, PK extends Serializable> implements GenericDAO<T,
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public T findById(PK id) {
         T object;
 
@@ -145,6 +146,26 @@ public class GenericDAOImpl<T, PK extends Serializable> implements GenericDAO<T,
         try {
             transaction = getSession().beginTransaction();
             getSession().update(transientObject);
+            transaction.commit();
+        }
+        catch (HibernateException he) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw he;
+        }
+        finally {
+            getSession().close();
+        }
+    }
+
+    @Override
+    public void saveOrUpdate(T transientObject) {
+        Transaction transaction = null;
+
+        try {
+            transaction = getSession().beginTransaction();
+            getSession().saveOrUpdate(transientObject);
             transaction.commit();
         }
         catch (HibernateException he) {
