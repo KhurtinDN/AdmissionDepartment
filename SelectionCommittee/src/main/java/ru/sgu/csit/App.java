@@ -3,6 +3,13 @@ package ru.sgu.csit;
 import ru.sgu.csit.selectioncommittee.common.Matriculant;
 import ru.sgu.csit.selectioncommittee.common.ReceiptExamine;
 import ru.sgu.csit.selectioncommittee.common.Speciality;
+import ru.sgu.csit.selectioncommittee.dao.impl.MatriculantDAOImpl;
+import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Hello world!
@@ -17,8 +24,8 @@ public class App {
         Speciality speciality2 = new Speciality("ВМ 102");
         Speciality speciality3 = new Speciality("КБ 103");
         Speciality speciality4 = new Speciality("ИВТ 104");
-        //MatriculantDAOImpl matriculantDAO = new MatriculantDAOImpl();
-        /*
+        MatriculantDAOImpl matriculantDAO = new MatriculantDAOImpl();
+
         matriculant.setName("Петров Сидор Иванович");
         matriculant.setPhoneNumbers("02, +7 877 777 34 22");
         Calendar date = Calendar.getInstance();
@@ -63,7 +70,5 @@ public class App {
         speciality4.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
         speciality4.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
         DataAccessFactory.getSpecialityDAO().create(speciality4);
-        */
-
     }
 }
