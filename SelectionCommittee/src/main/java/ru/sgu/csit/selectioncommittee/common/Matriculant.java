@@ -235,6 +235,38 @@ public class Matriculant extends Person {
                     && (copyMedicalPolicy != null && copyMedicalPolicy);
         }
 
+        public String printToString() {
+            String str = "\t";
+
+            if (originalAttestat != null) {
+                if (originalAttestat) {
+                    str += "Оригинал аттестата\n";
+                } else {
+                    str += "Копия аттестата\n";
+                }
+            }
+            if (attestatInsert != null && attestatInsert) {
+                str += "\tВкладыш аттестата\n";
+            }
+            if (originalEge != null && originalEge) {
+                str += "\tОригиналы ЕГЭ\n";
+            }
+            if (allPhotos != null && allPhotos) {
+                str += "\tВсе фотографии\n";
+            }
+            if (allPassportCopy != null && allPassportCopy) {
+                str += "\tВсе копии паспорта\n";
+            }
+            if (originalMedicalCertificate != null && originalMedicalCertificate) {
+                str += "\tОригинал медицинской справки\n";
+            }
+            if (copyMedicalPolicy != null && copyMedicalPolicy) {
+                str += "\tКопия медицинского полиса\n";
+            }
+
+            return str;
+        }
+
         @Override
         public String toString() {
             return "Documents{" +
@@ -248,6 +280,69 @@ public class Matriculant extends Person {
                     ", tookDocuments=" + tookDocuments +
                     '}';
         }
+    }
+
+    public String printToString() {
+        String str = "Рег. № " + receiptNumber + " от " + filingDate + "\n" +
+                name + "\n";
+
+        if (entranceCategory != null) {
+            str += "Поступает ";
+            switch (entranceCategory) {
+                case EXAMINE:
+                    str += "по результатам экзаменов\n";
+                    if (balls != null && !balls.isEmpty()) {
+                        for (Map.Entry<String, Integer> entry : balls.entrySet()) {
+                            str += "\t" + entry.getKey() + " - " + entry.getValue() + "\n";
+                        }
+                    }
+                    break;
+                case NO_EXAMINE:
+                    str += "без экзаменов\n";
+                    break;
+                case OUT_EXAMINE_OTHER:
+                    str += "вне конкурса\n";
+                    break;
+                case ORPHAN:
+                    str += "вне конкурса - сирота\n";
+                    break;
+                case INVALID:
+                    str += "вне конкурса - инвалид\n";
+                    break;
+            }
+            if (speciality != null && !speciality.isEmpty()) {
+                str += "На специальности:";
+                for (int i = 0; i < speciality.size(); ++i) {
+                    str += "\n\t" + String.valueOf(i + 1) + ". " + speciality.get(i + 1);
+                }
+                str += "\n";
+            }
+        }
+        if (schoolName != null && !schoolName.isEmpty()) {
+            str += "Предыдущее учебное заведение:\n" + schoolName + "\n";
+        }
+        if (documents != null && !documents.isTookDocuments()) {
+            str += "Предоставленные документы:\n" + documents.printToString();
+        } else {
+            str += "Документы не предоставлены или были забраны\n";
+        }
+        if (phoneNumbers != null && !phoneNumbers.isEmpty()) {
+            str += "Тел. " + phoneNumbers + "\n";
+        }
+        if (father != null &&
+                ((father.getName() != null && !father.getName().isEmpty())
+                || (father.getPhoneNumbers() != null && !father.getPhoneNumbers().isEmpty()))) {
+            str += "Отец: " + father.getName() + ", тел. " + father.getPhoneNumbers() + "\n";
+        }
+        if (mother != null &&
+                ((mother.getName() != null && !mother.getName().isEmpty())
+                || (mother.getPhoneNumbers() != null && !mother.getPhoneNumbers().isEmpty()))) {
+            str += "Мать: " + mother.getName() + ", тел. " + mother.getPhoneNumbers() + "\n";
+        }
+        if (info != null && !info.isEmpty()) {
+            str += "Примечание:\n" + info;
+        }
+        return str;
     }
 
     @Override

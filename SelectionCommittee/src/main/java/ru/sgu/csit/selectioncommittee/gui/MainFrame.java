@@ -28,6 +28,7 @@ public class MainFrame extends JFrame {
     Action deleteAction = new DeleteAction();
     Action aboutAction = new AboutAction();
     Action resizeTableAction = new ResizeTableAction();
+    Action infoAction = new InfoAction();
 
     MatriculantTable mainTable = null;
 
@@ -79,12 +80,14 @@ public class MainFrame extends JFrame {
 
         JMenu editMenu = new JMenu(tEDIT_MENU);
         editMenu.add(addAction);
+        editMenu.add(infoAction);
         editMenu.add(editAction);
+        editMenu.addSeparator();
         editMenu.add(deleteAction);
 
         JMenu viewMenu = new JMenu(tVIEW_MENU);
         //viewMenu.add(addAction);
-        fileMenu.addSeparator();
+        viewMenu.addSeparator();
         JCheckBoxMenuItem resizeMenuItem = new JCheckBoxMenuItem(resizeTableAction);
         resizeMenuItem.setSelected(mainTable.getAutoResizeMode() == JTable.AUTO_RESIZE_ALL_COLUMNS);
         viewMenu.add(resizeMenuItem);
@@ -102,7 +105,7 @@ public class MainFrame extends JFrame {
     private JPopupMenu createRowPopupMenu() {
         JPopupMenu jPopupMenu = new JPopupMenu();
 
-        jPopupMenu.add(addAction);
+        jPopupMenu.add(infoAction);
         jPopupMenu.add(editAction);
 //        jPopupMenu.add(deleteAction);
 
@@ -244,7 +247,7 @@ public class MainFrame extends JFrame {
         private ResizeTableAction() {
             putValue(Action.NAME, tAUTORESIZE);
             putValue(Action.SHORT_DESCRIPTION, tAUTORESIZE_DESCRIPTION);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F7"));
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F9"));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -254,6 +257,27 @@ public class MainFrame extends JFrame {
                 mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
             } else {
                 mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            }
+        }
+    }
+
+    private class InfoAction extends AbstractAction {
+        private InfoAction() {
+            putValue(Action.NAME, tINFO);
+            putValue(Action.SMALL_ICON, iABOUT);
+            putValue(Action.SHORT_DESCRIPTION, tINFO_DESCRIPTION);
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F3"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            int selectedIndex = mainTable.getSelectedRow();
+            if (selectedIndex >= 0) {
+                Matriculant matriculant = DataAccessFactory.getMatriculants()
+                        .get(mainTable.convertRowIndexToModel(selectedIndex));
+
+                System.out.println(matriculant.printToString());
+            } else {
+                JOptionPane.showMessageDialog(MainFrame.this, "Выберите сначала абитуриента", "Предупреждение", JOptionPane.WARNING_MESSAGE);
             }
         }
     }

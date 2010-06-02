@@ -28,6 +28,8 @@ public class ResourcesForApplication {
     public final static String tEDIT_DESCRIPTION = "Редактировать данные абитуриента";
     public final static String tDELETE = "Удалить";
     public final static String tDELETE_DESCRIPTION = "Удалить абитуриента";
+    public final static String tINFO = "Просмотреть";
+    public final static String tINFO_DESCRIPTION = "Посмотреть данные абитуриента";
 
     public final static String tVIEW_MENU = "Вид";
     public final static String tAUTORESIZE = "Автовыравнивание";

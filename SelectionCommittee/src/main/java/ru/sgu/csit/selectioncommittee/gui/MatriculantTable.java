@@ -6,6 +6,7 @@ import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @author xx & hd
  */
 public class MatriculantTable extends JTable {
+    private static List<TableColumn> columns = new ArrayList<TableColumn>();
     private static List<String> columnNames = new ArrayList<String>();
     private static List<Integer> columnWidths = new ArrayList<Integer>();
 
@@ -55,12 +57,12 @@ public class MatriculantTable extends JTable {
 
         for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
             columnNames.add(DataAccessFactory.getSpecialities().get(i).getName());
-            columnWidths.add(50);
+            columnWidths.add(55);
         }
 
         for (int i = 0; i < DataAccessFactory.getExamines().size(); ++i) {
             columnNames.add(DataAccessFactory.getExamines().get(i).getName());
-            columnWidths.add(50);
+            columnWidths.add(55);
         }
 
         columnNames.add("Телефон");
