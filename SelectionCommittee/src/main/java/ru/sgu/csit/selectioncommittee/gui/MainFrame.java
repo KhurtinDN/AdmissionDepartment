@@ -58,6 +58,7 @@ public class MainFrame extends JFrame {
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new GridLayout());
         buttonPanel.add(createButton(addAction));
+        buttonPanel.add(createButton(infoAction));
         buttonPanel.add(createButton(editAction));
         buttonPanel.add(createButton(deleteAction));
         return buttonPanel;
@@ -115,8 +116,8 @@ public class MainFrame extends JFrame {
     private JToolBar createJToolBar() {
         JToolBar jToolBar = new JToolBar();
         jToolBar.add(addAction);
+        jToolBar.add(infoAction);
         jToolBar.add(editAction);
-        jToolBar.add(deleteAction);
         jToolBar.addSeparator();
         jToolBar.add(printAction);
 //        jToolBar.add(exitAction);
