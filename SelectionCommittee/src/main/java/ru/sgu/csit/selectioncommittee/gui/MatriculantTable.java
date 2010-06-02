@@ -25,6 +25,8 @@ public class MatriculantTable extends JTable {
     private static List<String> columnNames = new ArrayList<String>();
     private static List<Integer> columnWidths = new ArrayList<Integer>();
 
+    private static boolean highlighting = true;
+
     private static MatriculantTableModel matriculantTableModel = new MatriculantTableModel();
 
     static {
@@ -77,6 +79,14 @@ public class MatriculantTable extends JTable {
         setAutoCreateRowSorter(true);
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setColumnWidths();
+    }
+
+    public static boolean isHighlighting() {
+        return highlighting;
+    }
+
+    public static void setHighlighting(boolean highlighting) {
+        MatriculantTable.highlighting = highlighting;
     }
 
     private static class MatriculantTableModel extends AbstractTableModel {
@@ -150,20 +160,35 @@ public class MatriculantTable extends JTable {
             Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             Matriculant matriculant = DataAccessFactory.getMatriculants().get(table.convertRowIndexToModel(row));
 
-            if (!isSelected) {
-                if (!matriculant.completeAllDocuments()) {
-                    cell.setBackground(new Color(255, 245, 210));
+            if (MatriculantTable.isHighlighting()) {
+                if (!isSelected) {
+                    if (!matriculant.completeAllDocuments()) {
+                        cell.setBackground(new Color(255, 245, 210));
 //                        cell.setFont(cell.getFont().deriveFont(Font.PLAIN));
 ///                       cell.setBackground(new Color(150, 150, 150));//Color(180, 250, 200));
 ///                       cell.setForeground(new Color(250, 250, 250));
-                } else if (matriculant.getDocuments() != null && matriculant.getDocuments().isTookDocuments()) {
-                    cell.setBackground(new Color(255, 210, 210));
-                } else {
+                    } else if (matriculant.getDocuments() != null && matriculant.getDocuments().isTookDocuments()) {
+                        cell.setBackground(new Color(255, 210, 210));
+                    } else {
 ///                    cell.setBackground(Color.WHITE);
 ///                    cell.setForeground(Color.BLACK);
 //                    cell.setFont(cell.getFont().deriveFont(Font.BOLD));
-                    cell.setBackground(new Color(210, 255, 210));
+                        cell.setBackground(new Color(210, 255, 210));
+                    }
+                } else {
+                    if (!matriculant.completeAllDocuments()) {
+                        cell.setBackground(new Color(245, 225, 180));
+                    } else if (matriculant.getDocuments() != null && matriculant.getDocuments().isTookDocuments()) {
+                        cell.setBackground(new Color(245, 180, 180));
+                    } else {
+                        cell.setBackground(new Color(180, 245, 180));
+                    }
                 }
+            } else {
+                if (!isSelected) {
+                    cell.setBackground(Color.WHITE);
+                    cell.setForeground(Color.BLACK);
+                }                
             }
             return cell;
         }

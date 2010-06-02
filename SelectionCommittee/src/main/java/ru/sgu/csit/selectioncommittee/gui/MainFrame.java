@@ -27,8 +27,9 @@ public class MainFrame extends JFrame {
     Action editAction = new EditAction();
     Action deleteAction = new DeleteAction();
     Action aboutAction = new AboutAction();
-    Action resizeTableAction = new ResizeTableAction();
     Action infoAction = new InfoAction();
+    Action resizeTableAction = new ResizeTableAction();
+    Action highlightingAction = new HighlightingAction();
 
     MatriculantTable mainTable = null;
 
@@ -89,6 +90,9 @@ public class MainFrame extends JFrame {
         JMenu viewMenu = new JMenu(tVIEW_MENU);
         //viewMenu.add(addAction);
         viewMenu.addSeparator();
+        JCheckBoxMenuItem lightMenuItem = new JCheckBoxMenuItem(highlightingAction);
+        lightMenuItem.setSelected(mainTable.isHighlighting());
+        viewMenu.add(lightMenuItem);
         JCheckBoxMenuItem resizeMenuItem = new JCheckBoxMenuItem(resizeTableAction);
         resizeMenuItem.setSelected(mainTable.getAutoResizeMode() == JTable.AUTO_RESIZE_ALL_COLUMNS);
         viewMenu.add(resizeMenuItem);
@@ -244,24 +248,6 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private class ResizeTableAction extends AbstractAction {
-        private ResizeTableAction() {
-            putValue(Action.NAME, tAUTORESIZE);
-            putValue(Action.SHORT_DESCRIPTION, tAUTORESIZE_DESCRIPTION);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F9"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            JCheckBoxMenuItem resizeMenuItem = (JCheckBoxMenuItem) e.getSource();
-
-            if (resizeMenuItem.isSelected()) {
-                mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-            } else {
-                mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-            }
-        }
-    }
-
     private class InfoAction extends AbstractAction {
         private InfoAction() {
             putValue(Action.NAME, tINFO);
@@ -280,6 +266,39 @@ public class MainFrame extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(MainFrame.this, "Выберите сначала абитуриента", "Предупреждение", JOptionPane.WARNING_MESSAGE);
             }
+        }
+    }
+
+    private class ResizeTableAction extends AbstractAction {
+        private ResizeTableAction() {
+            putValue(Action.NAME, tAUTORESIZE);
+            putValue(Action.SHORT_DESCRIPTION, tAUTORESIZE_DESCRIPTION);
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl R"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JCheckBoxMenuItem resizeMenuItem = (JCheckBoxMenuItem) e.getSource();
+
+            if (resizeMenuItem.isSelected()) {
+                mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            } else {
+                mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            }
+        }
+    }
+
+    private class HighlightingAction extends AbstractAction {
+        private HighlightingAction() {
+            putValue(Action.NAME, tHIGHLIGHTING);
+            putValue(Action.SHORT_DESCRIPTION, tHIGHLIGHTING_DESCRIPTION);
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl L"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JCheckBoxMenuItem lightMenuItem = (JCheckBoxMenuItem) e.getSource();
+
+            MatriculantTable.setHighlighting(lightMenuItem.isSelected());
+            mainTable.repaint();
         }
     }
 }
