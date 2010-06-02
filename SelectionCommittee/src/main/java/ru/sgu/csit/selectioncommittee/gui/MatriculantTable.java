@@ -150,11 +150,15 @@ public class MatriculantTable extends JTable {
 
             if (!isSelected) {
                 if (matriculant != null && !matriculant.completeAllDocuments()) {
-                    cell.setBackground(new Color(150, 150, 150));//Color(180, 250, 200));
-                    cell.setForeground(new Color(250, 250, 250));
+//                    cell.setBackground(new Color(255, 255, 210));
+                    cell.setFont(cell.getFont().deriveFont(Font.PLAIN));
+///                    cell.setBackground(new Color(150, 150, 150));//Color(180, 250, 200));
+///                    cell.setForeground(new Color(250, 250, 250));
                 } else {
-                    cell.setBackground(Color.WHITE);
-                    cell.setForeground(Color.BLACK);
+///                    cell.setBackground(Color.WHITE);
+///                    cell.setForeground(Color.BLACK);
+                    cell.setFont(cell.getFont().deriveFont(Font.BOLD));
+//                    cell.setBackground(new Color(200, 255, 220));
                 }
             }
             return cell;
