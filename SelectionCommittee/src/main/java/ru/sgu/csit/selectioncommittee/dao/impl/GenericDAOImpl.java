@@ -33,6 +33,7 @@ public class GenericDAOImpl<T, PK extends Serializable> implements GenericDAO<T,
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public PK create(T newInstance) {
         PK primaryKey = null;
         Transaction transaction = null;
@@ -54,12 +55,11 @@ public class GenericDAOImpl<T, PK extends Serializable> implements GenericDAO<T,
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public T findById(PK id) {
         T object;
 
         try {
-            object = (T) findByCriteria(Restrictions.eq("id", id)).get(0);
+            object = findByCriteria(Restrictions.eq("id", id)).get(0);
         }
         catch (IllegalArgumentException ex) {
             object = null;
@@ -108,7 +108,7 @@ public class GenericDAOImpl<T, PK extends Serializable> implements GenericDAO<T,
         String[] parName = new String[0];
         Object[] par = new Object[0];
 
-        return (List<T>) findByQuery(query, parName, par);
+        return findByQuery(query, parName, par);
     }
 
     @SuppressWarnings("unchecked")
