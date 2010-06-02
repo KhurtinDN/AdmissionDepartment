@@ -1,8 +1,6 @@
 package ru.sgu.csit.selectioncommittee.gui;
 
 import ru.sgu.csit.selectioncommittee.common.Matriculant;
-import ru.sgu.csit.selectioncommittee.dao.MatriculantDAO;
-import ru.sgu.csit.selectioncommittee.dao.impl.MatriculantDAOImpl;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.AboutDialog;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.MatriculantDialog;
@@ -29,17 +27,18 @@ public class MainFrame extends JFrame {
     Action editAction = new EditAction();
     Action deleteAction = new DeleteAction();
     Action aboutAction = new AboutAction();
+    Action resizeTableAction = new ResizeTableAction();
 
     MatriculantTable mainTable = null;
 
     public MainFrame() {
+        mainTable = new MatriculantTable();
         setTitle(tTITLE_OF_APPLICATION);
         setIconImage(iAPP16);
         setSize(800, 600);
         setJMenuBar(createJMenuBar());
         add(createJToolBar(), BorderLayout.NORTH);
 
-        mainTable = new MatriculantTable();
         mainTable.setComponentPopupMenu(createRowPopupMenu());
         add(new JScrollPane(mainTable), BorderLayout.CENTER);
 
@@ -83,11 +82,19 @@ public class MainFrame extends JFrame {
         editMenu.add(editAction);
         editMenu.add(deleteAction);
 
+        JMenu viewMenu = new JMenu(tVIEW_MENU);
+        //viewMenu.add(addAction);
+        fileMenu.addSeparator();
+        JCheckBoxMenuItem resizeMenuItem = new JCheckBoxMenuItem(resizeTableAction);
+        resizeMenuItem.setSelected(mainTable.getAutoResizeMode() == JTable.AUTO_RESIZE_ALL_COLUMNS);
+        viewMenu.add(resizeMenuItem);
+
         JMenu helpMenu = new JMenu(tHELP_MENU);
         helpMenu.add(aboutAction);
 
         jMenuBar.add(fileMenu);
         jMenuBar.add(editMenu);
+        jMenuBar.add(viewMenu);
         jMenuBar.add(helpMenu);
         return jMenuBar;
     }
@@ -230,6 +237,24 @@ public class MainFrame extends JFrame {
                 dialog = new AboutDialog(MainFrame.this);
             }
             dialog.setVisible(true);
+        }
+    }
+
+    private class ResizeTableAction extends AbstractAction {
+        private ResizeTableAction() {
+            putValue(Action.NAME, tAUTORESIZE);
+            putValue(Action.SHORT_DESCRIPTION, tAUTORESIZE_DESCRIPTION);
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F7"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JCheckBoxMenuItem resizeMenuItem = (JCheckBoxMenuItem) e.getSource();
+
+            if (resizeMenuItem.isSelected()) {
+                mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            } else {
+                mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            }
         }
     }
 }

@@ -29,6 +29,10 @@ public class ResourcesForApplication {
     public final static String tDELETE = "Удалить";
     public final static String tDELETE_DESCRIPTION = "Удалить абитуриента";
 
+    public final static String tVIEW_MENU = "Вид";
+    public final static String tAUTORESIZE = "Автовыравнивание";
+    public final static String tAUTORESIZE_DESCRIPTION = "Выровнять таблицу по ширине окна";
+
     public final static String tHELP_MENU = "Справка";
     public final static String tABOUT = "О программе";
     public final static String tABOUT_DESCRIPTION = "О программе \"Приемная комиссия\"";
