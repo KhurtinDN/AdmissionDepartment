@@ -358,7 +358,7 @@ public class MatriculantDialog extends JDialog {
 
         examineRadioButton.setSelected(matriculant.getEntranceCategory() == EntranceCategory.EXAMINE);
         noExamineRadioButton.setSelected(matriculant.getEntranceCategory() == EntranceCategory.NO_EXAMINE);
-        outExamineRadioButton.setSelected(matriculant.getEntranceCategory() == EntranceCategory.OUT_EXAMINE);
+        outExamineRadioButton.setSelected(matriculant.getEntranceCategory() == EntranceCategory.OUT_EXAMINE_OTHER);
 
         if (matriculant.getSpeciality() != null) {
             specialityPanel.setSpecialityMap(matriculant.getSpeciality());
@@ -423,7 +423,7 @@ public class MatriculantDialog extends JDialog {
             matriculant.setEntranceCategory(EntranceCategory.NO_EXAMINE);
         }
         if (outExamineRadioButton.isSelected()) {
-            matriculant.setEntranceCategory(EntranceCategory.OUT_EXAMINE);
+            matriculant.setEntranceCategory(EntranceCategory.OUT_EXAMINE_OTHER);
         }
 
         matriculant.setSpeciality(specialityPanel.getSpecialityMap());

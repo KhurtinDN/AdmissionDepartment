@@ -7,5 +7,5 @@ package ru.sgu.csit.selectioncommittee.common;
  * @author xx & hd
  */
 public enum EntranceCategory {
-    EXAMINE, NO_EXAMINE, OUT_EXAMINE;
+    EXAMINE, NO_EXAMINE, OUT_EXAMINE_OTHER, ORPHAN, INVALID;
 }

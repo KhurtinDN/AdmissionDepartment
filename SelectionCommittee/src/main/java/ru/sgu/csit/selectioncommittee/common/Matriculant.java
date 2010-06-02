@@ -155,6 +155,7 @@ public class Matriculant extends Person {
         Boolean allPassportCopy;
         Boolean originalMedicalCertificate;
         Boolean copyMedicalPolicy;
+        Boolean tookDocuments;
 
         public Boolean isOriginalAttestat() {
             return originalAttestat;
@@ -212,14 +213,26 @@ public class Matriculant extends Person {
             this.copyMedicalPolicy = copyMedicalPolicy;
         }
 
+        public Boolean isTookDocuments() {
+            if (tookDocuments == null) {
+                return false;
+            }
+            return tookDocuments;
+        }
+
+        public void setTookDocuments(Boolean tookDocuments) {
+            this.tookDocuments = tookDocuments;
+        }
+
         public Boolean completeAllDocuments() {
-            return originalAttestat
-                    && attestatInsert
-                    && originalEge
-                    && allPhotos
-                    && allPassportCopy
-                    && originalMedicalCertificate
-                    && copyMedicalPolicy;
+            return (tookDocuments == null || !tookDocuments)
+                    && (originalAttestat != null && originalAttestat)
+                    && (attestatInsert != null && attestatInsert)
+                    && (originalEge != null && originalEge)
+                    && (allPhotos != null && allPhotos)
+                    && (allPassportCopy != null && allPassportCopy)
+                    && (originalMedicalCertificate != null && originalMedicalCertificate)
+                    && (copyMedicalPolicy != null && copyMedicalPolicy);
         }
 
         @Override
@@ -232,6 +245,7 @@ public class Matriculant extends Person {
                     ", allPassportCopy=" + allPassportCopy +
                     ", originalMedicalCertificate=" + originalMedicalCertificate +
                     ", copyMedicalPolicy=" + copyMedicalPolicy +
+                    ", tookDocuments=" + tookDocuments +
                     '}';
         }
     }
