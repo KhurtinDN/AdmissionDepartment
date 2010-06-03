@@ -16,10 +16,15 @@ public class ResourcesForApplication {
     public final static String tTITLE_OF_ABOUT = "О программе \"Приемная комиссия\"";
 
     public final static String tFILE_MENU = "Файл";
+    public final static String tEXPORT_TO_EXCEL = "Экспорт в Excel";
+    public final static String tEXPORT_TO_EXCEL_DESCRIPTION = "Сохранить данные о поступающих в Excel";
     public final static String tPRINT = "Печать";
     public final static String tPRINT_DESCRIPTION = "Вывести на печать таблицу";
     public final static String tEXIT = "Выход";
     public final static String tEXIT_DESCRIPTION = "Выход из программы";
+
+    public final static String tCLOSE = "Закрыть";
+    public final static String tCLOSE_DESCRIPTION = "Закрыть диалоговое окно";
 
     public final static String tEDIT_MENU = "Правка";
     public final static String tADD = "Добавить";

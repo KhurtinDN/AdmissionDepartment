@@ -3,6 +3,7 @@ package ru.sgu.csit.selectioncommittee.gui;
 import ru.sgu.csit.selectioncommittee.common.Matriculant;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.AboutDialog;
+import ru.sgu.csit.selectioncommittee.gui.dialogs.ExportToExcelDialog;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.MatriculantDialog;
 
 import javax.swing.*;
@@ -21,6 +22,7 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  * @author xx & hd
  */
 public class MainFrame extends JFrame {
+    Action exportToExcelAction = new ExportToExcelAction();
     Action printAction = new PrintAction();
     Action exitAction = new ExitAction();
     Action addAction = new AddAction();
@@ -76,6 +78,7 @@ public class MainFrame extends JFrame {
         JMenuBar jMenuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu(tFILE_MENU);
+        fileMenu.add(exportToExcelAction);
         fileMenu.add(printAction);
         fileMenu.addSeparator();
         fileMenu.add(exitAction);
@@ -137,6 +140,23 @@ public class MainFrame extends JFrame {
         Object[] options = {tYES, tNO};
         return JOptionPane.showOptionDialog(MainFrame.this, message, tCONFIRM, JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, options, options[1]) == JOptionPane.OK_OPTION;
+    }
+
+    private class ExportToExcelAction extends AbstractAction {
+        private JDialog exportDialog;
+
+        private ExportToExcelAction() {
+            putValue(Action.NAME, tEXPORT_TO_EXCEL);
+            putValue(Action.SHORT_DESCRIPTION, tEXPORT_TO_EXCEL_DESCRIPTION);
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F2"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (exportDialog == null) {
+                exportDialog = new ExportToExcelDialog(MainFrame.this, mainTable);
+            }
+            exportDialog.setVisible(true);
+        }
     }
 
     private class PrintAction extends AbstractAction {
