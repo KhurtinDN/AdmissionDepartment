@@ -1,6 +1,8 @@
 package ru.sgu.csit.selectioncommittee.gui;
 
 import ru.sgu.csit.selectioncommittee.common.Matriculant;
+import ru.sgu.csit.selectioncommittee.common.ReceiptExamine;
+import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 
 import javax.swing.*;
@@ -57,10 +59,16 @@ public class MatriculantTable extends JTable {
         columnNames.add("Рег. №");
         columnWidths.add(70);
 
+        columnNames.add("Поступает");
+        columnWidths.add(100);
+
         for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
             columnNames.add(DataAccessFactory.getSpecialities().get(i).getName());
             columnWidths.add(55);
         }
+
+        columnNames.add("Балл");
+        columnWidths.add(45);
 
         for (int i = 0; i < DataAccessFactory.getExamines().size(); ++i) {
             columnNames.add(DataAccessFactory.getExamines().get(i).getName());
@@ -113,7 +121,24 @@ public class MatriculantTable extends JTable {
                 return matriculant.getReceiptNumber();
             }
 
-            int index = columnIndex - 2;
+            if (columnIndex == 2
+                    && matriculant.getEntranceCategory() != null) {
+                switch (matriculant.getEntranceCategory()) {
+                    case EXAMINE:
+                        return "По экзаменам\n";
+
+                    case NO_EXAMINE:
+                        return "Без экзаменов";
+                    case OUT_EXAMINE_OTHER:
+                        return "Вне конкурса";
+                    case ORPHAN:
+                        return "Вне конкурса";
+                    case INVALID:
+                        return "Вне конкурса";
+                }
+            }
+
+            int index = columnIndex - 3;
 
             if (index >= 0 && index < DataAccessFactory.getSpecialities().size()) {
                 for (Map.Entry<Integer, String> entry : matriculant.getSpeciality().entrySet()) {
@@ -123,7 +148,17 @@ public class MatriculantTable extends JTable {
                 }
             }
 
-            index = columnIndex - (DataAccessFactory.getSpecialities().size() + 2);
+            index = DataAccessFactory.getSpecialities().size() + 3;
+            if (columnIndex == index) {
+                String mainSpecName = matriculant.getSpeciality().get(1);
+                Integer result = matriculant.calculateTotalBallsForSpeciality(mainSpecName);
+
+                if (result != null) {
+                    return String.valueOf(result);
+                }
+            }
+
+            index = columnIndex - (index + 1);
             if (index >= 0 && index < DataAccessFactory.getExamines().size()) {
                 Integer value = matriculant.getBalls().get(DataAccessFactory.getExamines().get(index).getName());
 
@@ -132,7 +167,7 @@ public class MatriculantTable extends JTable {
                 }
             }
 
-            index = DataAccessFactory.getExamines().size() + DataAccessFactory.getSpecialities().size() + 2;
+            index = DataAccessFactory.getExamines().size() + DataAccessFactory.getSpecialities().size() + 4;
             if (columnIndex == index) {
                 return matriculant.getPhoneNumbers();
             }
@@ -159,6 +194,10 @@ public class MatriculantTable extends JTable {
                                                        int column) {
             Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             Matriculant matriculant = DataAccessFactory.getMatriculants().get(table.convertRowIndexToModel(row));
+
+            if (table.convertColumnIndexToModel(column) == DataAccessFactory.getSpecialities().size() + 3) {
+                cell.setFont(cell.getFont().deriveFont(Font.BOLD));
+            }
 
             if (MatriculantTable.isHighlighting()) {
                 if (!isSelected) {
@@ -188,7 +227,7 @@ public class MatriculantTable extends JTable {
                 if (!isSelected) {
                     cell.setBackground(Color.WHITE);
                     cell.setForeground(Color.BLACK);
-                }                
+                }
             }
             return cell;
         }

@@ -1,5 +1,7 @@
 package ru.sgu.csit.selectioncommittee.common;
 
+import org.hibernate.annotations.CollectionOfElements;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,7 @@ public class Speciality {
     private Long id;
     private String name;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<ReceiptExamine> exams;
 
     public Speciality() {

@@ -1,13 +1,11 @@
 package ru.sgu.csit.selectioncommittee.common;
 
 import org.hibernate.annotations.CollectionOfElements;
+import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 
 import javax.persistence.*;
 import java.text.DateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Date: Apr 19, 2010
@@ -144,6 +142,36 @@ public class Matriculant extends Person {
 
     public void setInfo(String info) {
         this.info = info;
+    }
+
+    public Integer calculateTotalBallsForSpeciality(String specialityName) {
+        Integer result = null;
+
+        if (specialityName != null && !specialityName.isEmpty()) {
+            List<Speciality> specialities = DataAccessFactory.getSpecialities();
+
+            if (specialities != null) {
+                for (Speciality speciality : specialities) {
+                    if (speciality.getName().equals(specialityName)) {
+                        List<ReceiptExamine> exams = speciality.getExams();
+
+                        if (exams != null) {
+                            result = 0;
+
+                            for (ReceiptExamine examine : exams) {
+                                Integer currentBall = balls.get(examine.getName());
+
+                                if (currentBall != null) {
+                                    result += currentBall;
+                                }
+                            }
+                            return result;
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @Embeddable
@@ -331,12 +359,12 @@ public class Matriculant extends Person {
         }
         if (father != null &&
                 ((father.getName() != null && !father.getName().isEmpty())
-                || (father.getPhoneNumbers() != null && !father.getPhoneNumbers().isEmpty()))) {
+                        || (father.getPhoneNumbers() != null && !father.getPhoneNumbers().isEmpty()))) {
             str += "Отец: " + father.getName() + ", тел. " + father.getPhoneNumbers() + "\n";
         }
         if (mother != null &&
                 ((mother.getName() != null && !mother.getName().isEmpty())
-                || (mother.getPhoneNumbers() != null && !mother.getPhoneNumbers().isEmpty()))) {
+                        || (mother.getPhoneNumbers() != null && !mother.getPhoneNumbers().isEmpty()))) {
             str += "Мать: " + mother.getName() + ", тел. " + mother.getPhoneNumbers() + "\n";
         }
         if (info != null && !info.isEmpty()) {
