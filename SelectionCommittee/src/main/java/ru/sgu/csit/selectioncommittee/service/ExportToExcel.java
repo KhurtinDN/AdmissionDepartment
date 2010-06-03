@@ -71,7 +71,6 @@ public class ExportToExcel {
         Row headerRow = sheet.createRow(1);
         for (int i = 0; i < m; ++i) {
             String head = headerList.get(i);
-            System.out.println("i = " + i + ", head = " + head);
             setValue(headerRow, i, head);
         }
 

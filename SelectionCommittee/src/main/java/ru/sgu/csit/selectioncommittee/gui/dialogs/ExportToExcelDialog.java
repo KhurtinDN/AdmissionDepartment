@@ -114,7 +114,13 @@ public class ExportToExcelDialog extends JDialog {
             for (int i = 0, n = matriculantList.size(); i < n; ++i) {
                 List<String> row = new ArrayList<String>();
                 for (int j = 0, m = headerList.size(); j < m; ++j) {
-                    row.add("cell[" + i + "," + j + "]");
+                    String value;
+                    if (matriculantTable.getModel().getValueAt(i, j) != null) {
+                        value = matriculantTable.getModel().getValueAt(i, j).toString();
+                    } else {
+                        value = "default";
+                    }
+                    row.add(value);
                 }
                 contentLists.add(row);
             }

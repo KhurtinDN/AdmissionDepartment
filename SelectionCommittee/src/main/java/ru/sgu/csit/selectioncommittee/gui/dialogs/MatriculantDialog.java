@@ -105,7 +105,7 @@ public class MatriculantDialog extends JDialog {
 
         pack();
 
-        if (add == false) {
+        if (!add) {
             setFieldsFromMatriculant(matriculant);
         }
     }
@@ -373,13 +373,15 @@ public class MatriculantDialog extends JDialog {
         }
 
         if (matriculant.getDocuments() != null) {
-            originalAttestatCheckBox.setSelected(matriculant.getDocuments().isOriginalAttestat() == true);
-            attestatInsertCheckBox.setSelected(matriculant.getDocuments().isAttestatInsert() == true);
-            originalEgeCheckBox.setSelected(matriculant.getDocuments().isOriginalEge() == true);
-            allPhotosCheckBox.setSelected(matriculant.getDocuments().isAllPhotos() == true);
-            allPassportCopyCheckBox.setSelected(matriculant.getDocuments().isAllPassportCopy() == true);
-            originalMedicalCertificateCheckBox.setSelected(matriculant.getDocuments().isOriginalMedicalCertificate() == true);
-            copyMedicalPolicyCheckBox.setSelected(matriculant.getDocuments().isCopyMedicalPolicy() == true);
+            originalAttestatCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalAttestat()));
+            attestatInsertCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAttestatInsert()));
+            originalEgeCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalEge()));
+            allPhotosCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAllPhotos()));
+            allPassportCopyCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAllPassportCopy()));
+            originalMedicalCertificateCheckBox.setSelected(
+                    Boolean.TRUE.equals(matriculant.getDocuments().isOriginalMedicalCertificate()));
+            copyMedicalPolicyCheckBox.setSelected(
+                    Boolean.TRUE.equals(matriculant.getDocuments().isCopyMedicalPolicy()));
         } else {
             originalAttestatCheckBox.setSelected(false);
             attestatInsertCheckBox.setSelected(false);

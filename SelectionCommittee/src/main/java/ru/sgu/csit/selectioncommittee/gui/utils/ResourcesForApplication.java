@@ -2,8 +2,6 @@ package ru.sgu.csit.selectioncommittee.gui.utils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  * Date: 03.05.2010
