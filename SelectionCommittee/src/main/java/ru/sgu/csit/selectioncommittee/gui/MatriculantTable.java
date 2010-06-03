@@ -1,8 +1,6 @@
 package ru.sgu.csit.selectioncommittee.gui;
 
 import ru.sgu.csit.selectioncommittee.common.Matriculant;
-import ru.sgu.csit.selectioncommittee.common.ReceiptExamine;
-import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 
 import javax.swing.*;
@@ -23,7 +21,7 @@ import java.util.Map;
  * @author xx & hd
  */
 public class MatriculantTable extends JTable {
-    private static List<TableColumn> columns = new ArrayList<TableColumn>();
+    private static List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
     private static List<String> columnNames = new ArrayList<String>();
     private static List<Integer> columnWidths = new ArrayList<Integer>();
 
@@ -46,6 +44,7 @@ public class MatriculantTable extends JTable {
     private void setColumnWidths() {
         for (int i = 0; i < columnWidths.size(); ++i) {
             getColumnModel().getColumn(i).setPreferredWidth(columnWidths.get(i));
+            columns.add(new ColumnInfo(getColumnModel().getColumn(i)));
         }
     }
 
@@ -230,6 +229,34 @@ public class MatriculantTable extends JTable {
                 }
             }
             return cell;
+        }
+    }
+
+    private static class ColumnInfo {
+        private TableColumn column;
+        private boolean visible = true;
+
+        public ColumnInfo() {
+        }
+
+        public ColumnInfo(TableColumn column) {
+            this.column = column;
+        }
+
+        public TableColumn getColumn() {
+            return column;
+        }
+
+        public void setColumn(TableColumn column) {
+            this.column = column;
+        }
+
+        public boolean isVisible() {
+            return visible;
+        }
+
+        public void setVisible(boolean visible) {
+            this.visible = visible;
         }
     }
 }
