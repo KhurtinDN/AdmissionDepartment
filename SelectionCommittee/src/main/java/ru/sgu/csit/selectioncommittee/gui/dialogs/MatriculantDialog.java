@@ -21,6 +21,8 @@ import java.util.*;
  * @author xx & hd
  */
 public class MatriculantDialog extends JDialog {
+    private Action closeAction = new CloseAction("Закрыть");
+
     private Matriculant matriculant;
     private MainFrame mainFrame;
 
@@ -108,6 +110,10 @@ public class MatriculantDialog extends JDialog {
         if (!add) {
             setFieldsFromMatriculant(matriculant);
         }
+
+        JPanel content = (JPanel) getContentPane();
+        content.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "CLOSE_DIALOG");
+        content.getActionMap().put("CLOSE_DIALOG", closeAction);
     }
 
     private JPanel getTopPanel() {
@@ -215,7 +221,7 @@ public class MatriculantDialog extends JDialog {
         } else {
             actionButton = new JButton(new EditMatriculantAction("Изменить"));
         }
-        JButton closeButton = new JButton(new CloseAction("Закрыть"));
+        JButton closeButton = new JButton(closeAction);
 
         buttonsPanel.add(actionButton, new GBConstraints(2, 0).setAnchor(GBConstraints.EAST));
         buttonsPanel.add(closeButton, new GBConstraints(3, 0).setAnchor(GBConstraints.EAST));

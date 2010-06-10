@@ -3,6 +3,7 @@ package ru.sgu.csit.selectioncommittee.gui.dialogs;
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*;
 
@@ -13,6 +14,7 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  * @author xx & hd
  */
 public class AboutDialog extends JDialog {
+
     public AboutDialog(JFrame owner) {
         super(owner, tTITLE_OF_ABOUT, true);
         setSize(600, 300);
@@ -21,5 +23,21 @@ public class AboutDialog extends JDialog {
         JLabel text = new JLabel(tTITLE_OF_ABOUT);
         add(picture);
         add(text);
+
+        Action closeAction = new CloseAction();
+        JPanel content = (JPanel) getContentPane();
+        content.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "CLOSE_DIALOG");
+        content.getActionMap().put("CLOSE_DIALOG", closeAction);
+    }
+
+    private class CloseAction extends AbstractAction {
+        private CloseAction() {
+            putValue(Action.NAME, tCLOSE);
+            putValue(Action.SHORT_DESCRIPTION, tCLOSE_DESCRIPTION);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            AboutDialog.this.setVisible(false);
+        }
     }
 }

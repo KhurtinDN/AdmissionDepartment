@@ -28,6 +28,8 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  * @author : xx & hd
  */
 public class ExportToExcelDialog extends JDialog {
+    private Action closeAction = new CloseAction(); 
+
     private MatriculantTable matriculantTable;
     private List<JCheckBox> checkBoxList;
     private JCheckBox needOpenDocumentCheckBox = new JCheckBox("Открыть документ после экспорта");
@@ -42,6 +44,10 @@ public class ExportToExcelDialog extends JDialog {
         add(createButtonPanel(), new GBConstraints(0, 1, true));
 
         pack();
+
+        JPanel content = (JPanel) getContentPane();
+        content.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "CLOSE_DIALOG");
+        content.getActionMap().put("CLOSE_DIALOG", closeAction);
     }
 
     private JPanel createSelectColumnPanel() {
@@ -66,7 +72,7 @@ public class ExportToExcelDialog extends JDialog {
         buttonPanel.add(needOpenDocumentCheckBox, new GBConstraints(0, 0));
         buttonPanel.add(new JLabel(), new GBConstraints(1, 0, true));
         buttonPanel.add(new JButton(new ExportToExcelAction()), new GBConstraints(2, 0));
-        buttonPanel.add(new JButton(new CloseAction()), new GBConstraints(3, 0));
+        buttonPanel.add(new JButton(closeAction), new GBConstraints(3, 0));
         return buttonPanel;
     }
 
