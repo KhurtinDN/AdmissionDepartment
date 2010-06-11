@@ -50,17 +50,19 @@ public class ResourcesForApplication {
             ResourcesForApplication.class.getResource("/icons/app16.png"));
     public final static Icon iABOUT = new ImageIcon(ResourcesForApplication.class.getResource("/icons/app16.png"));
     public final static Icon iAPP48 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/app48.png"));
+    public final static Icon iEXCEL16 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/excel16.gif"));
     public final static Icon iPRINT16 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/printer16.png"));
     public final static Icon iEXIT16 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/exit16.png"));
     public final static Icon iADD16 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/add16.png"));
     public final static Icon iEDIT16 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/edit16.png"));
+    public final static Icon iINFO16 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/info16.png"));
     public final static Icon iDELETE16 = new ImageIcon(ResourcesForApplication.class.getResource("/icons/delete16.png"));
-    public final static Icon iOK = new ImageIcon(ResourcesForApplication.class.getResource("/icons/ok.png"));
-    public final static Icon iCANCEL = new ImageIcon(ResourcesForApplication.class.getResource("/icons/cancel.png"));
+//    public final static Icon iOK = new ImageIcon(ResourcesForApplication.class.getResource("/icons/ok.png"));
+//    public final static Icon iCANCEL = new ImageIcon(ResourcesForApplication.class.getResource("/icons/cancel.png"));
 
 
     //
-    public final static String tCONFIRM_CLOSE_APP = "Вы действительно хотите закрыть приложение?";
+//    public final static String tCONFIRM_CLOSE_APP = "Вы действительно хотите закрыть приложение?";
     public final static String tCONFIRM = "Подтверждение";
     public final static String tYES = "Да";
     public final static String tNO = "Нет";

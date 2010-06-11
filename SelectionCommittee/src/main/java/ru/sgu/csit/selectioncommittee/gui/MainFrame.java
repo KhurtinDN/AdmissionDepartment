@@ -163,6 +163,7 @@ public class MainFrame extends JFrame {
 
         private ExportToExcelAction() {
             putValue(Action.NAME, tEXPORT_TO_EXCEL);
+            putValue(Action.SMALL_ICON, iEXCEL16);
             putValue(Action.SHORT_DESCRIPTION, tEXPORT_TO_EXCEL_DESCRIPTION);
             putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F2"));
         }
@@ -287,7 +288,7 @@ public class MainFrame extends JFrame {
     private class InfoAction extends AbstractAction {
         private InfoAction() {
             putValue(Action.NAME, tINFO);
-            putValue(Action.SMALL_ICON, iABOUT);
+            putValue(Action.SMALL_ICON, iINFO16);
             putValue(Action.SHORT_DESCRIPTION, tINFO_DESCRIPTION);
             putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F3"));
         }
