@@ -437,8 +437,10 @@ public class MatriculantDialog extends JDialog {
             originalAttestatCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalAttestat()));
             attestatInsertCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAttestatInsert()));
             originalEgeCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalEge()));
-//            allPhotosCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAllPhotos()));  todo
-//            allPassportCopyCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAllPassportCopy())); todo
+            if (matriculant.getDocuments()!= null) {
+                photosSpinner.setValue(matriculant.getDocuments().getCountPhotos());
+                passportCopySpinner.setValue(matriculant.getDocuments().getCountPassportCopy());
+            }
             originalMedicalCertificateCheckBox.setSelected(
                     Boolean.TRUE.equals(matriculant.getDocuments().isOriginalMedicalCertificate()));
             copyMedicalPolicyCheckBox.setSelected(
@@ -447,8 +449,6 @@ public class MatriculantDialog extends JDialog {
             originalAttestatCheckBox.setSelected(false);
             attestatInsertCheckBox.setSelected(false);
             originalEgeCheckBox.setSelected(false);
-//            allPhotosCheckBox.setSelected(false);      todo
-//            allPassportCopyCheckBox.setSelected(false);   todo
             originalMedicalCertificateCheckBox.setSelected(false);
             copyMedicalPolicyCheckBox.setSelected(false);
         }
@@ -504,8 +504,8 @@ public class MatriculantDialog extends JDialog {
         documents.setOriginalAttestat(originalAttestatCheckBox.isSelected());
         documents.setAttestatInsert(attestatInsertCheckBox.isSelected());
         documents.setOriginalEge(originalEgeCheckBox.isSelected());
-//        documents.setAllPhotos(allPhotosCheckBox.isSelected());        todo
-//        documents.setAllPassportCopy(allPassportCopyCheckBox.isSelected()); todo
+        documents.setCountPhotos((Integer)photosSpinner.getValue());
+        documents.setCountPassportCopy((Integer)passportCopySpinner.getValue());
         documents.setOriginalMedicalCertificate(originalMedicalCertificateCheckBox.isSelected());
         documents.setCopyMedicalPolicy(copyMedicalPolicyCheckBox.isSelected());
         matriculant.setDocuments(documents);

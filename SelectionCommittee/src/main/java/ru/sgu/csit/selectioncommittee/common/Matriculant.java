@@ -4,7 +4,6 @@ import org.hibernate.annotations.CollectionOfElements;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 
 import javax.persistence.*;
-import java.text.DateFormat;
 import java.util.*;
 
 /**
@@ -176,14 +175,14 @@ public class Matriculant extends Person {
 
     @Embeddable
     public static class Documents {
-        Boolean originalAttestat;
-        Boolean attestatInsert;
-        Boolean originalEge;
-        Boolean allPhotos;
-        Boolean allPassportCopy;
-        Boolean originalMedicalCertificate;
-        Boolean copyMedicalPolicy;
-        Boolean tookDocuments;
+        private Boolean originalAttestat;
+        private Boolean attestatInsert;
+        private Boolean originalEge;
+        private Integer countPhotos = 0;
+        private Integer countPassportCopy = 0;
+        private Boolean originalMedicalCertificate;
+        private Boolean copyMedicalPolicy;
+        private Boolean tookDocuments;
 
         public Boolean isOriginalAttestat() {
             return originalAttestat;
@@ -209,20 +208,20 @@ public class Matriculant extends Person {
             this.originalEge = originalEge;
         }
 
-        public Boolean isAllPhotos() {
-            return allPhotos;
+        public Integer getCountPhotos() {
+            return countPhotos;
         }
 
-        public void setAllPhotos(Boolean allPhotos) {
-            this.allPhotos = allPhotos;
+        public void setCountPhotos(Integer countPhotos) {
+            this.countPhotos = countPhotos;
         }
 
-        public Boolean isAllPassportCopy() {
-            return allPassportCopy;
+        public Integer getCountPassportCopy() {
+            return countPassportCopy;
         }
 
-        public void setAllPassportCopy(Boolean allPassportCopy) {
-            this.allPassportCopy = allPassportCopy;
+        public void setCountPassportCopy(Integer countPassportCopy) {
+            this.countPassportCopy = countPassportCopy;
         }
 
         public Boolean isOriginalMedicalCertificate() {
@@ -257,8 +256,8 @@ public class Matriculant extends Person {
                     ((originalAttestat != null && originalAttestat)
                     && (attestatInsert != null && attestatInsert)
                     && (originalEge != null && originalEge)
-                    && (allPhotos != null && allPhotos)
-                    && (allPassportCopy != null && allPassportCopy)
+                    && (countPhotos != 0)
+                    && (countPassportCopy != 0)
                     && (originalMedicalCertificate != null && originalMedicalCertificate)
                     && (copyMedicalPolicy != null && copyMedicalPolicy));
         }
@@ -279,11 +278,11 @@ public class Matriculant extends Person {
             if (originalEge != null && originalEge) {
                 str += "\tОригиналы ЕГЭ\n";
             }
-            if (allPhotos != null && allPhotos) {
-                str += "\tВсе фотографии\n";
+            if (countPhotos != 0) {
+                str += "\tФотографии: " + countPhotos + " шт.\n";
             }
-            if (allPassportCopy != null && allPassportCopy) {
-                str += "\tВсе копии паспорта\n";
+            if (countPassportCopy != 0) {
+                str += "\tКопии паспорта: " + countPassportCopy + " шт.\n";
             }
             if (originalMedicalCertificate != null && originalMedicalCertificate) {
                 str += "\tОригинал медицинской справки\n";
@@ -301,8 +300,8 @@ public class Matriculant extends Person {
                     "originalAttestat=" + originalAttestat +
                     ", attestatInsert=" + attestatInsert +
                     ", originalEge=" + originalEge +
-                    ", allPhotos=" + allPhotos +
-                    ", allPassportCopy=" + allPassportCopy +
+                    ", countPhotos=" + countPhotos +
+                    ", countPassportCopy=" + countPassportCopy +
                     ", originalMedicalCertificate=" + originalMedicalCertificate +
                     ", copyMedicalPolicy=" + copyMedicalPolicy +
                     ", tookDocuments=" + tookDocuments +
