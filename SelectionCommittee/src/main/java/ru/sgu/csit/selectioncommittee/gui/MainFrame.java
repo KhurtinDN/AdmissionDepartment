@@ -47,6 +47,7 @@ public class MainFrame extends JFrame {
         add(createJToolBar(), BorderLayout.NORTH);
 
         mainTable.setComponentPopupMenu(createRowPopupMenu());
+        mainTable.getTableHeader().setComponentPopupMenu(createColumnPopupMenu());
         add(new JScrollPane(mainTable), BorderLayout.CENTER);
 
         add(createButtonPanel(), BorderLayout.SOUTH);
@@ -126,6 +127,18 @@ public class MainFrame extends JFrame {
         jPopupMenu.add(editAction);
 //        jPopupMenu.add(deleteAction);
 
+        return jPopupMenu;
+    }
+
+    private JPopupMenu createColumnPopupMenu() {
+        JPopupMenu jPopupMenu = new JPopupMenu();
+
+        for (MatriculantTable.ColumnInfo column : mainTable.getColumns()) {
+            JCheckBoxMenuItem columnMenuItem = new JCheckBoxMenuItem(new ShowColumnAction(column.getColumnName()));
+
+            columnMenuItem.setSelected(column.isVisible());
+            jPopupMenu.add(columnMenuItem);
+        }
         return jPopupMenu;
     }
 
