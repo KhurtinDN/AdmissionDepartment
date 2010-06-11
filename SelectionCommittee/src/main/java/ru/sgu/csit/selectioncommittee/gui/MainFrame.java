@@ -91,10 +91,15 @@ public class MainFrame extends JFrame {
         editMenu.add(deleteAction);
 
         JMenu viewMenu = new JMenu(tVIEW_MENU);
-        //viewMenu.add(addAction);
+        for (MatriculantTable.ColumnInfo column : mainTable.getColumns()) {
+            JCheckBoxMenuItem columnMenuItem = new JCheckBoxMenuItem(new ShowColumnAction(column.getColumnName()));
+
+            columnMenuItem.setSelected(column.isVisible());
+            viewMenu.add(columnMenuItem);
+        }
         viewMenu.addSeparator();
         JCheckBoxMenuItem lightMenuItem = new JCheckBoxMenuItem(highlightingAction);
-        lightMenuItem.setSelected(mainTable.isHighlighting());
+        lightMenuItem.setSelected(MatriculantTable.isHighlighting());
         viewMenu.add(lightMenuItem);
         JCheckBoxMenuItem resizeMenuItem = new JCheckBoxMenuItem(resizeTableAction);
         resizeMenuItem.setSelected(mainTable.getAutoResizeMode() == JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -319,6 +324,32 @@ public class MainFrame extends JFrame {
 
             MatriculantTable.setHighlighting(lightMenuItem.isSelected());
             mainTable.repaint();
+        }
+    }
+
+    private class ShowColumnAction extends AbstractAction {
+        private ShowColumnAction(String name) {
+            putValue(Action.NAME, name);
+            putValue(Action.SHORT_DESCRIPTION, tSHOWCOLUMN_DESCRIPTION);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JCheckBoxMenuItem columnMenuItem = (JCheckBoxMenuItem) e.getSource();
+
+            for (int i = 0; i < mainTable.getColumns().size(); ++i) {
+                MatriculantTable.ColumnInfo column = mainTable.getColumns().get(i);
+
+                if (column.getColumnName().equals(columnMenuItem.getText())) {
+                    if (columnMenuItem.isSelected()) {
+                        mainTable.addColumn(i);
+                    } else {
+                        mainTable.removeColumn(i);
+                    }
+                    mainTable.repaint();
+
+                    return;
+                }
+            }
         }
     }
 }

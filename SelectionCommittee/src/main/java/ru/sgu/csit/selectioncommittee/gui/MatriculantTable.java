@@ -21,16 +21,17 @@ import java.util.Map;
  * @author xx & hd
  */
 public class MatriculantTable extends JTable {
-    private static List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
+    private List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
     private static List<String> columnNames = new ArrayList<String>();
     private static List<Integer> columnWidths = new ArrayList<Integer>();
+    private static List<Boolean> columnVisible = new ArrayList<Boolean>();
 
     private static boolean highlighting = true;
 
     private static MatriculantTableModel matriculantTableModel = new MatriculantTableModel();
 
     static {
-        regenerateColumnNames();
+        regenerateColumnData();
     }
 
     public MatriculantTable() {
@@ -38,54 +39,96 @@ public class MatriculantTable extends JTable {
         setDefaultRenderer(Object.class, new MatriculantTableCellRenderer());
         setAutoCreateRowSorter(true);
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        setColumnWidths();
+        setColumns();
     }
 
-    private void setColumnWidths() {
+    private void setColumns() {
+        if (columns != null) {
+            columns = new ArrayList<ColumnInfo>();
+        }
         for (int i = 0; i < columnWidths.size(); ++i) {
             getColumnModel().getColumn(i).setPreferredWidth(columnWidths.get(i));
-            columns.add(new ColumnInfo(getColumnModel().getColumn(i)));
+            columns.add(new ColumnInfo(getColumnModel().getColumn(i), columnNames.get(i),
+                    columnVisible.get(i)));
+        }
+        for (ColumnInfo column : columns) {
+            if (!column.isVisible()) {
+                removeColumn(column.getColumn());
+            }
         }
     }
 
-    private static void regenerateColumnNames() {
+    public void removeColumn(int column) {
+        removeColumn(columns.get(column).getColumn());
+        columns.get(column).setVisible(false);
+    }
+
+    public void addColumn(int column) {
+        addColumn(columns.get(column).getColumn());
+        columns.get(column).setVisible(true);
+        moveColumn(column);
+    }
+
+    public void moveColumn(int column) {
+        int sourceIndex = convertColumnIndexToView(column);
+        int targetIndex = 0;
+
+        for (int i = 0; i < column; ++i) {
+            if (columns.get(i).isVisible()) {
+                targetIndex++;
+            }
+        }
+
+        moveColumn(sourceIndex, targetIndex);
+    }
+
+    private static void regenerateColumnData() {
         columnNames.clear();
         columnWidths.clear();
+        columnVisible.clear();
 
         columnNames.add("ФИО");
         columnWidths.add(220);
+        columnVisible.add(Boolean.TRUE);
 
         columnNames.add("Рег. №");
         columnWidths.add(70);
+        columnVisible.add(Boolean.TRUE);
 
         columnNames.add("Поступает");
         columnWidths.add(100);
+        columnVisible.add(Boolean.FALSE);
 
         for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
             columnNames.add(DataAccessFactory.getSpecialities().get(i).getName());
-            columnWidths.add(55);
+            columnWidths.add(60);
+            columnVisible.add(Boolean.TRUE);
         }
 
         columnNames.add("Балл");
         columnWidths.add(45);
+        columnVisible.add(Boolean.TRUE);
 
         for (int i = 0; i < DataAccessFactory.getExamines().size(); ++i) {
             columnNames.add(DataAccessFactory.getExamines().get(i).getName());
-            columnWidths.add(55);
+            columnWidths.add(60);
+            columnVisible.add(Boolean.TRUE);
         }
 
         columnNames.add("Телефон");
         columnWidths.add(200);
+        columnVisible.add(Boolean.FALSE);
 
         columnNames.add("Дата");
         columnWidths.add(120);
+        columnVisible.add(Boolean.TRUE);
     }
 
     public void refresh() {
         matriculantTableModel.fireTableStructureChanged();
         setAutoCreateRowSorter(true);
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        setColumnWidths();
+        setColumns();
     }
 
     public static boolean isHighlighting() {
@@ -94,6 +137,10 @@ public class MatriculantTable extends JTable {
 
     public static void setHighlighting(boolean highlighting) {
         MatriculantTable.highlighting = highlighting;
+    }
+
+    public List<ColumnInfo> getColumns() {
+        return columns;
     }
 
     private static class MatriculantTableModel extends AbstractTableModel {
@@ -232,8 +279,9 @@ public class MatriculantTable extends JTable {
         }
     }
 
-    private static class ColumnInfo {
+    public static class ColumnInfo {
         private TableColumn column;
+        private String columnName;
         private boolean visible = true;
 
         public ColumnInfo() {
@@ -243,12 +291,26 @@ public class MatriculantTable extends JTable {
             this.column = column;
         }
 
+        public ColumnInfo(TableColumn column, String name, boolean visible) {
+            this.column = column;
+            this.columnName = name;
+            this.visible = visible;
+        }
+
         public TableColumn getColumn() {
             return column;
         }
 
         public void setColumn(TableColumn column) {
             this.column = column;
+        }
+
+        public String getColumnName() {
+            return columnName;
+        }
+
+        public void setColumnName(String columnName) {
+            this.columnName = columnName;
         }
 
         public boolean isVisible() {

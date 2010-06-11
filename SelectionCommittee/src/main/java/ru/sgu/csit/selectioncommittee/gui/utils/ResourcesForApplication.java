@@ -35,6 +35,7 @@ public class ResourcesForApplication {
     public final static String tINFO_DESCRIPTION = "Посмотреть данные абитуриента";
 
     public final static String tVIEW_MENU = "Вид";
+    public final static String tSHOWCOLUMN_DESCRIPTION = "Показать или скрыть столбец";
     public final static String tAUTORESIZE = "Автовыравнивание";
     public final static String tAUTORESIZE_DESCRIPTION = "Выровнять таблицу по ширине окна";
     public final static String tHIGHLIGHTING = "Цветовое выделение";
