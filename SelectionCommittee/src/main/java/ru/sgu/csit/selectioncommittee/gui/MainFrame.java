@@ -8,9 +8,7 @@ import ru.sgu.csit.selectioncommittee.gui.dialogs.MatriculantDialog;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.print.PrinterException;
 
 import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*;
@@ -54,6 +52,14 @@ public class MainFrame extends JFrame {
                 //if (confirm(tCONFIRM_CLOSE_APP)) {
                 System.exit(0);
                 //}
+            }
+        });
+
+        mainTable.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() > 1) {
+                    infoAction.actionPerformed(null);
+                }
             }
         });
     }
