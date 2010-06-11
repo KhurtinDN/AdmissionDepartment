@@ -248,7 +248,11 @@ public class MatriculantTable extends JTable {
             if (MatriculantTable.isHighlighting()) {
                 if (!isSelected) {
                     if (!matriculant.completeAllDocuments()) {
-                        cell.setBackground(new Color(255, 245, 210));
+                        if (matriculant.getDocuments() != null && matriculant.getDocuments().isOriginalAttestat()) {
+                            cell.setBackground(new Color(240, 230, 190));
+                        } else {
+                            cell.setBackground(new Color(210, 210, 245));
+                        }
 //                        cell.setFont(cell.getFont().deriveFont(Font.PLAIN));
 ///                       cell.setBackground(new Color(150, 150, 150));//Color(180, 250, 200));
 ///                       cell.setForeground(new Color(250, 250, 250));
@@ -258,15 +262,19 @@ public class MatriculantTable extends JTable {
 ///                    cell.setBackground(Color.WHITE);
 ///                    cell.setForeground(Color.BLACK);
 //                    cell.setFont(cell.getFont().deriveFont(Font.BOLD));
-                        cell.setBackground(new Color(210, 255, 210));
+                        cell.setBackground(new Color(210, 245, 200));
                     }
                 } else {
                     if (!matriculant.completeAllDocuments()) {
-                        cell.setBackground(new Color(245, 225, 180));
+                        if (matriculant.getDocuments() != null && matriculant.getDocuments().isOriginalAttestat()) {
+                            cell.setBackground(new Color(225, 215, 165));
+                        } else {
+                            cell.setBackground(new Color(195, 195, 245));
+                        }
                     } else if (matriculant.getDocuments() != null && matriculant.getDocuments().isTookDocuments()) {
-                        cell.setBackground(new Color(245, 180, 180));
+                        cell.setBackground(new Color(245, 195, 195));
                     } else {
-                        cell.setBackground(new Color(180, 245, 180));
+                        cell.setBackground(new Color(180, 240, 170));
                     }
                 }
             } else {
