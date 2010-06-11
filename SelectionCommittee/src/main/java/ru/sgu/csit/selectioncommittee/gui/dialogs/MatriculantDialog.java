@@ -46,12 +46,12 @@ public class MatriculantDialog extends JDialog {
     private JTextField motherPhoneNumberField = new JTextField();
 
     // HowMatriculatePanel
-    private ButtonGroup radionButtonGroup = new ButtonGroup();
+    private ButtonGroup radioButtonGroup = new ButtonGroup();
     private JRadioButton examineRadioButton = new JRadioButton("По экзаменам", false);
     private JRadioButton noExamineRadioButton = new JRadioButton("Без экзаменов", false);
-    private JRadioButton orphanOutExamineRadioButton = new JRadioButton("Вне конкурса (сирота)", false);
-    private JRadioButton invalidOutExamineRadioButton = new JRadioButton("Вне конкурса (инвалид)", false);
-    private JRadioButton otherOutExamineRadioButton = new JRadioButton("Вне конкурса (другое)", false);
+    private JRadioButton orphanOutExamineRadioButton = new JRadioButton("Вне конкурса ( сирота )", false);
+    private JRadioButton invalidOutExamineRadioButton = new JRadioButton("Вне конкурса ( инвалид )", false);
+    private JRadioButton otherOutExamineRadioButton = new JRadioButton("Вне конкурса ( другое )", false);
 
     // specialityPanel
     private SpecialityPanel specialityPanel = new SpecialityPanel();
@@ -60,13 +60,15 @@ public class MatriculantDialog extends JDialog {
     MarkPanel markPanel = new MarkPanel();
 
     // documentsPanel
+    private JCheckBox takeAwayDocumentsCheckBox = new JCheckBox("Забрал документы");
     private JCheckBox originalAttestatCheckBox = new JCheckBox("Оригинал аттестата");
     private JCheckBox attestatInsertCheckBox = new JCheckBox("Наличие вкладыша аттестата");
     private JCheckBox originalEgeCheckBox = new JCheckBox("Оригинал ЕГЭ");
-    private JCheckBox allPhotosCheckBox = new JCheckBox("Все фотографии");
-    private JCheckBox allPassportCopyCheckBox = new JCheckBox("Все копии паспорта");
     private JCheckBox originalMedicalCertificateCheckBox = new JCheckBox("Оригинал медицинской справки");
     private JCheckBox copyMedicalPolicyCheckBox = new JCheckBox("Копия медицинского полиса");
+
+    private JSpinner photosSpinner = new JSpinner();
+    private JSpinner passportCopySpinner = new JSpinner();
 
     // schoolPanel
     private JTextField schoolNameField = new JTextField();
@@ -169,33 +171,42 @@ public class MatriculantDialog extends JDialog {
         return motherPanel;
     }
 
-    private JPanel getDocumentsPanel() {
+    private JPanel getDocumentsPanel() { // todo
         JPanel documentsPanel = new JPanel(new GridBagLayout());
         documentsPanel.add(originalAttestatCheckBox, getCheckBoxConstraints(0, 0));
         documentsPanel.add(attestatInsertCheckBox, getCheckBoxConstraints(0, 1));
         documentsPanel.add(originalEgeCheckBox, getCheckBoxConstraints(0, 2));
-        documentsPanel.add(allPhotosCheckBox, getCheckBoxConstraints(0, 3));
-        documentsPanel.add(allPassportCopyCheckBox, getCheckBoxConstraints(0, 4));
-        documentsPanel.add(originalMedicalCertificateCheckBox, getCheckBoxConstraints(0, 5));
-        documentsPanel.add(copyMedicalPolicyCheckBox, getCheckBoxConstraints(0, 6));
+        documentsPanel.add(originalMedicalCertificateCheckBox, getCheckBoxConstraints(0, 3));
+        documentsPanel.add(copyMedicalPolicyCheckBox, getCheckBoxConstraints(0, 4));
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.add(new JLabel("Количество фотографий:"), new GBConstraints(0, 0, true));
+        panel.add(photosSpinner, new GBConstraints(1, 0, true));
+        panel.add(new JLabel("Количество копий паспорта:"), new GBConstraints(0, 1, true));
+        panel.add(passportCopySpinner, new GBConstraints(1, 1, true));
+        documentsPanel.add(panel, new GBConstraints(0, 5, true));
+
         documentsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Документы"));
         return documentsPanel;
     }
 
     private JPanel getHowMatriculatePanel() {
         JPanel howMatriculatePanel = new JPanel(new GridBagLayout());
-        howMatriculatePanel.add(examineRadioButton, new GBConstraints(0, 0, true));
-        howMatriculatePanel.add(noExamineRadioButton, new GBConstraints(0, 1, true));
 
-        howMatriculatePanel.add(orphanOutExamineRadioButton, new GBConstraints(1, 0, true));
-        howMatriculatePanel.add(invalidOutExamineRadioButton, new GBConstraints(1, 1, true));
-        howMatriculatePanel.add(otherOutExamineRadioButton, new GBConstraints(1, 2, true));
+        JPanel content = new JPanel(new GridBagLayout());
+        howMatriculatePanel.add(examineRadioButton, new GBConstraints(0, 0));
+        howMatriculatePanel.add(noExamineRadioButton, new GBConstraints(0, 1));
 
-        radionButtonGroup.add(examineRadioButton);
-        radionButtonGroup.add(noExamineRadioButton);
-        radionButtonGroup.add(orphanOutExamineRadioButton);
-        radionButtonGroup.add(invalidOutExamineRadioButton);
-        radionButtonGroup.add(otherOutExamineRadioButton);
+        howMatriculatePanel.add(orphanOutExamineRadioButton, new GBConstraints(1, 0));
+        howMatriculatePanel.add(invalidOutExamineRadioButton, new GBConstraints(1, 1));
+        howMatriculatePanel.add(otherOutExamineRadioButton, new GBConstraints(1, 2));
+        howMatriculatePanel.add(content, new GBConstraints(0, 0, true));
+
+        radioButtonGroup.add(examineRadioButton);
+        radioButtonGroup.add(noExamineRadioButton);
+        radioButtonGroup.add(orphanOutExamineRadioButton);
+        radioButtonGroup.add(invalidOutExamineRadioButton);
+        radioButtonGroup.add(otherOutExamineRadioButton);
 
         howMatriculatePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
                 "Как поступает"));
@@ -242,7 +253,7 @@ public class MatriculantDialog extends JDialog {
     }
 
     private GBConstraints getCheckBoxConstraints(int gridX, int gridY) {
-        return new GBConstraints(gridX, gridY, true).setInsets(0, 5, 0, 5);
+        return new GBConstraints(gridX, gridY).setInsets(0, 5, 0, 5);
     }
 
     private GBConstraints getPanelConstraints(int gridX, int gridY, int gridWidth, int gridHeight) {
@@ -400,8 +411,8 @@ public class MatriculantDialog extends JDialog {
             originalAttestatCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalAttestat()));
             attestatInsertCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAttestatInsert()));
             originalEgeCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalEge()));
-            allPhotosCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAllPhotos()));
-            allPassportCopyCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAllPassportCopy()));
+//            allPhotosCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAllPhotos()));  todo
+//            allPassportCopyCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAllPassportCopy())); todo
             originalMedicalCertificateCheckBox.setSelected(
                     Boolean.TRUE.equals(matriculant.getDocuments().isOriginalMedicalCertificate()));
             copyMedicalPolicyCheckBox.setSelected(
@@ -410,8 +421,8 @@ public class MatriculantDialog extends JDialog {
             originalAttestatCheckBox.setSelected(false);
             attestatInsertCheckBox.setSelected(false);
             originalEgeCheckBox.setSelected(false);
-            allPhotosCheckBox.setSelected(false);
-            allPassportCopyCheckBox.setSelected(false);
+//            allPhotosCheckBox.setSelected(false);      todo
+//            allPassportCopyCheckBox.setSelected(false);   todo
             originalMedicalCertificateCheckBox.setSelected(false);
             copyMedicalPolicyCheckBox.setSelected(false);
         }
@@ -466,8 +477,8 @@ public class MatriculantDialog extends JDialog {
         documents.setOriginalAttestat(originalAttestatCheckBox.isSelected());
         documents.setAttestatInsert(attestatInsertCheckBox.isSelected());
         documents.setOriginalEge(originalEgeCheckBox.isSelected());
-        documents.setAllPhotos(allPhotosCheckBox.isSelected());
-        documents.setAllPassportCopy(allPassportCopyCheckBox.isSelected());
+//        documents.setAllPhotos(allPhotosCheckBox.isSelected());        todo
+//        documents.setAllPassportCopy(allPassportCopyCheckBox.isSelected()); todo
         documents.setOriginalMedicalCertificate(originalMedicalCertificateCheckBox.isSelected());
         documents.setCopyMedicalPolicy(copyMedicalPolicyCheckBox.isSelected());
         matriculant.setDocuments(documents);
