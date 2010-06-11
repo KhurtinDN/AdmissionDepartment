@@ -253,14 +253,14 @@ public class Matriculant extends Person {
         }
 
         public Boolean completeAllDocuments() {
-            return (tookDocuments == null || !tookDocuments)
-                    && (originalAttestat != null && originalAttestat)
+            return (tookDocuments != null && tookDocuments) ||
+                    ((originalAttestat != null && originalAttestat)
                     && (attestatInsert != null && attestatInsert)
                     && (originalEge != null && originalEge)
                     && (allPhotos != null && allPhotos)
                     && (allPassportCopy != null && allPassportCopy)
                     && (originalMedicalCertificate != null && originalMedicalCertificate)
-                    && (copyMedicalPolicy != null && copyMedicalPolicy);
+                    && (copyMedicalPolicy != null && copyMedicalPolicy));
         }
 
         public String printToString() {
