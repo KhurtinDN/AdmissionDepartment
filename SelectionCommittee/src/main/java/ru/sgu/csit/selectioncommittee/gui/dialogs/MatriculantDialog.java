@@ -14,6 +14,7 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 
 /**
@@ -24,6 +25,8 @@ import java.util.*;
  */
 public class MatriculantDialog extends JDialog {
     private Action closeAction = new CloseAction("Закрыть");
+
+    private ActionListener takeAwayActionListener = new TakeAwayActionListener();
 
     private Matriculant matriculant;
     private MainFrame mainFrame;
@@ -67,7 +70,9 @@ public class MatriculantDialog extends JDialog {
     private JCheckBox originalMedicalCertificateCheckBox = new JCheckBox("Оригинал медицинской справки");
     private JCheckBox copyMedicalPolicyCheckBox = new JCheckBox("Копия медицинского полиса");
 
+    private JLabel photosLabel = new JLabel("Количество фотографий:");
     private JSpinner photosSpinner = new JSpinner();
+    private JLabel passportLabel = new JLabel("Количество копий паспорта:");
     private JSpinner passportCopySpinner = new JSpinner();
 
     // schoolPanel
@@ -171,20 +176,22 @@ public class MatriculantDialog extends JDialog {
         return motherPanel;
     }
 
-    private JPanel getDocumentsPanel() { // todo
+    private JPanel getDocumentsPanel() {
         JPanel documentsPanel = new JPanel(new GridBagLayout());
-        documentsPanel.add(originalAttestatCheckBox, getCheckBoxConstraints(0, 0));
-        documentsPanel.add(attestatInsertCheckBox, getCheckBoxConstraints(0, 1));
-        documentsPanel.add(originalEgeCheckBox, getCheckBoxConstraints(0, 2));
-        documentsPanel.add(originalMedicalCertificateCheckBox, getCheckBoxConstraints(0, 3));
-        documentsPanel.add(copyMedicalPolicyCheckBox, getCheckBoxConstraints(0, 4));
+        takeAwayDocumentsCheckBox.addActionListener(takeAwayActionListener);
+        documentsPanel.add(takeAwayDocumentsCheckBox, getCheckBoxConstraints(0, 0));
+        documentsPanel.add(originalAttestatCheckBox, getCheckBoxConstraints(0, 1));
+        documentsPanel.add(attestatInsertCheckBox, getCheckBoxConstraints(0, 2));
+        documentsPanel.add(originalEgeCheckBox, getCheckBoxConstraints(0, 3));
+        documentsPanel.add(originalMedicalCertificateCheckBox, getCheckBoxConstraints(0, 4));
+        documentsPanel.add(copyMedicalPolicyCheckBox, getCheckBoxConstraints(0, 5));
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.add(new JLabel("Количество фотографий:"), new GBConstraints(0, 0, true));
+        panel.add(photosLabel, new GBConstraints(0, 0, true));
         panel.add(photosSpinner, new GBConstraints(1, 0, true));
-        panel.add(new JLabel("Количество копий паспорта:"), new GBConstraints(0, 1, true));
+        panel.add(passportLabel, new GBConstraints(0, 1, true));
         panel.add(passportCopySpinner, new GBConstraints(1, 1, true));
-        documentsPanel.add(panel, new GBConstraints(0, 5, true));
+        documentsPanel.add(panel, new GBConstraints(0, 6, true));
 
         documentsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Документы"));
         return documentsPanel;
@@ -262,6 +269,27 @@ public class MatriculantDialog extends JDialog {
                 .setAnchor(GBConstraints.NORTHWEST);
     }
 
+    private boolean validateForm() {
+        return true; // todo: validate
+    }
+
+    private class TakeAwayActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            boolean enabled = !takeAwayDocumentsCheckBox.isSelected();
+            originalAttestatCheckBox.setEnabled(enabled);
+            attestatInsertCheckBox.setEnabled(enabled);
+            originalEgeCheckBox.setEnabled(enabled);
+            originalMedicalCertificateCheckBox.setEnabled(enabled);
+            copyMedicalPolicyCheckBox.setEnabled(enabled);
+
+            photosLabel.setEnabled(enabled);
+            photosSpinner.setEnabled(enabled);
+            passportLabel.setEnabled(enabled);
+            passportCopySpinner.setEnabled(enabled);
+        }
+    }
+
     private class AddMatriculantAction extends AbstractAction {
         private AddMatriculantAction(String name) {
             super(name);
@@ -286,10 +314,6 @@ public class MatriculantDialog extends JDialog {
                 setFieldsFromMatriculant(matriculant);
             }
         }
-    }
-
-    private boolean validateForm() {
-        return true; // todo: validate
     }
 
     private class EditMatriculantAction extends AbstractAction {
@@ -408,6 +432,8 @@ public class MatriculantDialog extends JDialog {
         }
 
         if (matriculant.getDocuments() != null) {
+            takeAwayDocumentsCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isTookDocuments()));
+            takeAwayActionListener.actionPerformed(new ActionEvent(this, 0, ""));
             originalAttestatCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalAttestat()));
             attestatInsertCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAttestatInsert()));
             originalEgeCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalEge()));
@@ -474,6 +500,7 @@ public class MatriculantDialog extends JDialog {
         matriculant.setBalls(markPanel.getMarks());
 
         Matriculant.Documents documents = new Matriculant.Documents();
+        documents.setTookDocuments(takeAwayDocumentsCheckBox.isSelected());
         documents.setOriginalAttestat(originalAttestatCheckBox.isSelected());
         documents.setAttestatInsert(attestatInsertCheckBox.isSelected());
         documents.setOriginalEge(originalEgeCheckBox.isSelected());
