@@ -19,7 +19,7 @@ public class MatriculantInfoDialog extends JDialog {
         super(owner, "Информация об абитуриенте", false);
         setLayout(new GridBagLayout());
 
-        add(textArea, new GBConstraints(0, 0).setFill(GBConstraints.BOTH));
+        add(getContentPanel(), new GBConstraints(0, 0).setFill(GBConstraints.BOTH).setWeight(100, 100).setInsets(10));
 
         Action closeAction = new CloseAction("Закрыть");
         JPanel content = (JPanel) getContentPane();
@@ -31,6 +31,16 @@ public class MatriculantInfoDialog extends JDialog {
         textArea.setText(info);
         pack();
         setVisible(true);
+    }
+
+    private JComponent getContentPanel() {
+        JPanel matriculantInfoPanel = new JPanel(new GridBagLayout());
+        textArea.setEditable(false);
+        matriculantInfoPanel.add(textArea,
+                new GBConstraints(0, 0).setFill(GBConstraints.BOTH).setWeight(100, 100).setInsets(5));
+        matriculantInfoPanel.setAutoscrolls(true);
+        matriculantInfoPanel.setBorder(BorderFactory.createEtchedBorder());
+        return new JScrollPane(matriculantInfoPanel);
     }
 
     private class CloseAction extends AbstractAction {
