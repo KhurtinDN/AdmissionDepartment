@@ -433,7 +433,7 @@ public class MatriculantDialog extends JDialog {
 
         if (matriculant.getDocuments() != null) {
             takeAwayDocumentsCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isTookDocuments()));
-            takeAwayActionListener.actionPerformed(new ActionEvent(this, 0, ""));
+            takeAwayActionListener.actionPerformed(null);
             originalAttestatCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalAttestat()));
             attestatInsertCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAttestatInsert()));
             originalEgeCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalEge()));

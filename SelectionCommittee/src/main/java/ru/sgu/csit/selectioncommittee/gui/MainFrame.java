@@ -5,6 +5,9 @@ import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.AboutDialog;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.ExportToExcelDialog;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.MatriculantDialog;
+import ru.sgu.csit.selectioncommittee.gui.dialogs.MatriculantInfoDialog;
+
+import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +35,8 @@ public class MainFrame extends JFrame {
     Action highlightingAction = new HighlightingAction();
 
     MatriculantTable mainTable = null;
+
+    MatriculantInfoDialog matriculantInfoDialog = new MatriculantInfoDialog(this);
 
     public MainFrame() {
         mainTable = new MatriculantTable();
@@ -66,18 +71,11 @@ public class MainFrame extends JFrame {
 
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new GridLayout());
-        buttonPanel.add(createButton(addAction));
-        buttonPanel.add(createButton(infoAction));
-        buttonPanel.add(createButton(editAction));
-        buttonPanel.add(createButton(deleteAction));
+        buttonPanel.add(new JButton(addAction));
+        buttonPanel.add(new JButton(infoAction));
+        buttonPanel.add(new JButton(editAction));
+        buttonPanel.add(new JButton(deleteAction));
         return buttonPanel;
-    }
-
-    JButton createButton(Action action) {
-        JButton button = new JButton(action);
-//        Dimension dimension = button.getPreferredSize();
-//        button.setPreferredSize(new Dimension(dimension.width + 3, dimension.height));
-        return button;
     }
 
     private JMenuBar createJMenuBar() {
@@ -147,12 +145,6 @@ public class MainFrame extends JFrame {
         mainTable.refresh();
     }
 
-    boolean confirm(String message) {
-        Object[] options = {tYES, tNO};
-        return JOptionPane.showOptionDialog(MainFrame.this, message, tCONFIRM, JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null, options, options[1]) == JOptionPane.OK_OPTION;
-    }
-
     private class ExportToExcelAction extends AbstractAction {
         private JDialog exportDialog;
 
@@ -217,7 +209,7 @@ public class MainFrame extends JFrame {
                 MatriculantDialog matriculantDialog = new MatriculantDialog(MainFrame.this, false, matriculant);
                 matriculantDialog.setVisible(true);
             } else {
-                JOptionPane.showMessageDialog(MainFrame.this, "Выберите сначала абитуриента", "Предупреждение", JOptionPane.WARNING_MESSAGE);
+                showWarningMessage("Выберите сначала абитуриента");
             }
         }
     }
@@ -233,7 +225,7 @@ public class MainFrame extends JFrame {
         public void actionPerformed(ActionEvent e) {
             int selectedIndex = mainTable.getSelectedRow();
             if (selectedIndex >= 0) {
-                if (confirm("Удалить абитуриента?")) {
+                if (showConfirmDialog("Удалить абитуриента?")) {
                     Matriculant matriculant = DataAccessFactory.getMatriculants()
                             .get(mainTable.convertRowIndexToModel(selectedIndex));
                     DataAccessFactory.getMatriculantDAO().delete(matriculant);
@@ -241,7 +233,7 @@ public class MainFrame extends JFrame {
                     mainTable.refresh();
                 }
             } else {
-                JOptionPane.showMessageDialog(MainFrame.this, "Выберите сначала абитуриента", "Предупреждение", JOptionPane.WARNING_MESSAGE);
+                showWarningMessage("Выберите сначала абитуриента");
             }
         }
     }
@@ -292,10 +284,9 @@ public class MainFrame extends JFrame {
             if (selectedIndex >= 0) {
                 Matriculant matriculant = DataAccessFactory.getMatriculants()
                         .get(mainTable.convertRowIndexToModel(selectedIndex));
-
-                System.out.println(matriculant.printToString());
+                matriculantInfoDialog.showInfo(matriculant.printToString());
             } else {
-                JOptionPane.showMessageDialog(MainFrame.this, "Выберите сначала абитуриента", "Предупреждение", JOptionPane.WARNING_MESSAGE);
+                showWarningMessage("Выберите сначала абитуриента");
             }
         }
     }
