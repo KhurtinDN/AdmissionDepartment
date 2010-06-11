@@ -331,10 +331,10 @@ public class Matriculant extends Person {
                 case OUT_EXAMINE_OTHER:
                     str += "вне конкурса\n";
                     break;
-                case ORPHAN:
+                case OUT_EXAMINE_ORPHAN:
                     str += "вне конкурса - сирота\n";
                     break;
-                case INVALID:
+                case OUT_EXAMINE_INVALID:
                     str += "вне конкурса - инвалид\n";
                     break;
             }

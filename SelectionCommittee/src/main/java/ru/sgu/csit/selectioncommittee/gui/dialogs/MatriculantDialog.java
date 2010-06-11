@@ -9,6 +9,8 @@ import ru.sgu.csit.selectioncommittee.gui.dialogs.panels.SpecialityPanel;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.panels.MarkPanel;
 
+import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -47,7 +49,9 @@ public class MatriculantDialog extends JDialog {
     private ButtonGroup radionButtonGroup = new ButtonGroup();
     private JRadioButton examineRadioButton = new JRadioButton("По экзаменам", false);
     private JRadioButton noExamineRadioButton = new JRadioButton("Без экзаменов", false);
-    private JRadioButton outExamineRadioButton = new JRadioButton("Вне конкурса", false);
+    private JRadioButton orphanOutExamineRadioButton = new JRadioButton("Вне конкурса (сирота)", false);
+    private JRadioButton invalidOutExamineRadioButton = new JRadioButton("Вне конкурса (инвалид)", false);
+    private JRadioButton otherOutExamineRadioButton = new JRadioButton("Вне конкурса (другое)", false);
 
     // specialityPanel
     private SpecialityPanel specialityPanel = new SpecialityPanel();
@@ -182,20 +186,29 @@ public class MatriculantDialog extends JDialog {
         JPanel howMatriculatePanel = new JPanel(new GridBagLayout());
         howMatriculatePanel.add(examineRadioButton, new GBConstraints(0, 0, true));
         howMatriculatePanel.add(noExamineRadioButton, new GBConstraints(0, 1, true));
-        howMatriculatePanel.add(outExamineRadioButton, new GBConstraints(0, 2, true));
+
+        howMatriculatePanel.add(orphanOutExamineRadioButton, new GBConstraints(1, 0, true));
+        howMatriculatePanel.add(invalidOutExamineRadioButton, new GBConstraints(1, 1, true));
+        howMatriculatePanel.add(otherOutExamineRadioButton, new GBConstraints(1, 2, true));
+
         radionButtonGroup.add(examineRadioButton);
         radionButtonGroup.add(noExamineRadioButton);
-        radionButtonGroup.add(outExamineRadioButton);
-        howMatriculatePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Как поступает"));
+        radionButtonGroup.add(orphanOutExamineRadioButton);
+        radionButtonGroup.add(invalidOutExamineRadioButton);
+        radionButtonGroup.add(otherOutExamineRadioButton);
+
+        howMatriculatePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                "Как поступает"));
         return howMatriculatePanel;
     }
 
     private JPanel getSchoolPanel() {
         JPanel schoolPanel = new JPanel(new GridBagLayout());
-        schoolPanel.add(new JLabel("Номер школы:"), new GBConstraints(0, 0));
+        schoolPanel.add(new JLabel("Учебное заведение:"), new GBConstraints(0, 0));
         schoolPanel.add(schoolNameField, new GBConstraints(1, 0, true));
         schoolPanel.add(new JLabel(" "), new GBConstraints(0, 1, 2, 1, true));
-        schoolPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Школа"));
+        schoolPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+                "Предыдущее место учебы"));
         return schoolPanel;
     }
 
@@ -252,7 +265,7 @@ public class MatriculantDialog extends JDialog {
                 DataAccessFactory.reloadMatriculants();
                 mainFrame.refresh();
             } else {
-                JOptionPane.showMessageDialog(MatriculantDialog.this, "Исправьте все", "Предупреждение", JOptionPane.WARNING_MESSAGE);
+                showWarningMessage("Исправьте все");
             }
 
             if (needExitDuringAddingCheckBox.isSelected()) {
@@ -282,7 +295,7 @@ public class MatriculantDialog extends JDialog {
                 DataAccessFactory.reloadMatriculants();
                 mainFrame.refresh();
             } else {
-                JOptionPane.showMessageDialog(MatriculantDialog.this, "Исправьте все", "Предупреждение", JOptionPane.WARNING_MESSAGE);
+                showWarningMessage("Исправьте все");
             }
 
             MatriculantDialog.this.setVisible(false);
@@ -362,9 +375,14 @@ public class MatriculantDialog extends JDialog {
             motherPhoneNumberField.setText("");
         }
 
-        examineRadioButton.setSelected(matriculant.getEntranceCategory() == EntranceCategory.EXAMINE);
-        noExamineRadioButton.setSelected(matriculant.getEntranceCategory() == EntranceCategory.NO_EXAMINE);
-        outExamineRadioButton.setSelected(matriculant.getEntranceCategory() == EntranceCategory.OUT_EXAMINE_OTHER);
+        examineRadioButton.setSelected(EntranceCategory.EXAMINE.equals(matriculant.getEntranceCategory()));
+        noExamineRadioButton.setSelected(EntranceCategory.NO_EXAMINE.equals(matriculant.getEntranceCategory()));
+        orphanOutExamineRadioButton.setSelected(
+                EntranceCategory.OUT_EXAMINE_ORPHAN.equals(matriculant.getEntranceCategory()));
+        invalidOutExamineRadioButton.setSelected(
+                EntranceCategory.OUT_EXAMINE_INVALID.equals(matriculant.getEntranceCategory()));
+        otherOutExamineRadioButton.setSelected(
+                EntranceCategory.OUT_EXAMINE_OTHER.equals(matriculant.getEntranceCategory()));
 
         if (matriculant.getSpeciality() != null) {
             specialityPanel.setSpecialityMap(matriculant.getSpeciality());
@@ -430,7 +448,13 @@ public class MatriculantDialog extends JDialog {
         if (noExamineRadioButton.isSelected()) {
             matriculant.setEntranceCategory(EntranceCategory.NO_EXAMINE);
         }
-        if (outExamineRadioButton.isSelected()) {
+        if (orphanOutExamineRadioButton.isSelected()) {
+            matriculant.setEntranceCategory(EntranceCategory.OUT_EXAMINE_ORPHAN);
+        }
+        if (invalidOutExamineRadioButton.isSelected()) {
+            matriculant.setEntranceCategory(EntranceCategory.OUT_EXAMINE_INVALID);
+        }
+        if (otherOutExamineRadioButton.isSelected()) {
             matriculant.setEntranceCategory(EntranceCategory.OUT_EXAMINE_OTHER);
         }
 

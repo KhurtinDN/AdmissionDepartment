@@ -130,9 +130,9 @@ public class MatriculantTable extends JTable {
                         return "Без экзаменов";
                     case OUT_EXAMINE_OTHER:
                         return "Вне конкурса";
-                    case ORPHAN:
+                    case OUT_EXAMINE_ORPHAN:
                         return "Вне конкурса";
-                    case INVALID:
+                    case OUT_EXAMINE_INVALID:
                         return "Вне конкурса";
                 }
             }
