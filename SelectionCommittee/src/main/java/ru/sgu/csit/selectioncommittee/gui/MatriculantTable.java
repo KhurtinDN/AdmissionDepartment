@@ -8,11 +8,14 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.tSHOWCOLUMN_DESCRIPTION;
 
 /**
  * Date: May 5, 2010
@@ -40,6 +43,19 @@ public class MatriculantTable extends JTable {
         setAutoCreateRowSorter(true);
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setColumns();
+        getTableHeader().setComponentPopupMenu(createColumnPopupMenu());
+    }
+
+    private JPopupMenu createColumnPopupMenu() {
+        JPopupMenu jPopupMenu = new JPopupMenu();
+
+        for (ColumnInfo column : columns) {
+            JCheckBoxMenuItem columnMenuItem = new JCheckBoxMenuItem(new ShowColumnAction(column.getColumnName()));
+
+            columnMenuItem.setSelected(column.isVisible());
+            jPopupMenu.add(columnMenuItem);
+        }
+        return jPopupMenu;
     }
 
     private void setColumns() {
@@ -295,10 +311,6 @@ public class MatriculantTable extends JTable {
         public ColumnInfo() {
         }
 
-        public ColumnInfo(TableColumn column) {
-            this.column = column;
-        }
-
         public ColumnInfo(TableColumn column, String name, boolean visible) {
             this.column = column;
             this.columnName = name;
@@ -327,6 +339,32 @@ public class MatriculantTable extends JTable {
 
         public void setVisible(boolean visible) {
             this.visible = visible;
+        }
+    }
+
+    private class ShowColumnAction extends AbstractAction {
+        private ShowColumnAction(String name) {
+            putValue(Action.NAME, name);
+            putValue(Action.SHORT_DESCRIPTION, tSHOWCOLUMN_DESCRIPTION);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JCheckBoxMenuItem columnMenuItem = (JCheckBoxMenuItem) e.getSource();
+
+            for (int i = 0; i < columns.size(); ++i) {
+                ColumnInfo column = columns.get(i);
+
+                if (column.getColumnName().equals(columnMenuItem.getText())) {
+                    if (columnMenuItem.isSelected()) {
+                        addColumn(i);
+                    } else {
+                        removeColumn(i);
+                    }
+                    repaint();
+
+                    return;
+                }
+            }
         }
     }
 }
