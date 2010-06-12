@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -94,12 +95,23 @@ public class ExportToExcelDialog extends JDialog {
                 } catch (WritingException e1) {
                     showErrorMessage("При экспорте произошла ошибка записи.");
                 }
+
+                if (needOpenDocumentCheckBox.isSelected()) {
+                    String program = "kspread";
+                    try {
+                        String[] arguments = new String[]{program, file.getCanonicalPath()};
+                        Runtime.getRuntime().exec(arguments);
+                    } catch (IOException e1) {
+                        showErrorMessage("Не удалось запустить программу " + program);
+                    }
+                }
             }
+            setVisible(false);
         }
 
         private List<String> createHeaderList() {
             List<String> headerList = new ArrayList<String>();
-            for(int i = 0, n = matriculantTable.getColumnCount(); i < n; ++i) {
+            for (int i = 0, n = matriculantTable.getColumnCount(); i < n; ++i) {
                 String columnName = matriculantTable.getColumnName(i);
                 headerList.add(columnName);
             }
