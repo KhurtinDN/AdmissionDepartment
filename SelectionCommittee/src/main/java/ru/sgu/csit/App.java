@@ -25,7 +25,7 @@ public class App {
         Speciality speciality3 = new Speciality("КБ 103");
         Speciality speciality4 = new Speciality("ИВТ 104");
         MatriculantDAOImpl matriculantDAO = new MatriculantDAOImpl();
-
+        
         matriculant.setName("Петров Сидор Иванович");
         matriculant.setPhoneNumbers("02, +7 877 777 34 22");
         Calendar date = Calendar.getInstance();
@@ -75,7 +75,6 @@ public class App {
         receiptExamine.setName("ЕГЭ ФИЗ");
         DataAccessFactory.getReceiptExamineDAO().save(receiptExamine);
 
-
         speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
         speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ФИЗ").get(0));
         speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
@@ -95,5 +94,15 @@ public class App {
         speciality4.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
         speciality4.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         DataAccessFactory.getSpecialityDAO().save(speciality4);
+
+        /*
+        Speciality spec = DataAccessFactory.getSpecialityDAO().findByName("ПМ 101").get(0);
+        ReceiptExamine exam = spec.getExams().get(0);
+        spec.getExams().clear();
+        spec.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ФИЗ").get(0));
+        spec.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
+        spec.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
+        DataAccessFactory.getSpecialityDAO().update(spec);
+        */
     }
 }
