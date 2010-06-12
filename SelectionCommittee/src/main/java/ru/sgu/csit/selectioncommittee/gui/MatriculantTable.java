@@ -217,10 +217,10 @@ public class MatriculantTable extends JTable {
                         if (secondMatriculant.isNoExamine()) {
                             return 0;//firstMatriculant.getName().compareTo(secondMatriculant.getName());
                         } else {
-                            return 1;
+                            return -1;
                         }
                     } else if (secondMatriculant.isNoExamine()) {
-                        return -1;
+                        return 1;
                     } else {
                         Integer firstBalls = firstMatriculant.calculateTotalBallsForSpeciality(speciality.getName());
                         Integer secondBalls = secondMatriculant.calculateTotalBallsForSpeciality(speciality.getName());
