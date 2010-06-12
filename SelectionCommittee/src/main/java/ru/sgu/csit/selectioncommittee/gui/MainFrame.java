@@ -1,6 +1,7 @@
 package ru.sgu.csit.selectioncommittee.gui;
 
 import ru.sgu.csit.selectioncommittee.common.Matriculant;
+import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.AboutDialog;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.ExportToExcelDialog;
@@ -32,6 +33,7 @@ public class MainFrame extends JFrame {
     Action aboutAction = new AboutAction();
     Action infoAction = new InfoAction();
     Action resizeTableAction = new ResizeTableAction();
+    Action showAllMatriculantsAction = new ShowAllMatriculantsAction();
     Action highlightingAction = new HighlightingAction();
 
     MatriculantTable mainTable = null;
@@ -48,7 +50,6 @@ public class MainFrame extends JFrame {
         add(createJToolBar(), BorderLayout.NORTH);
 
         mainTable.setComponentPopupMenu(createRowPopupMenu());
-        //mainTable.getTableHeader().setComponentPopupMenu(createColumnPopupMenu());
         add(new JScrollPane(mainTable), BorderLayout.CENTER);
 
         add(createButtonPanel(), BorderLayout.SOUTH);
@@ -97,7 +98,11 @@ public class MainFrame extends JFrame {
         editMenu.add(deleteAction);
 
         JMenu viewMenu = new JMenu(tVIEW_MENU);
-        //viewMenu.addSeparator();
+        for (Speciality speciality : DataAccessFactory.getSpecialities()) {
+            viewMenu.add(new ShowMatriculantsAction(speciality.getName()));
+        }
+        viewMenu.add(showAllMatriculantsAction);
+        viewMenu.addSeparator();
         JCheckBoxMenuItem lightMenuItem = new JCheckBoxMenuItem(highlightingAction);
         lightMenuItem.setSelected(MatriculantTable.isHighlighting());
         viewMenu.add(lightMenuItem);
@@ -318,6 +323,39 @@ public class MainFrame extends JFrame {
 
             MatriculantTable.setHighlighting(lightMenuItem.isSelected());
             mainTable.repaint();
+        }
+    }
+
+    private class ShowMatriculantsAction extends AbstractAction {
+        private ShowMatriculantsAction(String name) {
+            putValue(Action.NAME, name);
+            putValue(Action.SHORT_DESCRIPTION, tSHOWMATRICULANTS_DESCRIPTION);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JMenuItem showMenuItem = (JMenuItem) e.getSource();
+
+            for (Speciality speciality : DataAccessFactory.getSpecialities()) {
+                if (speciality.getName().equals(showMenuItem.getText())) {
+                    mainTable.sortBy(speciality);
+                    mainTable.repaint();
+                    
+                    return;
+                }
+            }
+        }
+    }
+
+    private class ShowAllMatriculantsAction extends AbstractAction {
+        private ShowAllMatriculantsAction() {
+            putValue(Action.NAME, tSHOWALL);
+            putValue(Action.SHORT_DESCRIPTION, tSHOWALL_DESCRIPTION);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JMenuItem columnMenuItem = (JMenuItem) e.getSource();
+
+            ;//mainTable
         }
     }
 }

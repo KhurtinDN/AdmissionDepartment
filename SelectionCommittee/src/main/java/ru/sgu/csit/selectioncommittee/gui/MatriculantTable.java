@@ -1,6 +1,8 @@
 package ru.sgu.csit.selectioncommittee.gui;
 
 import ru.sgu.csit.selectioncommittee.common.Matriculant;
+import ru.sgu.csit.selectioncommittee.common.ReceiptExamine;
+import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 
 import javax.swing.*;
@@ -11,9 +13,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.tSHOWCOLUMN_DESCRIPTION;
 
@@ -181,22 +182,99 @@ public class MatriculantTable extends JTable {
         return columns;
     }
 
+    public void sortBy(Speciality speciality) {
+        if (speciality == null) {
+            matriculantTableModel.restoreRowIndexes();
+        } else {
+            matriculantTableModel.sortBy(speciality);
+        }
+    }
+
     private static class MatriculantTableModel extends AbstractTableModel {
         private static DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm");
+        private List<Integer> rowIndexes = new ArrayList<Integer>();
 
-        @Override
-        public int getRowCount() {
-            return DataAccessFactory.getMatriculants().size();
+        {
+            restoreRowIndexes();
+        }
+
+        public void restoreRowIndexes() {
+            rowIndexes.clear();
+            for (int i = 0; i < DataAccessFactory.getMatriculants().size(); ++i) {
+                rowIndexes.add(i);
+            }
+        }
+
+        public void sortBy(final Speciality speciality) {
+            Collections.sort(rowIndexes, new Comparator<Integer>() {
+                List<Matriculant> matriculants = DataAccessFactory.getMatriculants();
+
+                public int compare(Integer o1, Integer o2) {
+                    Matriculant firstMatriculant = matriculants.get(o1);
+                    Matriculant secondMatriculant = matriculants.get(o2);
+
+                    if (firstMatriculant.isNoExamine()) {
+                        if (secondMatriculant.isNoExamine()) {
+                            return 0;//firstMatriculant.getName().compareTo(secondMatriculant.getName());
+                        } else {
+                            return 1;
+                        }
+                    } else if (secondMatriculant.isNoExamine()) {
+                        return -1;
+                    } else {
+                        Integer firstBalls = firstMatriculant.calculateTotalBallsForSpeciality(speciality.getName());
+                        Integer secondBalls = secondMatriculant.calculateTotalBallsForSpeciality(speciality.getName());
+                        System.out.println(firstBalls + ", " + secondBalls);
+                        if (firstBalls < secondBalls) { //|| (firstBalls == null && secondBalls > 0)) {
+                            return 1;
+                        } else if (firstBalls > secondBalls) {
+                            return -1;
+                        } else {
+                            if (firstBalls > 0) {
+                                return sortByExamsPriority(firstMatriculant, secondMatriculant, speciality.getExams(), 0);
+                            } else {
+                                return 0;
+                            }
+                        }
+                    }
+                }
+
+                private int sortByExamsPriority(Matriculant first, Matriculant second, List<ReceiptExamine> exams, int level) {
+                    if (level == exams.size()) {
+                        return 0;
+                    }
+                    if (first.getBalls().get(exams.get(level).getName()) < second.getBalls().get(exams.get(level).getName())) {
+                        return 1;
+                    } else if (first.getBalls().get(exams.get(level).getName()) > second.getBalls().get(exams.get(level).getName())) {
+                        return -1;
+                    } else {
+                        return sortByExamsPriority(first, second, exams, level + 1);
+                    }
+                }
+            });
+            for (Integer index : rowIndexes) {
+                System.out.println(index);
+            }
         }
 
         @Override
-        public int getColumnCount() {
+        public int getRowCount
+                () {
+            return rowIndexes.size();
+        }
+
+        @Override
+        public int getColumnCount
+                () {
             return columnNames.size();
         }
 
         @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            Matriculant matriculant = DataAccessFactory.getMatriculants().get(rowIndex);
+        public Object getValueAt
+                (
+                        int rowIndex,
+                        int columnIndex) {
+            Matriculant matriculant = DataAccessFactory.getMatriculants().get(rowIndexes.get(rowIndex));
 
             if (columnIndex == 0) {
                 return matriculant.getName();
@@ -269,7 +347,9 @@ public class MatriculantTable extends JTable {
         }
 
         @Override
-        public String getColumnName(int column) {
+        public String getColumnName
+                (
+                        int column) {
             return columnNames.get(column);
         }
     }

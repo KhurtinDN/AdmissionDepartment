@@ -77,6 +77,10 @@ public class Matriculant extends Person {
         this.filingDate = filingDate;
     }
 
+    public boolean isNoExamine() {
+        return !(entranceCategory == null || entranceCategory == EntranceCategory.EXAMINE);
+    }
+
     public Person getFather() {
         return father;
     }
