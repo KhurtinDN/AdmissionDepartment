@@ -49,6 +49,7 @@ public class ExportToExcelDialog extends JDialog {
 
     private JPanel createSelectColumnPanel() {
         JPanel selectColumnPanelPanel = new JPanel(new GridBagLayout());
+        matriculantTable.hideGeneratedColumns();
         selectColumnPanelPanel.add(new JScrollPane(matriculantTable),
                 new GBConstraints(0, 0).setFill(GBConstraints.BOTH).setWeight(100, 100));
         selectColumnPanelPanel.setBorder(BorderFactory.createTitledBorder(

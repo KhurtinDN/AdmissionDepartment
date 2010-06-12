@@ -30,6 +30,9 @@ public class MatriculantTable extends JTable {
     private static List<Boolean> columnVisible = new ArrayList<Boolean>();
 
     private static boolean highlighting = true;
+    private List<JCheckBoxMenuItem> headerPopupMenu = new ArrayList<JCheckBoxMenuItem>();
+    private static int startSpecialityIndex;
+    private static int startExaminesIndex;
 
     private static MatriculantTableModel matriculantTableModel = new MatriculantTableModel();
 
@@ -53,6 +56,7 @@ public class MatriculantTable extends JTable {
 
             columnMenuItem.setSelected(column.isVisible());
             jPopupMenu.add(columnMenuItem);
+            headerPopupMenu.add(columnMenuItem);
         }
         return jPopupMenu;
     }
@@ -93,8 +97,23 @@ public class MatriculantTable extends JTable {
                 targetIndex++;
             }
         }
-
         moveColumn(sourceIndex, targetIndex);
+    }
+
+    public void hideGeneratedColumns() {
+        for (int i = startSpecialityIndex; i < startSpecialityIndex + DataAccessFactory.getSpecialities().size(); ++i) {
+            removeColumn(i);
+        }
+        for (int i = startExaminesIndex; i < startExaminesIndex + DataAccessFactory.getExamines().size(); ++i) {
+            removeColumn(i);
+        }
+        synchronizePopupWithColumns();
+    }
+
+    public void synchronizePopupWithColumns() {
+        for (int i = 0; i < columns.size(); ++i) {
+            headerPopupMenu.get(i).setSelected(columns.get(i).isVisible());
+        }
     }
 
     private static void regenerateColumnData() {
@@ -114,6 +133,7 @@ public class MatriculantTable extends JTable {
         columnWidths.add(100);
         columnVisible.add(Boolean.FALSE);
 
+        startSpecialityIndex = 3;
         for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
             columnNames.add(DataAccessFactory.getSpecialities().get(i).getName());
             columnWidths.add(60);
@@ -128,6 +148,7 @@ public class MatriculantTable extends JTable {
         columnWidths.add(95);
         columnVisible.add(Boolean.TRUE);
 
+        startExaminesIndex = 2 + DataAccessFactory.getSpecialities().size() + startSpecialityIndex;
         for (int i = 0; i < DataAccessFactory.getExamines().size(); ++i) {
             columnNames.add(DataAccessFactory.getExamines().get(i).getName());
             columnWidths.add(60);
