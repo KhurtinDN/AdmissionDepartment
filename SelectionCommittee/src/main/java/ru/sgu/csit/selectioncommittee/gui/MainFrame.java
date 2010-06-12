@@ -40,6 +40,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         mainTable = new MatriculantTable();
+        mainTable.setAutoCreateRowSorter(true);
         setTitle(tTITLE_OF_APPLICATION);
         setIconImage(iAPP16);
         setSize(800, 600);
@@ -152,7 +153,7 @@ public class MainFrame extends JFrame {
 
         public void actionPerformed(ActionEvent e) {
             if (exportDialog == null) {
-                exportDialog = new ExportToExcelDialog(MainFrame.this, mainTable);
+                exportDialog = new ExportToExcelDialog(MainFrame.this);
             }
             exportDialog.setVisible(true);
         }

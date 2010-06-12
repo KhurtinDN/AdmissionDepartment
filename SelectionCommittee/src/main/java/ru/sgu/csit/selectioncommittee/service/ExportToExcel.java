@@ -18,15 +18,12 @@ import java.util.List;
  * @author : xx & hd
  */
 public class ExportToExcel {
-    private List<String> headerList;
-    private List<List<String>> contentLists;
 
-    public ExportToExcel(List<String> headerList, List<List<String>> contentLists) {
-        this.headerList = headerList;
-        this.contentLists = contentLists;
+    public ExportToExcel() {
     }
 
-    public void write(File file) throws ArgumentNotExcelFileException, FileNotFoundException, WritingException {
+    public void write(File file, String title, List<String> headerList, List<List<String>> contentLists)
+            throws ArgumentNotExcelFileException, FileNotFoundException, WritingException {
         Workbook workbook;
         String fileName = file.getName();
         if (fileName.endsWith(".xls")) {
@@ -46,8 +43,8 @@ public class ExportToExcel {
         printSetup.setFitWidth((short)1);
         printSetup.setFitHeight((short)9999);
 
-        writeHeader(sheet);
-        writeContent(sheet);
+        writeHeader(sheet, title, headerList);
+        writeContent(sheet, contentLists);
 
         FileOutputStream fileOutputStream = new FileOutputStream(file);
         try {
@@ -58,7 +55,7 @@ public class ExportToExcel {
         }
     }
 
-    private void writeHeader(Sheet sheet) {
+    private void writeHeader(Sheet sheet, String title, List<String> headerList) {
         int m = headerList.size();
         if (m > 0) {
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, m - 1));
@@ -66,7 +63,7 @@ public class ExportToExcel {
 
         Row titleRow = sheet.createRow(0);
         titleRow.setHeight((short)(20 * 20));
-        setValue(titleRow, 0, "Абитуриенты");
+        setValue(titleRow, 0, title);
 
         Row headerRow = sheet.createRow(1);
         for (int i = 0; i < m; ++i) {
@@ -77,7 +74,7 @@ public class ExportToExcel {
         sheet.createFreezePane(0, 2);
     }
 
-    private void writeContent(Sheet sheet) {
+    private void writeContent(Sheet sheet, List<List<String>> contentLists) {
         for (int i = 0, n = contentLists.size(); i < n; ++i) {
             List<String> stringList = contentLists.get(i);
             Row row = sheet.createRow(i + 2);

@@ -1,7 +1,5 @@
 package ru.sgu.csit.selectioncommittee.gui.dialogs;
 
-import ru.sgu.csit.selectioncommittee.common.Matriculant;
-import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import ru.sgu.csit.selectioncommittee.gui.MatriculantTable;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
 import ru.sgu.csit.selectioncommittee.service.ArgumentNotExcelFileException;
@@ -28,19 +26,18 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  * @author : xx & hd
  */
 public class ExportToExcelDialog extends JDialog {
-    private Action closeAction = new CloseAction(); 
+    private Action closeAction = new CloseAction();
 
-    private MatriculantTable matriculantTable;
-    private List<JCheckBox> checkBoxList;
+    private MatriculantTable matriculantTable = new MatriculantTable();
+
     private JCheckBox needOpenDocumentCheckBox = new JCheckBox("Открыть документ после экспорта");
 
-    public ExportToExcelDialog(JFrame owner, MatriculantTable matriculantTable) {
+    public ExportToExcelDialog(JFrame owner) {
         super(owner, "Экспорт в excel", false);
-        this.matriculantTable = matriculantTable;
 
         setLayout(new GridBagLayout());
 
-        add(createSelectColumnPanel(), new GBConstraints(0, 0, true));
+        add(createSelectColumnPanel(), new GBConstraints(0, 0).setFill(GBConstraints.BOTH).setWeight(100, 100));
         add(createButtonPanel(), new GBConstraints(0, 1, true));
 
         pack();
@@ -52,16 +49,8 @@ public class ExportToExcelDialog extends JDialog {
 
     private JPanel createSelectColumnPanel() {
         JPanel selectColumnPanelPanel = new JPanel(new GridBagLayout());
-
-        checkBoxList = new ArrayList<JCheckBox>();
-        for (int i = 0; i < matriculantTable.getColumnCount(); ++i) {
-            JCheckBox checkBox = new JCheckBox(matriculantTable.getColumnName(i));
-            checkBox.setActionCommand(matriculantTable.getColumnName(i));
-            selectColumnPanelPanel.add(checkBox,
-                    new GBConstraints(0, i).setAnchor(GBConstraints.NORTHWEST));
-            checkBoxList.add(checkBox);
-        }
-
+        selectColumnPanelPanel.add(new JScrollPane(matriculantTable),
+                new GBConstraints(0, 0).setFill(GBConstraints.BOTH).setWeight(100, 100));
         selectColumnPanelPanel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), "Выбор колонок для экспорта"));
         return selectColumnPanelPanel;
@@ -90,18 +79,13 @@ public class ExportToExcelDialog extends JDialog {
             if (fileChooser.showSaveDialog(ExportToExcelDialog.this) == JFileChooser.APPROVE_OPTION) {
                 File file = fileChooser.getSelectedFile();
 
-                List<String> headerList = new ArrayList<String>();
-                for (JCheckBox checkBox : checkBoxList) {
-                    if (checkBox.isSelected()) {
-                        headerList.add(checkBox.getActionCommand());
-                    }
-                }
+                List<String> headerList = createHeaderList();
 
-                List<List<String>> contentLists = createContentLists(headerList); // todo: get true cells
+                List<List<String>> contentLists = createContentLists();
 
-                ExportToExcel exportToExcel = new ExportToExcel(headerList, contentLists);
+                ExportToExcel exportToExcel = new ExportToExcel();
                 try {
-                    exportToExcel.write(file);
+                    exportToExcel.write(file, "Абитуриенты", headerList, contentLists);
                 } catch (ArgumentNotExcelFileException e1) {
                     showErrorMessage("Файл должен иметь расширение *.xls или *.xlsx");
                 } catch (FileNotFoundException e1) {
@@ -112,23 +96,30 @@ public class ExportToExcelDialog extends JDialog {
             }
         }
 
-        private List<List<String>> createContentLists(List<String> headerList) {
+        private List<String> createHeaderList() {
+            List<String> headerList = new ArrayList<String>();
+            for(int i = 0, n = matriculantTable.getColumnCount(); i < n; ++i) {
+                String columnName = matriculantTable.getColumnName(i);
+                headerList.add(columnName);
+            }
+            return headerList;
+        }
+
+        private List<List<String>> createContentLists() {
             List<List<String>> contentLists = new ArrayList<List<String>>();
 
-            List<Matriculant> matriculantList = DataAccessFactory.getMatriculants();
-
-            for (int i = 0, n = matriculantList.size(); i < n; ++i) {
-                List<String> row = new ArrayList<String>();
-                for (int j = 0, m = headerList.size(); j < m; ++j) {
-                    String value;
-                    if (matriculantTable.getModel().getValueAt(i, j) != null) {
-                        value = matriculantTable.getModel().getValueAt(i, j).toString();
+            for (int i = 0, n = matriculantTable.getRowCount(); i < n; ++i) {
+                List<String> rowContentList = new ArrayList<String>();
+                for (int j = 0, m = matriculantTable.getColumnCount(); j < m; ++j) {
+                    String cellValue;
+                    if (matriculantTable.getValueAt(i, j) == null) {
+                        cellValue = "";
                     } else {
-                        value = "default";
+                        cellValue = matriculantTable.getValueAt(i, j).toString();
                     }
-                    row.add(value);
+                    rowContentList.add(cellValue);
                 }
-                contentLists.add(row);
+                contentLists.add(rowContentList);
             }
 
             return contentLists;

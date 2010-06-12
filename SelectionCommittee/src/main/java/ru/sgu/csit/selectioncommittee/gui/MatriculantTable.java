@@ -40,7 +40,6 @@ public class MatriculantTable extends JTable {
     public MatriculantTable() {
         super(matriculantTableModel);
         setDefaultRenderer(Object.class, new MatriculantTableCellRenderer());
-        setAutoCreateRowSorter(true);
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setColumns();
         getTableHeader().setComponentPopupMenu(createColumnPopupMenu());
@@ -146,8 +145,6 @@ public class MatriculantTable extends JTable {
 
     public void refresh() {
         matriculantTableModel.fireTableStructureChanged();
-        setAutoCreateRowSorter(true);
-        setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setColumns();
     }
 
