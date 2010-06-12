@@ -35,6 +35,7 @@ public class MatriculantInfoDialog extends JDialog {
 
     private JComponent getContentPanel() {
         JPanel matriculantInfoPanel = new JPanel(new GridBagLayout());
+        textArea.setFont(textArea.getFont().deriveFont(14f));
         textArea.setEditable(false);
         matriculantInfoPanel.add(textArea,
                 new GBConstraints(0, 0).setFill(GBConstraints.BOTH).setWeight(100, 100).setInsets(5));
