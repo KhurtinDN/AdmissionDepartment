@@ -311,7 +311,7 @@ public class Matriculant extends Person {
 
     public String printToString() {
         String str = "Рег. № " + receiptNumber + " от " + filingDate + "\n" +
-                name + "\n";
+                name + "\n\n";
 
         if (entranceCategory != null) {
             str += "Поступает ";
@@ -346,7 +346,7 @@ public class Matriculant extends Person {
             }
         }
         if (schoolName != null && !schoolName.isEmpty()) {
-            str += "Предыдущее учебное заведение:\n" + schoolName + "\n";
+            str += "Предыдущее место учёбы:\n\t" + schoolName + "\n";
         }
         if (documents != null && !documents.isTookDocuments()) {
             str += "Предоставленные документы:\n" + documents.printToString();
@@ -354,7 +354,7 @@ public class Matriculant extends Person {
             str += "Документы не предоставлены или были забраны\n";
         }
         if (phoneNumbers != null && !phoneNumbers.isEmpty()) {
-            str += "Тел. " + phoneNumbers + "\n";
+            str += "Тел. " + phoneNumbers + "\n\n";
         }
         if (father != null &&
                 ((father.getName() != null && !father.getName().isEmpty())
@@ -367,7 +367,7 @@ public class Matriculant extends Person {
             str += "Мать: " + mother.getName() + ", тел. " + mother.getPhoneNumbers() + "\n";
         }
         if (info != null && !info.isEmpty()) {
-            str += "Примечание:\n" + info;
+            str += "\nПримечание:\n" + info;
         }
         return str;
     }

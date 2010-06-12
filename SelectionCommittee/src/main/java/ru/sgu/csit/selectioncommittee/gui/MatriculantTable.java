@@ -125,6 +125,10 @@ public class MatriculantTable extends JTable {
         columnWidths.add(45);
         columnVisible.add(Boolean.TRUE);
 
+        columnNames.add("Специальность");
+        columnWidths.add(95);
+        columnVisible.add(Boolean.TRUE);
+
         for (int i = 0; i < DataAccessFactory.getExamines().size(); ++i) {
             columnNames.add(DataAccessFactory.getExamines().get(i).getName());
             columnWidths.add(60);
@@ -132,11 +136,11 @@ public class MatriculantTable extends JTable {
         }
 
         columnNames.add("Телефон");
-        columnWidths.add(200);
+        columnWidths.add(150);
         columnVisible.add(Boolean.FALSE);
 
         columnNames.add("Дата");
-        columnWidths.add(120);
+        columnWidths.add(110);
         columnVisible.add(Boolean.TRUE);
     }
 
@@ -220,6 +224,11 @@ public class MatriculantTable extends JTable {
                 }
             }
 
+            index++;
+            if (columnIndex == index) {
+                return matriculant.getSpeciality().get(1);
+            }
+
             index = columnIndex - (index + 1);
             if (index >= 0 && index < DataAccessFactory.getExamines().size()) {
                 Integer value = matriculant.getBalls().get(DataAccessFactory.getExamines().get(index).getName());
@@ -229,7 +238,7 @@ public class MatriculantTable extends JTable {
                 }
             }
 
-            index = DataAccessFactory.getExamines().size() + DataAccessFactory.getSpecialities().size() + 4;
+            index = DataAccessFactory.getExamines().size() + DataAccessFactory.getSpecialities().size() + 5;
             if (columnIndex == index) {
                 return matriculant.getPhoneNumbers();
             }

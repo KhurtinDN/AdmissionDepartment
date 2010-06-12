@@ -16,7 +16,7 @@ import java.util.TreeMap;
  */
 public class App {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        System.out.println("Start process");
         //Session session = LocalSessionFactory.getSessionFactory().getCurrentSession();
         Matriculant matriculant = new Matriculant();
         ReceiptExamine receiptExamine = new ReceiptExamine();
@@ -26,6 +26,7 @@ public class App {
         Speciality speciality4 = new Speciality("ИВТ 104");
         MatriculantDAOImpl matriculantDAO = new MatriculantDAOImpl();
 
+        /*
         matriculant.setName("Петров Сидор Иванович");
         matriculant.setPhoneNumbers("02, +7 877 777 34 22");
         Calendar date = Calendar.getInstance();
@@ -65,6 +66,7 @@ public class App {
         }
         matriculant.setSpeciality(mapSpecPriority);
         DataAccessFactory.getMatriculantDAO().save(matriculant);
+        */
 
         receiptExamine.setName("ЕГЭ РЯ");
         DataAccessFactory.getReceiptExamineDAO().save(receiptExamine);
@@ -76,24 +78,24 @@ public class App {
         DataAccessFactory.getReceiptExamineDAO().save(receiptExamine);
 
 
-        speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
         speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ФИЗ").get(0));
+        speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         DataAccessFactory.getSpecialityDAO().save(speciality1);
 
-        speciality2.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         speciality2.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
         speciality2.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
+        speciality2.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         DataAccessFactory.getSpecialityDAO().save(speciality2);
 
-        speciality3.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         speciality3.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
         speciality3.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
+        speciality3.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         DataAccessFactory.getSpecialityDAO().save(speciality3);
 
-        speciality4.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         speciality4.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
         speciality4.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
+        speciality4.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         DataAccessFactory.getSpecialityDAO().save(speciality4);
     }
 }
