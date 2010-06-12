@@ -40,11 +40,14 @@ public class ExportToExcel {
         sheet.setFitToPage(true);
 
         PrintSetup printSetup = sheet.getPrintSetup();
-        printSetup.setFitWidth((short)1);
-        printSetup.setFitHeight((short)9999);
+        printSetup.setFitWidth((short) 1);
+        printSetup.setFitHeight((short) 9999);
 
         writeHeader(sheet, title, headerList);
         writeContent(sheet, contentLists);
+
+        fillStyleForAllCell(sheet, contentLists.size(), headerList.size());
+        resizeColumnWidth(sheet, headerList, contentLists);
 
         FileOutputStream fileOutputStream = new FileOutputStream(file);
         try {
@@ -62,10 +65,12 @@ public class ExportToExcel {
         }
 
         Row titleRow = sheet.createRow(0);
-        titleRow.setHeight((short)(20 * 20));
+        titleRow.setHeight((short) (20 * 20));
         setValue(titleRow, 0, title);
 
         Row headerRow = sheet.createRow(1);
+        headerRow.setHeight((short) (15 * 20));
+
         for (int i = 0; i < m; ++i) {
             String head = headerList.get(i);
             setValue(headerRow, i, head);
@@ -84,9 +89,62 @@ public class ExportToExcel {
         }
     }
 
+    private void fillStyleForAllCell(Sheet sheet, int n, int m) {
+        Row titleRow = sheet.getRow(0);
+        setTitleCellStyle(sheet, titleRow.getCell(0));
+
+        Row headerRow = sheet.getRow(1);
+        for (int j = 0; j < m; ++j) {
+            setHeaderCellStyle(sheet, headerRow.getCell(j));
+        }
+
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                // set style for cell
+            }
+        }
+    }
+
+    private void resizeColumnWidth(Sheet sheet, List<String> headerList, List<List<String>> contentLists) {
+        for (int j = 0, m = headerList.size(); j < m; ++j) {
+            int width = headerList.get(j).length();
+            for (int i = 0, n = contentLists.size(); i < n; ++i) {
+                width = Math.max(width, contentLists.get(i).get(j).length());
+            }
+            sheet.setColumnWidth(j, (width + 2) * 256);
+        }
+    }
+
     private void setValue(Row row, int columnIndex, String value) {
         Cell cell = row.createCell(columnIndex);
         cell.setCellType(Cell.CELL_TYPE_STRING);
         cell.setCellValue(value);
+    }
+
+    private void setTitleCellStyle(Sheet sheet, Cell cell) {
+        Font font = sheet.getWorkbook().createFont();
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        font.setFontHeightInPoints((short)12);
+
+        CellStyle headerCellStyle = sheet.getWorkbook().createCellStyle();
+        headerCellStyle.setFont(font);
+        headerCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+        headerCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        headerCellStyle.setWrapText(true);
+
+        cell.setCellStyle(headerCellStyle);
+    }
+
+    private void setHeaderCellStyle(Sheet sheet, Cell cell) {
+        Font boldFont = sheet.getWorkbook().createFont();
+        boldFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+
+        CellStyle headerCellStyle = sheet.getWorkbook().createCellStyle();
+        headerCellStyle.setFont(boldFont);
+        headerCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+        headerCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        headerCellStyle.setWrapText(true);
+
+        cell.setCellStyle(headerCellStyle);
     }
 }
