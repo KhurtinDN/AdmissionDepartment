@@ -15,6 +15,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.print.PrinterException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*;
 
 /**
@@ -35,6 +38,7 @@ public class MainFrame extends JFrame {
     Action resizeTableAction = new ResizeTableAction();
     Action showAllMatriculantsAction = new ShowAllMatriculantsAction();
     Action highlightingAction = new HighlightingAction();
+    Action apportionMatriculantsAction = new ApportionMatriculantsAction();
 
     MatriculantTable mainTable = null;
 
@@ -42,7 +46,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         mainTable = new MatriculantTable();
-        mainTable.setAutoCreateRowSorter(true);
+        //mainTable.setAutoCreateRowSorter(true);
         setTitle(tTITLE_OF_APPLICATION);
         setIconImage(iAPP16);
         setSize(800, 600);
@@ -110,12 +114,16 @@ public class MainFrame extends JFrame {
         resizeMenuItem.setSelected(mainTable.getAutoResizeMode() == JTable.AUTO_RESIZE_ALL_COLUMNS);
         viewMenu.add(resizeMenuItem);
 
+        JMenu apportionMenu = new JMenu(tAPPORTION_MENU);
+        apportionMenu.add(apportionMatriculantsAction);
+
         JMenu helpMenu = new JMenu(tHELP_MENU);
         helpMenu.add(aboutAction);
 
         jMenuBar.add(fileMenu);
         jMenuBar.add(editMenu);
         jMenuBar.add(viewMenu);
+        jMenuBar.add(apportionMenu);
         jMenuBar.add(helpMenu);
         return jMenuBar;
     }
@@ -356,6 +364,24 @@ public class MainFrame extends JFrame {
             JMenuItem columnMenuItem = (JMenuItem) e.getSource();
 
             MatriculantTable.restoreRowIndexes();
+            mainTable.repaint();
+        }
+    }
+
+    private class ApportionMatriculantsAction extends AbstractAction {
+        private ApportionMatriculantsAction() {
+            putValue(Action.NAME, tAPPORTION_SPEC);
+            putValue(Action.SHORT_DESCRIPTION, tAPPORTION_SPEC_DESCRIPTION);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JMenuItem showMenuItem = (JMenuItem) e.getSource();
+
+            List<Integer> counts = new ArrayList<Integer>();
+            for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
+                counts.add(5);
+            }
+            mainTable.ApportionBySpec(counts);
             mainTable.repaint();
         }
     }

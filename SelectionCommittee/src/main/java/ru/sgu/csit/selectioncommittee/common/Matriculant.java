@@ -46,6 +46,7 @@ public class Matriculant extends Person {
     @Embedded
     private Documents documents;
 
+    private String entranceSpecialityName;
     private String schoolName;
     private String info;
 
@@ -129,6 +130,14 @@ public class Matriculant extends Person {
 
     public void setDocuments(Documents documents) {
         this.documents = documents;
+    }
+
+    public String getEntranceSpecialityName() {
+        return entranceSpecialityName;
+    }
+
+    public void setEntranceSpecialityName(String entranceSpecialityName) {
+        this.entranceSpecialityName = entranceSpecialityName;
     }
 
     public String getSchoolName() {

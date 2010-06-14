@@ -113,17 +113,19 @@ public class CreateDBData {
         private static Random generator = new Random(new Date().getTime());
         private static int number = DataAccessFactory.getMatriculants().size();
         private static String[][] lastNames = {{"Иванов", "Петров", "Захаров", "Клочко", "Кузнецов", "Алексеев", "Свиридов",
-                "Яковлев"},
+                "Яковлев", "Нечаев", "Куприн", "Снегов", "Дубровский", "Шефер", "Привалов", "Горбовский", "Печкин"},
                 {"Иванова", "Петрова", "Захарова", "Клочко", "Кузнецова", "Алексеева", "Свиридова",
-                "Яковлева"}};
+                    "Яковлева", "Нечаева", "Куприна", "Снегова", "Дубровская", "Шефер", "Привалова", "Горбовская", "Печкина"}};
         private static String[][] firstNames = {{"Иван", "Пётр", "Александр", "Семён", "Николай", "Алексей", "Юрий",
-                "Борис"},
-                {"Светлана", "Екатерина", "Александра", "Надежда", "Анна", "Юлия", "Томара",
-                "Елена"}};
+                "Борис", "Сергей", "Андрей", "Олег", "Степан", "Максим", "Дмитрий", "Владимир", "Виктор", "Денис"},
+                {"Светлана", "Екатерина", "Александра", "Надежда", "Анна", "Юлия", "Томара", "Наталия",
+                    "Елена", "Мария", "Марина", "Ольга", "Зульфия", "Алёна", "Лидия", "Антонина", "Настасья", "Лера"}};
         private static String[][] middleNames = {{"Иванович", "Петрович", "Александрович", "Семёнович", "Николаевич", "Алексеевич",
-                "Юрьевич", "Борисович"},
+                "Юрьевич", "Борисович", "Сергеевич", "Андреевич", "Олегович", "Степанович", "Максимович", "Дмитриевич",
+                    "Владимирович", "Викторович", "Денисович"},
                 {"Ивановна", "Петровна", "Александровна", "Семёновна", "Николаевна", "Алексеевна",
-                "Юрьевна", "Борисовна"}};
+                    "Юрьевна", "Борисовна", "Сергеевна", "Андреевна", "Олеговна", "Степановна", "Максимовна", "Дмитриевна",
+                        "Владимировна", "Викторовна", "Денисовна"}};
 
         public MatriculantGenerator() {
         }
@@ -140,6 +142,7 @@ public class CreateDBData {
             matriculant.setMother(new Person(getRandomName(1), getRandomPhone()));
             matriculant.setSchoolName("Школа № " + (generator.nextInt(999) + 1));
             matriculant.setEntranceCategory(getRandomCategory());
+            matriculant.setEntranceSpecialityName("");
             matriculant.setDocuments(getRandomDocuments());
             matriculant.setSpeciality(getRandomMapSpec());
             matriculant.setBalls(getRandomBalls(matriculant));
@@ -192,7 +195,7 @@ public class CreateDBData {
             Map<Integer, String> mapSpecPriority = new TreeMap<Integer, String>();
             ArrayList<Speciality> listSpec =
                     (ArrayList<Speciality>) DataAccessFactory.getSpecialityDAO().findAll();
-            int countSpecPriority = generator.nextInt(70);
+            int countSpecPriority = generator.nextInt(70) + 1;
 
             if (countSpecPriority > listSpec.size()) {
                 countSpecPriority = listSpec.size();

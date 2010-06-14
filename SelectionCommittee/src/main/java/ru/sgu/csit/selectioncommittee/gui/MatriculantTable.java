@@ -140,7 +140,7 @@ public class MatriculantTable extends JTable {
         for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
             columnNames.add(DataAccessFactory.getSpecialities().get(i).getName());
             columnWidths.add(60);
-            columnVisible.add(Boolean.TRUE);
+            columnVisible.add(Boolean.FALSE);
         }
 
         columnNames.add("Балл");
@@ -148,6 +148,10 @@ public class MatriculantTable extends JTable {
         columnVisible.add(Boolean.TRUE);
 
         columnNames.add("Специальность");
+        columnWidths.add(95);
+        columnVisible.add(Boolean.TRUE);
+
+        columnNames.add("Зачислен на");
         columnWidths.add(95);
         columnVisible.add(Boolean.TRUE);
 
@@ -184,12 +188,31 @@ public class MatriculantTable extends JTable {
         return columns;
     }
 
-    public void sortBy(Speciality speciality) {
-        if (speciality == null) {
-            restoreRowIndexes();
-        } else {
-            matriculantTableModel.sortBy(speciality);
+    private int findSpecialityIndex(final Speciality speciality) {
+        int index = -1;
+
+        if (speciality != null) {
+            for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
+                if (DataAccessFactory.getSpecialities().get(i).getName().equals(speciality.getName())) {
+                    index = i;
+                }
+            }
         }
+        return index;
+    }
+
+    public void sortBy(Speciality speciality) {
+        matriculantTableModel.restoreIndexes();
+        if (speciality != null) {
+            int index = findSpecialityIndex(speciality);
+
+            matriculantTableModel.sortBy(speciality, index);
+            matriculantTableModel.setRowIndexesFromMatriculantIndexesBy(index);
+        }
+    }
+
+    public void ApportionBySpec(List<Integer> counts) {
+        matriculantTableModel.ApportionBySpec(counts);
     }
 
     public static void restoreRowIndexes() {
@@ -215,30 +238,20 @@ public class MatriculantTable extends JTable {
 
         public void restoreIndexes() {
             MatriculantTable.restoreRowIndexes();
+            restoreMatriculantIndexes();
+        }
+
+        public void restoreMatriculantIndexes() {
             matriculantIndexes.clear();
             for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
                 matriculantIndexes.add(new LinkedList<Integer>());
-                matriculantIndexes.get(i).addAll(rowIndexes);
-
-            }
-        }
-
-        private int findSpecialityIndex(final Speciality speciality) {
-            int index = -1;
-
-            if (speciality != null) {
-                for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
-                    if (DataAccessFactory.getSpecialities().get(i).getName().equals(speciality.getName())) {
-                        index = i;
-                    }
+                for (int j = 0; j < DataAccessFactory.getMatriculants().size(); ++j) {
+                    matriculantIndexes.get(i).add(j);
                 }
             }
-            return index;
         }
 
-        public void sortBy(final Speciality speciality) {
-            int index = findSpecialityIndex(speciality);
-
+        public void sortBy(final Speciality speciality, int index) {
             Collections.sort(matriculantIndexes.get(index), new Comparator<Integer>() {
                 private List<Matriculant> matriculants = DataAccessFactory.getMatriculants();
 
@@ -285,8 +298,73 @@ public class MatriculantTable extends JTable {
                     }
                 }
             });
+        }
+
+        public void setRowIndexesFromMatriculantIndexesBy(int index) {
             rowIndexes = matriculantIndexes.get(index);
             specialityIndex = index;
+        }
+
+        public void ApportionBySpec(List<Integer> counts) {
+            System.out.println("//=== Start apportion.");
+            restoreMatriculantIndexes();
+            for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
+                sortBy(DataAccessFactory.getSpecialities().get(i), i);
+            }
+            for (Matriculant matriculant : DataAccessFactory.getMatriculants()) {
+                if (!"".equals(matriculant.getEntranceSpecialityName())) {
+                    matriculant.setEntranceSpecialityName("");
+                    DataAccessFactory.getMatriculantDAO().update(matriculant);
+                }
+            }
+            DataAccessFactory.reloadMatriculants();
+
+            boolean theContinue = true;
+            int curSpecPriority = 1;
+
+            while (curSpecPriority <= DataAccessFactory.getSpecialities().size()) {
+                theContinue = false;
+
+                for (int specIndex = 0; specIndex < DataAccessFactory.getSpecialities().size(); ++specIndex) {
+                    Speciality speciality = DataAccessFactory.getSpecialities().get(specIndex);
+                    int count = counts.get(specIndex);
+                    Iterator<Integer> iter = matriculantIndexes.get(specIndex).iterator();
+                    boolean updatedMatriculants = false;
+
+                    while (count > 0 && iter.hasNext()) {
+                        Integer element = iter.next();
+                        Matriculant matriculant = DataAccessFactory.getMatriculants().get(element);
+                        boolean updated = false;
+
+                        if ("".equals(matriculant.getEntranceSpecialityName())) {
+                                if (speciality.getName().equals(matriculant.getSpeciality().get(curSpecPriority))) {
+                                    matriculant.setEntranceSpecialityName(speciality.getName());
+                                    updated = true;
+                                } else {
+                                    if (matriculant.getSpeciality().containsValue(speciality.getName())) {
+                                        --count;
+                                    }
+                                }
+                        }
+                        if (speciality.getName().equals(matriculant.getEntranceSpecialityName())) {
+                            --count;
+                        }
+                        if (updated) {
+                            updatedMatriculants = true;
+                            DataAccessFactory.getMatriculantDAO().update(matriculant);
+                        }
+                    }
+                    if (updatedMatriculants) {
+                        //DataAccessFactory.reloadMatriculants();
+                        theContinue = true;
+                    }
+                }
+                if (!theContinue) {
+                    curSpecPriority++;
+                }
+            }
+            DataAccessFactory.reloadMatriculants();
+            System.out.println("//=== Apportion finished!");
         }
 
         @Override
@@ -358,6 +436,11 @@ public class MatriculantTable extends JTable {
                         : matriculant.getSpeciality().get(1));
             }
 
+            index++;
+            if (columnIndex == index) {
+                return matriculant.getEntranceSpecialityName();
+            }
+
             index = columnIndex - (index + 1);
             if (index >= 0 && index < DataAccessFactory.getExamines().size()) {
                 Integer value = matriculant.getBalls().get(DataAccessFactory.getExamines().get(index).getName());
@@ -367,7 +450,7 @@ public class MatriculantTable extends JTable {
                 }
             }
 
-            index = DataAccessFactory.getExamines().size() + DataAccessFactory.getSpecialities().size() + 6;
+            index = DataAccessFactory.getExamines().size() + DataAccessFactory.getSpecialities().size() + 7;
             if (columnIndex == index) {
                 return matriculant.getPhoneNumbers();
             }
@@ -380,9 +463,7 @@ public class MatriculantTable extends JTable {
         }
 
         @Override
-        public String getColumnName
-                (
-                        int column) {
+        public String getColumnName(int column) {
             return columnNames.get(column);
         }
     }
