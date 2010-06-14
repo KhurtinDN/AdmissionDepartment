@@ -17,7 +17,7 @@ public class LocalSessionFactory {
         try {
             sessionFactory = new AnnotationConfiguration()
                     //.addPackage("ru.sgu.csit.selectioncommittee.common")
-                    .addAnnotatedClass(ru.sgu.csit.selectioncommittee.common.Matriculant.class)
+                    //.addAnnotatedClass(ru.sgu.csit.selectioncommittee.common.Matriculant.class)
                     //.addAnnotatedClass(ru.sgu.csit.selectioncommittee.common.Matriculant.class)                    
                     .configure().buildSessionFactory();
         } catch (Throwable e) {

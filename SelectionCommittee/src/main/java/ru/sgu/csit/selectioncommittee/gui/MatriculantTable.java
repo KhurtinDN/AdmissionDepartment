@@ -258,22 +258,17 @@ public class MatriculantTable extends JTable {
         }
 
         @Override
-        public int getRowCount
-                () {
+        public int getRowCount() {
             return rowIndexes.size();
         }
 
         @Override
-        public int getColumnCount
-                () {
+        public int getColumnCount() {
             return columnNames.size();
         }
 
         @Override
-        public Object getValueAt
-                (
-                        int rowIndex,
-                        int columnIndex) {
+        public Object getValueAt(int rowIndex, int columnIndex) {
             Matriculant matriculant = DataAccessFactory.getMatriculants().get(rowIndexes.get(rowIndex));
 
             if (columnIndex == 0) {
@@ -288,7 +283,6 @@ public class MatriculantTable extends JTable {
                 switch (matriculant.getEntranceCategory()) {
                     case EXAMINE:
                         return "По экзаменам\n";
-
                     case NO_EXAMINE:
                         return "Без экзаменов";
                     case OUT_EXAMINE_OTHER:
