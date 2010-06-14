@@ -29,6 +29,8 @@ public class MatriculantTable extends JTable {
     private static List<String> columnNames = new ArrayList<String>();
     private static List<Integer> columnWidths = new ArrayList<Integer>();
     private static List<Boolean> columnVisible = new ArrayList<Boolean>();
+    private static List<Integer> rowIndexes = new ArrayList<Integer>();
+    private static int specialityIndex = -1;
 
     private static boolean highlighting = true;
     private List<JCheckBoxMenuItem> headerPopupMenu = new ArrayList<JCheckBoxMenuItem>();
@@ -36,10 +38,6 @@ public class MatriculantTable extends JTable {
     private static int startExaminesIndex;
 
     private static MatriculantTableModel matriculantTableModel = new MatriculantTableModel();
-
-    static {
-        regenerateColumnData();
-    }
 
     public MatriculantTable() {
         super(matriculantTableModel);
@@ -122,6 +120,10 @@ public class MatriculantTable extends JTable {
         columnWidths.clear();
         columnVisible.clear();
 
+        columnNames.add("№");
+        columnWidths.add(25);
+        columnVisible.add(Boolean.TRUE);
+
         columnNames.add("ФИО");
         columnWidths.add(220);
         columnVisible.add(Boolean.TRUE);
@@ -184,30 +186,61 @@ public class MatriculantTable extends JTable {
 
     public void sortBy(Speciality speciality) {
         if (speciality == null) {
-            matriculantTableModel.restoreRowIndexes();
+            restoreRowIndexes();
         } else {
             matriculantTableModel.sortBy(speciality);
         }
     }
 
+    public static void restoreRowIndexes() {
+        rowIndexes.clear();
+        specialityIndex = -1;
+        for (int i = 0; i < DataAccessFactory.getMatriculants().size(); ++i) {
+            rowIndexes.add(i);
+        }
+    }
+
+    public int convertViewRowIndexToMatriculants(int selectedIndex) {
+        return rowIndexes.get(this.convertRowIndexToModel(selectedIndex));
+    }
+
     private static class MatriculantTableModel extends AbstractTableModel {
         private static DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm");
-        private List<Integer> rowIndexes = new ArrayList<Integer>();
+        private List<List<Integer>> matriculantIndexes = new ArrayList<List<Integer>>();
 
         {
-            restoreRowIndexes();
+            restoreIndexes();
+            MatriculantTable.regenerateColumnData();
         }
 
-        public void restoreRowIndexes() {
-            rowIndexes.clear();
-            for (int i = 0; i < DataAccessFactory.getMatriculants().size(); ++i) {
-                rowIndexes.add(i);
+        public void restoreIndexes() {
+            MatriculantTable.restoreRowIndexes();
+            matriculantIndexes.clear();
+            for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
+                matriculantIndexes.add(new LinkedList<Integer>());
+                matriculantIndexes.get(i).addAll(rowIndexes);
+
             }
         }
 
+        private int findSpecialityIndex(final Speciality speciality) {
+            int index = -1;
+
+            if (speciality != null) {
+                for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
+                    if (DataAccessFactory.getSpecialities().get(i).getName().equals(speciality.getName())) {
+                        index = i;
+                    }
+                }
+            }
+            return index;
+        }
+
         public void sortBy(final Speciality speciality) {
-            Collections.sort(rowIndexes, new Comparator<Integer>() {
-                List<Matriculant> matriculants = DataAccessFactory.getMatriculants();
+            int index = findSpecialityIndex(speciality);
+
+            Collections.sort(matriculantIndexes.get(index), new Comparator<Integer>() {
+                private List<Matriculant> matriculants = DataAccessFactory.getMatriculants();
 
                 public int compare(Integer o1, Integer o2) {
                     Matriculant firstMatriculant = matriculants.get(o1);
@@ -252,9 +285,8 @@ public class MatriculantTable extends JTable {
                     }
                 }
             });
-            for (Integer index : rowIndexes) {
-                System.out.println(index);
-            }
+            rowIndexes = matriculantIndexes.get(index);
+            specialityIndex = index;
         }
 
         @Override
@@ -272,13 +304,16 @@ public class MatriculantTable extends JTable {
             Matriculant matriculant = DataAccessFactory.getMatriculants().get(rowIndexes.get(rowIndex));
 
             if (columnIndex == 0) {
-                return matriculant.getName();
+                return rowIndex + 1;
             }
             if (columnIndex == 1) {
+                return matriculant.getName();
+            }
+            if (columnIndex == 2) {
                 return matriculant.getReceiptNumber();
             }
 
-            if (columnIndex == 2
+            if (columnIndex == 3
                     && matriculant.getEntranceCategory() != null) {
                 switch (matriculant.getEntranceCategory()) {
                     case EXAMINE:
@@ -294,7 +329,7 @@ public class MatriculantTable extends JTable {
                 }
             }
 
-            int index = columnIndex - 3;
+            int index = columnIndex - 4;
 
             if (index >= 0 && index < DataAccessFactory.getSpecialities().size()) {
                 for (Map.Entry<Integer, String> entry : matriculant.getSpeciality().entrySet()) {
@@ -304,9 +339,11 @@ public class MatriculantTable extends JTable {
                 }
             }
 
-            index = DataAccessFactory.getSpecialities().size() + 3;
+            index = DataAccessFactory.getSpecialities().size() + 4;
             if (columnIndex == index) {
-                String mainSpecName = matriculant.getSpeciality().get(1);
+                String mainSpecName = (specialityIndex > -1
+                        ? DataAccessFactory.getSpecialities().get(specialityIndex).getName()
+                        : matriculant.getSpeciality().get(1));
                 Integer result = matriculant.calculateTotalBallsForSpeciality(mainSpecName);
 
                 if (result != null) {
@@ -316,7 +353,9 @@ public class MatriculantTable extends JTable {
 
             index++;
             if (columnIndex == index) {
-                return matriculant.getSpeciality().get(1);
+                return (specialityIndex > -1
+                        ? DataAccessFactory.getSpecialities().get(specialityIndex).getName()
+                        : matriculant.getSpeciality().get(1));
             }
 
             index = columnIndex - (index + 1);
@@ -328,7 +367,7 @@ public class MatriculantTable extends JTable {
                 }
             }
 
-            index = DataAccessFactory.getExamines().size() + DataAccessFactory.getSpecialities().size() + 5;
+            index = DataAccessFactory.getExamines().size() + DataAccessFactory.getSpecialities().size() + 6;
             if (columnIndex == index) {
                 return matriculant.getPhoneNumbers();
             }
@@ -356,9 +395,9 @@ public class MatriculantTable extends JTable {
                                                        int row,
                                                        int column) {
             Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            Matriculant matriculant = DataAccessFactory.getMatriculants().get(table.convertRowIndexToModel(row));
+            Matriculant matriculant = DataAccessFactory.getMatriculants().get(rowIndexes.get(table.convertRowIndexToModel(row)));
 
-            if (table.convertColumnIndexToModel(column) == DataAccessFactory.getSpecialities().size() + 3) {
+            if (table.convertColumnIndexToModel(column) == DataAccessFactory.getSpecialities().size() + 4) {
                 cell.setFont(cell.getFont().deriveFont(Font.BOLD));
             }
 
@@ -382,6 +421,9 @@ public class MatriculantTable extends JTable {
                         cell.setBackground(new Color(210, 245, 200));
                     }
                 } else {
+                    if (table.convertColumnIndexToModel(column) == 1) {
+                        cell.setFont(cell.getFont().deriveFont(Font.BOLD));
+                    }
                     if (!matriculant.completeAllDocuments()) {
                         if (matriculant.getDocuments() != null && matriculant.getDocuments().isOriginalAttestat()) {
                             cell.setBackground(new Color(225, 215, 165));

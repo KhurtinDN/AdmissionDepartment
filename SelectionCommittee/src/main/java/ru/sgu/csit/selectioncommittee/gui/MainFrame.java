@@ -207,7 +207,7 @@ public class MainFrame extends JFrame {
             int selectedIndex = mainTable.getSelectedRow();
             if (selectedIndex >= 0) {
                 Matriculant matriculant = DataAccessFactory.getMatriculants()
-                        .get(mainTable.convertRowIndexToModel(selectedIndex));
+                        .get(mainTable.convertViewRowIndexToMatriculants(selectedIndex));
                 MatriculantDialog matriculantDialog = new MatriculantDialog(MainFrame.this, false, matriculant);
                 matriculantDialog.setVisible(true);
             } else {
@@ -229,7 +229,7 @@ public class MainFrame extends JFrame {
             if (selectedIndex >= 0) {
                 if (showConfirmDialog("Удалить абитуриента?")) {
                     Matriculant matriculant = DataAccessFactory.getMatriculants()
-                            .get(mainTable.convertRowIndexToModel(selectedIndex));
+                            .get(mainTable.convertViewRowIndexToMatriculants(selectedIndex));
                     DataAccessFactory.getMatriculantDAO().delete(matriculant);
                     DataAccessFactory.reloadMatriculants();
                     mainTable.refresh();
@@ -285,7 +285,7 @@ public class MainFrame extends JFrame {
             int selectedIndex = mainTable.getSelectedRow();
             if (selectedIndex >= 0) {
                 Matriculant matriculant = DataAccessFactory.getMatriculants()
-                        .get(mainTable.convertRowIndexToModel(selectedIndex));
+                        .get(mainTable.convertViewRowIndexToMatriculants(selectedIndex));
                 matriculantInfoDialog.showInfo(matriculant.printToString());
             } else {
                 showWarningMessage("Выберите сначала абитуриента");
@@ -355,7 +355,8 @@ public class MainFrame extends JFrame {
         public void actionPerformed(ActionEvent e) {
             JMenuItem columnMenuItem = (JMenuItem) e.getSource();
 
-            ;//mainTable
+            MatriculantTable.restoreRowIndexes();
+            mainTable.repaint();
         }
     }
 }
