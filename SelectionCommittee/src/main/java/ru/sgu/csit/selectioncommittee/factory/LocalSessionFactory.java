@@ -3,6 +3,8 @@ package ru.sgu.csit.selectioncommittee.factory;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 
+import java.util.Properties;
+
 /**
  * Date: Apr 19, 2010
  * Time: 1:41:16 PM
@@ -11,19 +13,19 @@ import org.hibernate.cfg.AnnotationConfiguration;
  */
 
 public class LocalSessionFactory {
-    private static final SessionFactory sessionFactory;
+    private static SessionFactory sessionFactory;
 
-    static {
+    public static boolean createNewSessionFactory(Properties properties) {
+        AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration().configure();
+        annotationConfiguration.mergeProperties(properties);
+
         try {
-            sessionFactory = new AnnotationConfiguration()
-                    //.addPackage("ru.sgu.csit.selectioncommittee.common")
-                    //.addAnnotatedClass(ru.sgu.csit.selectioncommittee.common.Matriculant.class)
-                    //.addAnnotatedClass(ru.sgu.csit.selectioncommittee.common.Matriculant.class)                    
-                    .configure().buildSessionFactory();
+            sessionFactory = annotationConfiguration.buildSessionFactory();
         } catch (Throwable e) {
-            System.err.println("The session factory can't be created:" + e.getMessage());
-            throw new ExceptionInInitializerError(e);
+            return false;
         }
+
+        return true;
     }
 
     public static SessionFactory getSessionFactory() {
