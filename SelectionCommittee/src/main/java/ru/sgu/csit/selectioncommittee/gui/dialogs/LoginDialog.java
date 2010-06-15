@@ -22,6 +22,8 @@ import java.util.Vector;
  * @author xx & hd
  */
 public class LoginDialog extends JDialog {
+    private static String HIBERNATE_PROPERTIES = "hibernate.properties";
+
     private Action openDBOptionAction = new OpenDBOptionAction();
     private Action loginAction = new LoginAction();
     private Action closeAction = new CloseAction();
@@ -92,7 +94,7 @@ public class LoginDialog extends JDialog {
             if (validateForm()) {
                 Properties dbProperties = new Properties();
                 try {
-                    FileInputStream fileInputStream = new FileInputStream("settings/hibernate.properties");
+                    FileInputStream fileInputStream = new FileInputStream(HIBERNATE_PROPERTIES);
                     dbProperties.load(fileInputStream);
                 } catch (IOException ioe) {
                     showWarningMessage("Необходимо настроить доступ к СУБД");
@@ -246,7 +248,7 @@ public class LoginDialog extends JDialog {
                     properties.put("hibernate.connection.url", url);
 
                     try {
-                        FileOutputStream fileOutputStream = new FileOutputStream("settings/hibernate.properties");
+                        FileOutputStream fileOutputStream = new FileOutputStream(HIBERNATE_PROPERTIES);
                         properties.store(fileOutputStream, "Hibernate properties");
                         fileOutputStream.close();
                     } catch (IOException e1) {
