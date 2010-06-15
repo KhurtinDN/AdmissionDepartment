@@ -3,10 +3,7 @@ package ru.sgu.csit.selectioncommittee.gui;
 import ru.sgu.csit.selectioncommittee.common.Matriculant;
 import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
-import ru.sgu.csit.selectioncommittee.gui.dialogs.AboutDialog;
-import ru.sgu.csit.selectioncommittee.gui.dialogs.ExportToExcelDialog;
-import ru.sgu.csit.selectioncommittee.gui.dialogs.MatriculantDialog;
-import ru.sgu.csit.selectioncommittee.gui.dialogs.MatriculantInfoDialog;
+import ru.sgu.csit.selectioncommittee.gui.dialogs.*;
 
 import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
 
@@ -39,6 +36,7 @@ public class MainFrame extends JFrame {
     Action showAllMatriculantsAction = new ShowAllMatriculantsAction();
     Action highlightingAction = new HighlightingAction();
     Action apportionMatriculantsAction = new ApportionMatriculantsAction();
+    Action sortAction = new SortAction();
 
     MatriculantTable mainTable = null;
 
@@ -97,6 +95,7 @@ public class MainFrame extends JFrame {
         JMenuBar jMenuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu(tFILE_MENU);
+        fileMenu.add(sortAction); //todo: remove
         fileMenu.add(exportToExcelAction);
         fileMenu.add(printAction);
         fileMenu.addSeparator();
@@ -393,6 +392,19 @@ public class MainFrame extends JFrame {
             }
             mainTable.ApportionBySpec(counts);
             mainTable.repaint();
+        }
+    }
+
+    private class SortAction extends AbstractAction {
+        private SortAction() {
+            putValue(Action.NAME, "Сортировка");
+            putValue(Action.SHORT_DESCRIPTION, "Выбрать столбцы для сортировки");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            SortDialog sortDialog = new SortDialog(MainFrame.this, mainTable);
+            sortDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            sortDialog.setVisible(true);
         }
     }
 }

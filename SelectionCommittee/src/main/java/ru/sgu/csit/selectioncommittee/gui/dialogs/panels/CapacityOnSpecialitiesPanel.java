@@ -3,18 +3,20 @@ package ru.sgu.csit.selectioncommittee.gui.dialogs.panels;
 import ru.sgu.csit.selectioncommittee.common.ReceiptExamine;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Date: May 6, 2010
- * Time: 10:17:09 PM
+ * Date: Jun 15, 2010
+ * Time: 3:48:56 PM
  *
  * @author xx & hd
  */
-public class MarkPanel extends SelectNumbersPanel {
-    public MarkPanel() {
-        super("Баллы по ЕГЭ");
+public class CapacityOnSpecialitiesPanel extends SelectNumbersPanel {
+
+    public CapacityOnSpecialitiesPanel() {
+        super("Количество мест на каждой специальности");
 
         List<String> examineNames = new ArrayList<String>();
 
@@ -26,11 +28,11 @@ public class MarkPanel extends SelectNumbersPanel {
         createLabelList(examineNames);
     }
 
-    public void setMarks(Map<String, Integer> specialityMap) {
-        setNumbers(specialityMap);
+    public void setCapacityOnSpecialities(Map<String, Integer> capacityMap) {
+        setNumbers(capacityMap);
     }
 
-    public Map<String, Integer> getMarks() {
+    public Map<String, Integer> getCapacityOnSpecialities() {
         return getNumbers();
     }
 }
