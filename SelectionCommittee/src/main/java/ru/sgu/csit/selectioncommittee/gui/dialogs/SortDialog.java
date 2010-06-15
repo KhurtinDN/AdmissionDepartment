@@ -66,7 +66,9 @@ public class SortDialog extends JDialog {
 
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new GridBagLayout());
-        buttonPanel.add(new JLabel(), new GBConstraints(0, 0, true));
+        JLabel spacerLabel = new JLabel();
+        spacerLabel.setPreferredSize(new Dimension(50, 0));
+        buttonPanel.add(spacerLabel, new GBConstraints(0, 0, true));
         buttonPanel.add(new JButton(sortAction), new GBConstraints(1, 0));
         buttonPanel.add(new JButton(closeAction), new GBConstraints(2, 0));
         return buttonPanel;

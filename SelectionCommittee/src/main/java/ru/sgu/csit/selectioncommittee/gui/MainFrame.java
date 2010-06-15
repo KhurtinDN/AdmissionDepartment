@@ -24,7 +24,7 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  * @author xx & hd
  */
 public class MainFrame extends JFrame {
-    Action exportToExcelAction = new ExportToExcelAction();
+    Action exportToExcelAction = new ExportToExcelAction();   // todo: all fields must be private
     Action printAction = new PrintAction();
     Action exitAction = new ExitAction();
     Action addAction = new AddAction();
@@ -37,6 +37,7 @@ public class MainFrame extends JFrame {
     Action highlightingAction = new HighlightingAction();
     Action apportionMatriculantsAction = new ApportionMatriculantsAction();
     Action sortAction = new SortAction();
+    Action apportionMatriculantsAction2 = new ApportionMatriculantsAction2();
 
     MatriculantTable mainTable = null;
 
@@ -96,6 +97,7 @@ public class MainFrame extends JFrame {
 
         JMenu fileMenu = new JMenu(tFILE_MENU);
         fileMenu.add(sortAction); //todo: remove
+        fileMenu.add(apportionMatriculantsAction2); //todo: remove
         fileMenu.add(exportToExcelAction);
         fileMenu.add(printAction);
         fileMenu.addSeparator();
@@ -405,6 +407,19 @@ public class MainFrame extends JFrame {
             SortDialog sortDialog = new SortDialog(MainFrame.this, mainTable);
             sortDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             sortDialog.setVisible(true);
+        }
+    }
+
+    private class ApportionMatriculantsAction2 extends AbstractAction {
+        private ApportionMatriculantsAction2() {
+            putValue(Action.NAME, "Распределить по специальностям");
+            putValue(Action.SHORT_DESCRIPTION, "Распределить абитуриентов по специальностям");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            ApportionMatriculantsDialog apportionMatriculantsDialog = new ApportionMatriculantsDialog(MainFrame.this);
+            apportionMatriculantsDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            apportionMatriculantsDialog.setVisible(true);
         }
     }
 }
