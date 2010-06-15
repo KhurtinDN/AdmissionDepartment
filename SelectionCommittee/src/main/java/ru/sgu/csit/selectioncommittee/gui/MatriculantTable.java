@@ -134,7 +134,7 @@ public class MatriculantTable extends JTable {
 
         columnNames.add("Поступает");
         columnWidths.add(100);
-        columnVisible.add(Boolean.FALSE);
+        columnVisible.add(Boolean.TRUE);
 
         startSpecialityIndex = 3;
         for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
@@ -172,6 +172,7 @@ public class MatriculantTable extends JTable {
     }
 
     public void refresh() {
+        matriculantTableModel.restoreIndexes();
         matriculantTableModel.fireTableStructureChanged();
         setColumns();
     }
@@ -215,11 +216,21 @@ public class MatriculantTable extends JTable {
         matriculantTableModel.ApportionBySpec(counts);
     }
 
+    public static void resetRowIndexes() {
+        specialityIndex = -1;
+        restoreRowIndexes();
+    }
+
     public static void restoreRowIndexes() {
         rowIndexes.clear();
-        specialityIndex = -1;
-        for (int i = 0; i < DataAccessFactory.getMatriculants().size(); ++i) {
-            rowIndexes.add(i);
+        if (specialityIndex > -1) {
+            matriculantTableModel.sortBy(DataAccessFactory.getSpecialities().get(specialityIndex), specialityIndex);
+            matriculantTableModel.setRowIndexesFromMatriculantIndexesBy(specialityIndex);
+        } else {
+            specialityIndex = -1;
+            for (int i = 0; i < DataAccessFactory.getMatriculants().size(); ++i) {
+                rowIndexes.add(i);
+            }
         }
     }
 
@@ -237,8 +248,8 @@ public class MatriculantTable extends JTable {
         }
 
         public void restoreIndexes() {
-            MatriculantTable.restoreRowIndexes();
             restoreMatriculantIndexes();
+            MatriculantTable.restoreRowIndexes();
         }
 
         public void restoreMatriculantIndexes() {
@@ -318,12 +329,12 @@ public class MatriculantTable extends JTable {
                     DataAccessFactory.getMatriculantDAO().update(matriculant);
                 }
             }
-            DataAccessFactory.reloadMatriculants();
+            //DataAccessFactory.reloadMatriculants();
 
             boolean theContinue = true;
-            int curSpecPriority = 1;
+            int currentSpecPriority = 1;
 
-            while (curSpecPriority <= DataAccessFactory.getSpecialities().size()) {
+            while (currentSpecPriority <= DataAccessFactory.getSpecialities().size()) {
                 theContinue = false;
 
                 for (int specIndex = 0; specIndex < DataAccessFactory.getSpecialities().size(); ++specIndex) {
@@ -338,7 +349,7 @@ public class MatriculantTable extends JTable {
                         boolean updated = false;
 
                         if ("".equals(matriculant.getEntranceSpecialityName())) {
-                                if (speciality.getName().equals(matriculant.getSpeciality().get(curSpecPriority))) {
+                                if (speciality.getName().equals(matriculant.getSpeciality().get(currentSpecPriority))) {
                                     matriculant.setEntranceSpecialityName(speciality.getName());
                                     updated = true;
                                 } else {
@@ -361,7 +372,7 @@ public class MatriculantTable extends JTable {
                     }
                 }
                 if (!theContinue) {
-                    curSpecPriority++;
+                    currentSpecPriority++;
                 }
             }
             DataAccessFactory.reloadMatriculants();

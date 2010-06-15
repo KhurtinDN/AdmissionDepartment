@@ -246,8 +246,10 @@ public class MainFrame extends JFrame {
                 if (showConfirmDialog("Удалить абитуриента?")) {
                     Matriculant matriculant = DataAccessFactory.getMatriculants()
                             .get(mainTable.convertViewRowIndexToMatriculants(selectedIndex));
+                    
+                    DataAccessFactory.getMatriculants().remove(mainTable.convertViewRowIndexToMatriculants(selectedIndex));
                     DataAccessFactory.getMatriculantDAO().delete(matriculant);
-                    DataAccessFactory.reloadMatriculants();
+//                    DataAccessFactory.reloadMatriculants();
                     mainTable.refresh();
                 }
             } else {
@@ -371,7 +373,7 @@ public class MainFrame extends JFrame {
         public void actionPerformed(ActionEvent e) {
             JMenuItem columnMenuItem = (JMenuItem) e.getSource();
 
-            MatriculantTable.restoreRowIndexes();
+            MatriculantTable.resetRowIndexes();
             mainTable.repaint();
         }
     }

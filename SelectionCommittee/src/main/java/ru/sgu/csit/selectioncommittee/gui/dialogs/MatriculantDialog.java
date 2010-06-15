@@ -308,7 +308,8 @@ public class MatriculantDialog extends JDialog {
 
             if (validateForm()) {
                 DataAccessFactory.getMatriculantDAO().save(matriculant);
-                DataAccessFactory.reloadMatriculants();
+//                DataAccessFactory.reloadMatriculants();
+                DataAccessFactory.getMatriculants().add(matriculant);
                 mainFrame.refresh();
             } else {
                 showWarningMessage("Исправьте все");
@@ -334,7 +335,7 @@ public class MatriculantDialog extends JDialog {
 
             if (validateForm()) {
                 DataAccessFactory.getMatriculantDAO().update(matriculant);
-                DataAccessFactory.reloadMatriculants();
+//                DataAccessFactory.reloadMatriculants();
                 mainFrame.refresh();
             } else {
                 showWarningMessage("Исправьте все");
