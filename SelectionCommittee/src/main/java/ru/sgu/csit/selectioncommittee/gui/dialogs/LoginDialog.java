@@ -62,7 +62,11 @@ public class LoginDialog extends JDialog {
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         buttonPanel.add(new JButton(openDBOptionAction), new GBConstraints(0, 0));
         buttonPanel.add(new JLabel(), new GBConstraints(1, 0, true));
-        buttonPanel.add(new JButton(loginAction), new GBConstraints(2, 0));
+
+        JButton loginButton = new JButton(loginAction);
+        getRootPane().setDefaultButton(loginButton);
+        
+        buttonPanel.add(loginButton, new GBConstraints(2, 0));
         buttonPanel.add(new JButton(closeAction), new GBConstraints(3, 0));
         return buttonPanel;
     }
@@ -87,7 +91,7 @@ public class LoginDialog extends JDialog {
 
     private class LoginAction extends AbstractAction {
         private LoginAction() {
-            putValue(Action.NAME, "Логин");
+            putValue(Action.NAME, "Вход в систему");
         }
 
         public void actionPerformed(ActionEvent e) {

@@ -29,7 +29,15 @@ public class MatriculantInfoDialog extends JDialog {
 
     public void showInfo(String info) {
         textArea.setText(info);
+
         pack();
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+        Dimension dialogSize = getSize();
+        int x = (int) (screenSize.getWidth() / 2 - dialogSize.getWidth() / 2);
+        int y = (int) (screenSize.getHeight() / 2 - dialogSize.getHeight() / 2);
+        setLocation(x, y);
+
         setVisible(true);
     }
 

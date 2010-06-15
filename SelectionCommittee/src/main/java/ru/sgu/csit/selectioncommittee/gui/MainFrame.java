@@ -74,6 +74,14 @@ public class MainFrame extends JFrame {
                 }
             }
         });
+
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+//        Dimension dialogSize = getSize();
+//        int x = (int) (screenSize.getWidth() / 2 - dialogSize.getWidth() / 2);
+//        int y = (int) (screenSize.getHeight() / 2 - dialogSize.getHeight() / 2);
+//        setLocation(x, y);
+        setSize(screenSize);
     }
 
     private JPanel createButtonPanel() {

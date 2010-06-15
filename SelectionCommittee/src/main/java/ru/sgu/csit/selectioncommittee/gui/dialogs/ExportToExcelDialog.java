@@ -12,9 +12,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 
@@ -42,6 +40,13 @@ public class ExportToExcelDialog extends JDialog {
         add(createButtonPanel(), new GBConstraints(0, 1, true));
 
         pack();
+
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+        Dimension dialogSize = getSize();
+        int x = (int) (screenSize.getWidth() / 2 - dialogSize.getWidth() / 2);
+        int y = (int) (screenSize.getHeight() / 2 - dialogSize.getHeight() / 2);
+        setLocation(x, y);
 
         JPanel content = (JPanel) getContentPane();
         content.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "CLOSE_DIALOG");
@@ -97,7 +102,7 @@ public class ExportToExcelDialog extends JDialog {
                 }
 
                 if (needOpenDocumentCheckBox.isSelected()) {
-                    String program = "kspread";
+                    String program = getExcelExecutor();
                     try {
                         String[] arguments = new String[]{program, file.getCanonicalPath()};
                         Runtime.getRuntime().exec(arguments);
@@ -107,6 +112,36 @@ public class ExportToExcelDialog extends JDialog {
                 }
             }
             setVisible(false);
+        }
+
+        private String getExcelExecutor() {
+            Properties properties = new Properties();
+            String APPLICATION_PROPERTIES = "application.properties";
+
+            boolean exist = true;
+            try {
+                properties.load(new FileInputStream(APPLICATION_PROPERTIES));
+            } catch (IOException e) {
+                exist = false;
+            }
+
+            String excelExecutor = null;
+            if (exist) {
+                excelExecutor = properties.getProperty("excelExecutor");
+            }
+            if (excelExecutor == null) {
+                excelExecutor = "oocalc";
+                properties.put("excelExecutor", excelExecutor);
+                try {
+                    FileOutputStream fileOutputStream = new FileOutputStream(APPLICATION_PROPERTIES);
+                    properties.store(fileOutputStream, "Application settings");
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    showErrorMessage("Нет прав создать файл настроек " + APPLICATION_PROPERTIES);
+                }
+            }
+
+            return excelExecutor;
         }
 
         private List<String> createHeaderList() {
