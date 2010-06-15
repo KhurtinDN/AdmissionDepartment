@@ -1,16 +1,43 @@
 package ru.sgu.csit.selectioncommittee;
 
 import ru.sgu.csit.selectioncommittee.common.*;
-import ru.sgu.csit.selectioncommittee.dao.impl.MatriculantDAOImpl;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
+import ru.sgu.csit.selectioncommittee.factory.LocalSessionFactory;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 
 /**
  * Hello world!
  */
 public class CreateDBData {
+    private static String HIBERNATE_PROPERTIES = "hibernate.properties";
     public static void main(String[] args) {
+        Properties dbProperties = new Properties();
+        try {
+            FileInputStream fileInputStream = new FileInputStream(HIBERNATE_PROPERTIES);
+            dbProperties.load(fileInputStream);
+        } catch (IOException ioe) {
+            System.out.println("Необходимо настроить доступ к СУБД");
+            return;
+        }
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter login: ");
+        String login = scanner.nextLine();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+
+        dbProperties.put("hibernate.connection.username", login);
+        dbProperties.put("hibernate.connection.password", password);
+
+        if (!LocalSessionFactory.createNewSessionFactory(dbProperties)) {
+            System.out.println("Авторизация провалилась.");
+            return;
+        }
+
         System.out.println("Start process");
 
         //Session session = LocalSessionFactory.getSessionFactory().getCurrentSession();
@@ -53,7 +80,7 @@ public class CreateDBData {
 
         DataAccessFactory.reloadAll();
 
-        for (int i = 0; i < 70; ++i) {
+        for (int i = 0; i < 700; ++i) {
             Matriculant matriculant = MatriculantGenerator.getRandomMatriculant();
             DataAccessFactory.getMatriculantDAO().save(matriculant);
         }
@@ -115,16 +142,16 @@ public class CreateDBData {
         private static String[][] lastNames = {{"Иванов", "Петров", "Захаров", "Клочко", "Кузнецов", "Алексеев", "Свиридов",
                 "Яковлев", "Нечаев", "Куприн", "Снегов", "Дубровский", "Шефер", "Привалов", "Горбовский", "Печкин"},
                 {"Иванова", "Петрова", "Захарова", "Клочко", "Кузнецова", "Алексеева", "Свиридова",
-                    "Яковлева", "Нечаева", "Куприна", "Снегова", "Дубровская", "Шефер", "Привалова", "Горбовская", "Печкина"}};
+                        "Яковлева", "Нечаева", "Куприна", "Снегова", "Дубровская", "Шефер", "Привалова", "Горбовская", "Печкина"}};
         private static String[][] firstNames = {{"Иван", "Пётр", "Александр", "Семён", "Николай", "Алексей", "Юрий",
                 "Борис", "Сергей", "Андрей", "Олег", "Степан", "Максим", "Дмитрий", "Владимир", "Виктор", "Денис"},
                 {"Светлана", "Екатерина", "Александра", "Надежда", "Анна", "Юлия", "Томара", "Наталия",
-                    "Елена", "Мария", "Марина", "Ольга", "Зульфия", "Алёна", "Лидия", "Антонина", "Настасья", "Лера"}};
+                        "Елена", "Мария", "Марина", "Ольга", "Зульфия", "Алёна", "Лидия", "Антонина", "Настасья", "Лера"}};
         private static String[][] middleNames = {{"Иванович", "Петрович", "Александрович", "Семёнович", "Николаевич", "Алексеевич",
                 "Юрьевич", "Борисович", "Сергеевич", "Андреевич", "Олегович", "Степанович", "Максимович", "Дмитриевич",
-                    "Владимирович", "Викторович", "Денисович"},
+                "Владимирович", "Викторович", "Денисович"},
                 {"Ивановна", "Петровна", "Александровна", "Семёновна", "Николаевна", "Алексеевна",
-                    "Юрьевна", "Борисовна", "Сергеевна", "Андреевна", "Олеговна", "Степановна", "Максимовна", "Дмитриевна",
+                        "Юрьевна", "Борисовна", "Сергеевна", "Андреевна", "Олеговна", "Степановна", "Максимовна", "Дмитриевна",
                         "Владимировна", "Викторовна", "Денисовна"}};
 
         public MatriculantGenerator() {
@@ -152,8 +179,8 @@ public class CreateDBData {
 
         private static String getRandomName(int sex) {
             return lastNames[sex][generator.nextInt(lastNames[sex].length)] +
-                   " " + firstNames[sex][generator.nextInt(firstNames[sex].length)] +
-                   " " + middleNames[sex][generator.nextInt(middleNames[sex].length)];
+                    " " + firstNames[sex][generator.nextInt(firstNames[sex].length)] +
+                    " " + middleNames[sex][generator.nextInt(middleNames[sex].length)];
         }
 
         private static String getRandomPhone() {

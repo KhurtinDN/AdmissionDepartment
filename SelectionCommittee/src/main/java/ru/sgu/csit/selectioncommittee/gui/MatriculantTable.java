@@ -244,7 +244,7 @@ public class MatriculantTable extends JTable {
         public void restoreMatriculantIndexes() {
             matriculantIndexes.clear();
             for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
-                matriculantIndexes.add(new LinkedList<Integer>());
+                matriculantIndexes.add(new ArrayList<Integer>());
                 for (int j = 0; j < DataAccessFactory.getMatriculants().size(); ++j) {
                     matriculantIndexes.get(i).add(j);
                 }
@@ -270,14 +270,14 @@ public class MatriculantTable extends JTable {
                     } else {
                         Integer firstBalls = firstMatriculant.calculateTotalBallsForSpeciality(speciality.getName());
                         Integer secondBalls = secondMatriculant.calculateTotalBallsForSpeciality(speciality.getName());
-                        System.out.println(firstBalls + ", " + secondBalls);
+                        //System.out.println(firstBalls + ", " + secondBalls);
                         if (firstBalls < secondBalls) { //|| (firstBalls == null && secondBalls > 0)) {
                             return 1;
                         } else if (firstBalls > secondBalls) {
                             return -1;
                         } else {
                             if (firstBalls > 0) {
-                                return sortByExamsPriority(firstMatriculant, secondMatriculant, speciality.getExams(), 0);
+                                return compareByExamsPriority(firstMatriculant, secondMatriculant, speciality.getExams(), 0);
                             } else {
                                 return 0;
                             }
@@ -285,7 +285,7 @@ public class MatriculantTable extends JTable {
                     }
                 }
 
-                private int sortByExamsPriority(Matriculant first, Matriculant second, List<ReceiptExamine> exams, int level) {
+                private int compareByExamsPriority(Matriculant first, Matriculant second, List<ReceiptExamine> exams, int level) {
                     if (level == exams.size()) {
                         return 0;
                     }
@@ -294,7 +294,7 @@ public class MatriculantTable extends JTable {
                     } else if (first.getBalls().get(exams.get(level).getName()) > second.getBalls().get(exams.get(level).getName())) {
                         return -1;
                     } else {
-                        return sortByExamsPriority(first, second, exams, level + 1);
+                        return compareByExamsPriority(first, second, exams, level + 1);
                     }
                 }
             });
@@ -308,6 +308,7 @@ public class MatriculantTable extends JTable {
         public void ApportionBySpec(List<Integer> counts) {
             System.out.println("//=== Start apportion.");
             restoreMatriculantIndexes();
+
             for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
                 sortBy(DataAccessFactory.getSpecialities().get(i), i);
             }
@@ -364,6 +365,7 @@ public class MatriculantTable extends JTable {
                 }
             }
             DataAccessFactory.reloadMatriculants();
+            
             System.out.println("//=== Apportion finished!");
         }
 

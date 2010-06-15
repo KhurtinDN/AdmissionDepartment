@@ -379,7 +379,7 @@ public class MainFrame extends JFrame {
 
             List<Integer> counts = new ArrayList<Integer>();
             for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
-                counts.add(5);
+                counts.add(70);
             }
             mainTable.ApportionBySpec(counts);
             mainTable.repaint();
