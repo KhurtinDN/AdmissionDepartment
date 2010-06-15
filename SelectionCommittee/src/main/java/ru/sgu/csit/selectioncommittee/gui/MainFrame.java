@@ -33,7 +33,7 @@ public class MainFrame extends JFrame {
     Action aboutAction = new AboutAction();
     Action infoAction = new InfoAction();
     Action resizeTableAction = new ResizeTableAction();
-    Action showAllMatriculantsAction = new ShowAllMatriculantsAction();
+    Action calcAllMatriculantsAction = new CalcAllMatriculantsAction();
     Action highlightingAction = new HighlightingAction();
     Action apportionMatriculantsAction = new ApportionMatriculantsAction();
     Action sortAction = new SortAction();
@@ -111,10 +111,14 @@ public class MainFrame extends JFrame {
         editMenu.add(deleteAction);
 
         JMenu viewMenu = new JMenu(tVIEW_MENU);
+        JCheckBoxMenuItem showNotEntranceMenuItem = new JCheckBoxMenuItem(new ShowMatriculantsAction(tSHOWNOTENT_ITEM));
+        showNotEntranceMenuItem.setSelected(MatriculantTable.isShowNotEntrance());
+        viewMenu.add(showNotEntranceMenuItem);
         for (Speciality speciality : DataAccessFactory.getSpecialities()) {
-            viewMenu.add(new ShowMatriculantsAction(speciality.getName()));
+            JCheckBoxMenuItem showEntranceMenuItem = new JCheckBoxMenuItem(new ShowMatriculantsAction(speciality.getName()));
+            showEntranceMenuItem.setSelected(MatriculantTable.isShowEntrance(speciality.getName()));
+            viewMenu.add(showEntranceMenuItem);
         }
-        viewMenu.add(showAllMatriculantsAction);
         viewMenu.addSeparator();
         JCheckBoxMenuItem lightMenuItem = new JCheckBoxMenuItem(highlightingAction);
         lightMenuItem.setSelected(MatriculantTable.isHighlighting());
@@ -124,6 +128,11 @@ public class MainFrame extends JFrame {
         viewMenu.add(resizeMenuItem);
 
         JMenu apportionMenu = new JMenu(tAPPORTION_MENU);
+        apportionMenu.add(calcAllMatriculantsAction);
+        for (Speciality speciality : DataAccessFactory.getSpecialities()) {
+            apportionMenu.add(new CalcForSpecialityAction(speciality.getName()));
+        }
+        apportionMenu.addSeparator();
         apportionMenu.add(apportionMatriculantsAction);
 
         JMenu helpMenu = new JMenu(tHELP_MENU);
@@ -249,6 +258,7 @@ public class MainFrame extends JFrame {
                             .get(mainTable.convertViewRowIndexToMatriculants(selectedIndex));
                     
                     DataAccessFactory.getMatriculants().remove(mainTable.convertViewRowIndexToMatriculants(selectedIndex));
+                    MatriculantTable.deleteFromViewIndex(selectedIndex);
                     DataAccessFactory.getMatriculantDAO().delete(matriculant);
 //                    DataAccessFactory.reloadMatriculants();
                     mainTable.refresh();
@@ -345,17 +355,20 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private class ShowMatriculantsAction extends AbstractAction {
-        private ShowMatriculantsAction(String name) {
-            putValue(Action.NAME, name);
-            putValue(Action.SHORT_DESCRIPTION, tSHOWMATRICULANTS_DESCRIPTION);
+    private class CalcForSpecialityAction extends AbstractAction {
+        private String specialityName;
+
+        private CalcForSpecialityAction(String name) {
+            specialityName = name;
+            putValue(Action.NAME, tCALCFOR_PREF + name);
+            putValue(Action.SHORT_DESCRIPTION, tCALCFORSPECIALITY_DESCRIPTION);
         }
 
         public void actionPerformed(ActionEvent e) {
             JMenuItem showMenuItem = (JMenuItem) e.getSource();
 
             for (Speciality speciality : DataAccessFactory.getSpecialities()) {
-                if (speciality.getName().equals(showMenuItem.getText())) {
+                if (speciality.getName().equals(specialityName)) {
                     mainTable.sortBy(speciality);
                     mainTable.repaint();
                     
@@ -365,10 +378,10 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private class ShowAllMatriculantsAction extends AbstractAction {
-        private ShowAllMatriculantsAction() {
-            putValue(Action.NAME, tSHOWALL);
-            putValue(Action.SHORT_DESCRIPTION, tSHOWALL_DESCRIPTION);
+    private class CalcAllMatriculantsAction extends AbstractAction {
+        private CalcAllMatriculantsAction() {
+            putValue(Action.NAME, tCALCALL);
+            putValue(Action.SHORT_DESCRIPTION, tCALCALL_DESCRIPTION);
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -390,13 +403,39 @@ public class MainFrame extends JFrame {
 
             List<Integer> counts = new ArrayList<Integer>();
             for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
-                counts.add(70);
+                counts.add(20);
             }
             mainTable.ApportionBySpec(counts);
             mainTable.repaint();
         }
     }
 
+    private class ShowMatriculantsAction extends AbstractAction {
+        private String specialityName;
+
+        private ShowMatriculantsAction(String name) {
+            specialityName = name;
+            if (tSHOWNOTENT_ITEM.equals(name)) {
+                putValue(Action.NAME, name);
+            } else {
+                putValue(Action.NAME, tSHOWENT_PREF + name);
+            }
+            putValue(Action.SHORT_DESCRIPTION, tSHOWENT_DESCRIPTION);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JCheckBoxMenuItem showMenuItem = (JCheckBoxMenuItem) e.getSource();
+
+            if (tSHOWNOTENT_ITEM.equals(specialityName)) {
+                MatriculantTable.setShowNotEntrance(showMenuItem.isSelected());
+            } else {
+                MatriculantTable.setShowEntrance(specialityName, showMenuItem.isSelected());
+            }
+            MatriculantTable.recalculateViewRows();
+            mainTable.refresh();
+            mainTable.repaint();
+        }
+    }
     private class SortAction extends AbstractAction {
         private SortAction() {
             putValue(Action.NAME, "Сортировка");

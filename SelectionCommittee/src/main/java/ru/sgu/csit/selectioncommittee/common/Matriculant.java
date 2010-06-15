@@ -359,8 +359,9 @@ public class Matriculant extends Person {
             }
         }
         if (entranceSpecialityName != null && !"".equals(entranceSpecialityName)) {
-            str += "Результат зачисления: " + entranceSpecialityName + "\n\n";
+            str += "Результат зачисления: " + entranceSpecialityName + "\n";
         }
+        str += "\n";
         if (schoolName != null && !schoolName.isEmpty()) {
             str += "Предыдущее место учёбы:\n\t" + schoolName + "\n";
         }

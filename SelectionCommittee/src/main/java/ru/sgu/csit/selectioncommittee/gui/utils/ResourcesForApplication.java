@@ -35,18 +35,22 @@ public class ResourcesForApplication {
     public final static String tINFO_DESCRIPTION = "Посмотреть данные абитуриента";
 
     public final static String tVIEW_MENU = "Вид";
-    public final static String tSHOWMATRICULANTS_DESCRIPTION = "Сортировать абитуриентов для данной специальности";
-    public final static String tSHOWALL = "В порядке добавления";
-    public final static String tSHOWALL_DESCRIPTION = "Показать абитуриентов в порядке добавления";
+    public final static String tSHOWNOTENT_ITEM = "Не зачисленные";
+    public final static String tSHOWENT_PREF = "Зачисленные на ";
+    public final static String tSHOWENT_DESCRIPTION = "Показать абитуриентов данной категории";
     public final static String tSHOWCOLUMN_DESCRIPTION = "Показать или скрыть столбец";
     public final static String tAUTORESIZE = "Автовыравнивание";
     public final static String tAUTORESIZE_DESCRIPTION = "Выровнять таблицу по ширине окна";
     public final static String tHIGHLIGHTING = "Цветовое выделение";
     public final static String tHIGHLIGHTING_DESCRIPTION = "Выделить строки цветами в соответствии с наличием документов";
 
-    public final static String tAPPORTION_MENU = "Распределить";
+    public final static String tAPPORTION_MENU = "Раcсчитать";
+    public final static String tCALCFORSPECIALITY_DESCRIPTION = "Сортировать абитуриентов для данной специальности";
+    public final static String tCALCALL = "В порядке добавления";
+    public final static String tCALCALL_DESCRIPTION = "Показать абитуриентов в порядке добавления";
+    public final static String tCALCFOR_PREF = "Для ";
     public final static String tAPPORTION_SPEC_DESCRIPTION = "Распределить абитуриентов по специальностям";
-    public final static String tAPPORTION_SPEC = "По специальностям";
+    public final static String tAPPORTION_SPEC = "Распределить по специальностям";
 
     public final static String tHELP_MENU = "Справка";
     public final static String tABOUT = "О программе";
