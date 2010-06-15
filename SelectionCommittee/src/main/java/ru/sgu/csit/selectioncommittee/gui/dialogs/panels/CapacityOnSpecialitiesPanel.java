@@ -1,6 +1,7 @@
 package ru.sgu.csit.selectioncommittee.gui.dialogs.panels;
 
 import ru.sgu.csit.selectioncommittee.common.ReceiptExamine;
+import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 
 import java.util.ArrayList;
@@ -20,9 +21,9 @@ public class CapacityOnSpecialitiesPanel extends SelectNumbersPanel {
 
         List<String> examineNames = new ArrayList<String>();
 
-        List<ReceiptExamine> receiptExamineList = DataAccessFactory.getExamines();
-        for (ReceiptExamine receiptExamine : receiptExamineList) {
-            examineNames.add(receiptExamine.getName());
+        List<Speciality> specialityList = DataAccessFactory.getSpecialities();
+        for (Speciality speciality : specialityList) {
+            examineNames.add(speciality.getName());
         }
 
         createLabelList(examineNames);

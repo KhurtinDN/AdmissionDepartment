@@ -6,7 +6,6 @@ import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.Map;
 
 import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*;
 
