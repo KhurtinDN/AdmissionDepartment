@@ -24,12 +24,15 @@ public class SortDialog extends JDialog {
 
     private SortColumnPanel sortColumnPanel;
 
+    private MatriculantTable matriculantTable;
+
     public SortDialog(JFrame owner, MatriculantTable matriculantTable) {
         super(owner, "Поля для сортирровки", true);
+        this.matriculantTable = matriculantTable;
         setSize(600, 300);
         setLayout(new GridBagLayout());
 
-        add(createSelectSortColumnPanel(matriculantTable),
+        add(createSelectSortColumnPanel(),
                 new GBConstraints(0, 0).setFill(GBConstraints.BOTH).setWeight(100, 100));
         add(createButtonPanel(), new GBConstraints(0, 1, true));
 
@@ -47,11 +50,12 @@ public class SortDialog extends JDialog {
         content.getActionMap().put("CLOSE_DIALOG", closeAction);
     }
 
-    private JPanel createSelectSortColumnPanel(MatriculantTable matriculantTable) {
+    private JPanel createSelectSortColumnPanel() {
         List<MatriculantTable.ColumnInfo> columnInfoList = matriculantTable.getColumns();
 
         List<String> columnList = new ArrayList<String>();
-        for (MatriculantTable.ColumnInfo columnInfo : columnInfoList) {
+        for (int i = 1, n = columnInfoList.size(); i < n; ++i) {
+            MatriculantTable.ColumnInfo columnInfo = columnInfoList.get(i);
             if (columnInfo.isVisible()) {
                 columnList.add(columnInfo.getColumnName());
             }
@@ -81,8 +85,23 @@ public class SortDialog extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-//            List<String> columnNames = sortColumnPanel.getColumnNameList();
-            // todo: code for sorting
+            List<String> columnNames = sortColumnPanel.getColumnNameList();
+            List<Integer> columnIndexList = new ArrayList<Integer>();
+
+            for (String columnName : columnNames) {
+                for (int index = 0, n = matriculantTable.getColumns().size(); index < n; ++index) {
+                    MatriculantTable.ColumnInfo columnInfo = matriculantTable.getColumns().get(index);
+                    if (columnName.equals(columnInfo.getColumnName())) {
+                        columnIndexList.add(index);
+                        break;
+                    }
+                }
+            }
+
+            SortDialog.this.setVisible(false);
+
+            matriculantTable.sort(columnIndexList);
+            matriculantTable.repaint();
         }
     }
 
