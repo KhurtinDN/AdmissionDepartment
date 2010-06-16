@@ -9,7 +9,6 @@ import ru.sgu.csit.selectioncommittee.service.WritingException;
 import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
@@ -79,9 +78,7 @@ public class ExportToExcelDialog extends JDialog {
         }
 
         public void actionPerformed(ActionEvent e) {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setFileFilter(new FileNameExtensionFilter("Excel файлы (*.xls, *.xlsx)", "xls", "xlsx"));
-            fileChooser.setDialogTitle("Сохранение абитуриентов в Excel файл");
+            JFileChooser fileChooser = new ExcelFileChooser();
 
             if (fileChooser.showSaveDialog(ExportToExcelDialog.this) == JFileChooser.APPROVE_OPTION) {
                 File file = fileChooser.getSelectedFile();
@@ -92,7 +89,7 @@ public class ExportToExcelDialog extends JDialog {
 
                 ExportToExcel exportToExcel = new ExportToExcel();
                 try {
-                    exportToExcel.write(file, "Абитуриенты", headerList, contentLists);
+                    exportToExcel.writeMatriculants(file, "Абитуриенты", headerList, contentLists);
                 } catch (ArgumentNotExcelFileException e1) {
                     showErrorMessage("Файл должен иметь расширение *.xls или *.xlsx");
                 } catch (FileNotFoundException e1) {

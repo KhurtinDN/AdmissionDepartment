@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Date: 03.06.2010
@@ -22,10 +23,44 @@ public class ExportToExcel {
     public ExportToExcel() {
     }
 
-    public void write(File file, String title, List<String> headerList, List<List<String>> contentLists)
+    public void writeMatriculants(File file, String title, List<String> headerList, List<List<String>> contentLists)
             throws ArgumentNotExcelFileException, FileNotFoundException, WritingException {
+        Workbook workbook = createWorkbook(file.getName());
+
+        Sheet sheet = createSheet(workbook, "Абитуриенты");
+
+        writeHeader(sheet, title, headerList);
+        writeContent(sheet, contentLists);
+
+        fillStyleForAllCell(sheet, contentLists.size(), headerList.size());
+        resizeColumnWidth(sheet, headerList, contentLists);
+
+        writeWorkbookToFile(workbook, file);
+    }
+
+    public void writeSpecialities(File file, String title,
+                                  List<String> headerList, Map<String, List<List<String>>> contentMap)
+            throws ArgumentNotExcelFileException, FileNotFoundException, WritingException {
+        Workbook workbook = createWorkbook(file.getName());
+
+        for (Map.Entry<String, List<List<String>>> entry : contentMap.entrySet()) {
+            String specialityName = entry.getKey();
+            List<List<String>> contentLists = entry.getValue();
+
+            Sheet sheet = createSheet(workbook, specialityName);
+
+            writeHeader(sheet, title, headerList);
+            writeContent(sheet, contentLists);
+
+            fillStyleForAllCell(sheet, contentLists.size(), headerList.size());
+            resizeColumnWidth(sheet, headerList, contentLists);
+        }
+
+        writeWorkbookToFile(workbook, file);
+    }
+
+    private Workbook createWorkbook(String fileName) throws ArgumentNotExcelFileException {
         Workbook workbook;
-        String fileName = file.getName();
         if (fileName.endsWith(".xls")) {
             workbook = new HSSFWorkbook();
         } else if (fileName.endsWith(".xlsx")) {
@@ -33,8 +68,11 @@ public class ExportToExcel {
         } else {
             throw new ArgumentNotExcelFileException();
         }
+        return workbook;
+    }
 
-        Sheet sheet = workbook.createSheet("Абитуриенты");
+    private Sheet createSheet(Workbook workbook, String name) {
+        Sheet sheet = workbook.createSheet(name);
         sheet.setHorizontallyCenter(true);
         sheet.setAutobreaks(true);
         sheet.setFitToPage(true);
@@ -43,12 +81,10 @@ public class ExportToExcel {
         printSetup.setFitWidth((short) 1);
         printSetup.setFitHeight((short) 9999);
 
-        writeHeader(sheet, title, headerList);
-        writeContent(sheet, contentLists);
+        return sheet;
+    }
 
-        fillStyleForAllCell(sheet, contentLists.size(), headerList.size());
-        resizeColumnWidth(sheet, headerList, contentLists);
-
+    private void writeWorkbookToFile(Workbook workbook, File file) throws FileNotFoundException, WritingException {
         FileOutputStream fileOutputStream = new FileOutputStream(file);
         try {
             workbook.write(fileOutputStream);
@@ -124,7 +160,7 @@ public class ExportToExcel {
     private void setTitleCellStyle(Sheet sheet, Cell cell) {
         Font font = sheet.getWorkbook().createFont();
         font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        font.setFontHeightInPoints((short)12);
+        font.setFontHeightInPoints((short) 12);
 
         CellStyle headerCellStyle = sheet.getWorkbook().createCellStyle();
         headerCellStyle.setFont(font);

@@ -1,17 +1,25 @@
 package ru.sgu.csit.selectioncommittee.gui.dialogs;
 
+import ru.sgu.csit.selectioncommittee.common.EntranceCategory;
+import ru.sgu.csit.selectioncommittee.common.Matriculant;
 import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import ru.sgu.csit.selectioncommittee.gui.MatriculantTable;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.panels.CapacityOnSpecialitiesPanel;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
+import ru.sgu.csit.selectioncommittee.service.ArgumentNotExcelFileException;
+import ru.sgu.csit.selectioncommittee.service.ExportToExcel;
+import ru.sgu.csit.selectioncommittee.service.WritingException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.List;
 
+import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.showErrorMessage;
 import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*;
 
 /**
@@ -94,10 +102,105 @@ public class ApportionMatriculantsDialog extends JDialog {
             matriculantTable.repaint();
 
             if (saveInXlsCheckBox.isSelected()) {
-                // todo: save to Excel
+                JFileChooser fileChooser = new ExcelFileChooser();
+
+                if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+
+                    List<String> headerList = createHeaderList();
+                    Map<String, List<List<String>>> contentMap = createContentMap();
+
+                    ExportToExcel exportToExcel = new ExportToExcel();
+                    try {
+                        exportToExcel.writeSpecialities(file, "Абитуриенты", headerList, contentMap);
+                    } catch (ArgumentNotExcelFileException e1) {
+                        showErrorMessage("Файл должен иметь расширение *.xls или *.xlsx");
+                    } catch (FileNotFoundException e1) {
+                        showErrorMessage("Файл " + file.getPath() + " не найден.");
+                    } catch (WritingException e1) {
+                        showErrorMessage("При экспорте произошла ошибка записи.");
+                    }
+                }
             }
 
             ApportionMatriculantsDialog.this.setVisible(false);
+        }
+
+        private Map<String, List<List<String>>> createContentMap() {
+            Map<String, List<List<String>>> contentMap = new LinkedHashMap<String, List<List<String>>>();
+
+            for (Speciality speciality : DataAccessFactory.getSpecialities()) {
+                String specialityName = speciality.getName();
+                List<List<String>> contentLists = createContentLists(specialityName);
+                if (contentLists.size() > 0) {
+                    contentMap.put(specialityName, contentLists);
+                }
+            }
+
+            return contentMap;
+        }
+
+        private List<List<String>> createContentLists(String specialityName) {
+            List<List<String>> contentLists = new ArrayList<List<String>>();
+
+            List<MatriculantRecord> matriculants = new ArrayList<MatriculantRecord>();
+            for (Matriculant matriculant : DataAccessFactory.getMatriculants()) {
+                if (specialityName.equals(matriculant.getEntranceSpecialityName())) {
+                    matriculants.add(new MatriculantRecord(matriculant));
+                }
+            }
+            Collections.sort(matriculants);
+
+            for (int i = 0, n = matriculants.size(); i < n; ++i) {
+                List<String> matriculantRow = new ArrayList<String>();
+                matriculantRow.addAll(matriculants.get(i).getDataList(i + 1));
+                contentLists.add(matriculantRow);
+            }
+
+            return contentLists;
+        }
+
+        private List<String> createHeaderList() {
+            return Arrays.asList("№", "ФИО", "Тип поступления", "суммарный балл");
+        }
+
+        private class MatriculantRecord implements Comparable<MatriculantRecord> {
+            private String name;
+            private EntranceCategory entranceCategory;
+            private Integer genericMark;
+
+            public MatriculantRecord(Matriculant matriculant) {
+                this.name = matriculant.getName();
+                this.entranceCategory = matriculant.getEntranceCategory();
+                this.genericMark = matriculant.calculateTotalBallsForSpeciality(matriculant.getEntranceSpecialityName());
+            }
+
+            private List<String> getDataList(Integer number) {
+                return new ArrayList<String>(Arrays.asList(number.toString(), name,
+                        getEntranceCategoryName(entranceCategory), genericMark.toString()));
+            }
+
+            private String getEntranceCategoryName(EntranceCategory entranceCategory) {
+                switch (entranceCategory) {
+                    case OUT_EXAMINE_ORPHAN:
+                        return "Без экзаменов (сирота)";
+                    case OUT_EXAMINE_INVALID:
+                        return "Без экзаменов (инвалид)";
+                    case OUT_EXAMINE_OTHER:
+                        return "Без экзаменов (другое)";
+                    case EXAMINE:
+                        return "По экзаменам";
+                    case NO_EXAMINE:
+                        return "Без экзаменов";
+                    default:
+                        return "";
+                }
+            }
+
+            @Override
+            public int compareTo(MatriculantRecord other) {
+                return this.name.compareTo(other.name);
+            }
         }
     }
 
