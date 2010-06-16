@@ -1,6 +1,5 @@
 package ru.sgu.csit.selectioncommittee.gui.dialogs.panels;
 
-import ru.sgu.csit.selectioncommittee.common.ReceiptExamine;
 import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 
@@ -17,7 +16,7 @@ import java.util.Map;
 public class CapacityOnSpecialitiesPanel extends SelectNumbersPanel {
 
     public CapacityOnSpecialitiesPanel() {
-        super("Количество мест на каждой специальности");
+        super("Количество мест на каждой специальности", 0);
 
         List<String> examineNames = new ArrayList<String>();
 

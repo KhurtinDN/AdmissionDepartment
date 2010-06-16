@@ -16,9 +16,22 @@ import java.util.List;
 public class SelectNumbersPanel extends JPanel {
     private Map<String, JSpinner> spinners = new HashMap<String, JSpinner>();
 
+    private Integer max = null;
+    private Integer min = null;
+
     public SelectNumbersPanel(String title) {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title));
+    }
+
+    public SelectNumbersPanel(String title, Integer min) {
+        this(title);
+        this.min = min;
+    }
+
+    public SelectNumbersPanel(String title, Integer max, Integer min) {
+        this(title, min);
+        this.max = max;
     }
 
     public void createLabelList(List<String> labelNames) {
@@ -26,7 +39,7 @@ public class SelectNumbersPanel extends JPanel {
 
         int i = 0;
         for (String labelName : labelNames) {
-            JSpinner spinner = new JSpinner();
+            JSpinner spinner = new JSpinner(new SpinnerNumberModel((Number)0, min, max, 1));
             Dimension dimension = spinner.getPreferredSize();
             spinner.setPreferredSize(new Dimension(dimension.width + 50, dimension.height));
             spinners.put(labelName, spinner);
@@ -64,5 +77,4 @@ public class SelectNumbersPanel extends JPanel {
 
         return numbers;
     }
-
 }

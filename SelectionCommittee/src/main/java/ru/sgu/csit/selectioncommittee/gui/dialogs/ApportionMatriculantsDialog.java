@@ -1,11 +1,16 @@
 package ru.sgu.csit.selectioncommittee.gui.dialogs;
 
+import ru.sgu.csit.selectioncommittee.common.Speciality;
+import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
+import ru.sgu.csit.selectioncommittee.gui.MatriculantTable;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.panels.CapacityOnSpecialitiesPanel;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.*;
+import java.util.List;
 
 import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*;
 
@@ -16,14 +21,17 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  * @author xx & hd
  */
 public class ApportionMatriculantsDialog extends JDialog {
-    private JCheckBox saveInDbCheckBox = new JCheckBox("Сохранить распределение в базе данных");
+    private JCheckBox saveInXlsCheckBox = new JCheckBox("Сохранить в excel файл");
     private Action apportionAction = new ApportionAction();
     private Action closeAction = new CloseAction();
 
+    private MatriculantTable matriculantTable = null;
+
     private CapacityOnSpecialitiesPanel capacityOnSpecialitiesPanel;
 
-    public ApportionMatriculantsDialog(JFrame owner) {
+    public ApportionMatriculantsDialog(JFrame owner, MatriculantTable matriculantTable) {
         super(owner, "Распределение абитуриентов по специальностям", true);
+        this.matriculantTable = matriculantTable;
         setSize(600, 300);
         setLayout(new GridBagLayout());
 
@@ -53,7 +61,7 @@ public class ApportionMatriculantsDialog extends JDialog {
 
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new GridBagLayout());
-        buttonPanel.add(saveInDbCheckBox, new GBConstraints(0, 0));
+        buttonPanel.add(saveInXlsCheckBox, new GBConstraints(0, 0));
         buttonPanel.add(new JLabel(), new GBConstraints(1, 0, true));
         buttonPanel.add(new JButton(apportionAction), new GBConstraints(2, 0));
         buttonPanel.add(new JButton(closeAction), new GBConstraints(3, 0));
@@ -66,8 +74,30 @@ public class ApportionMatriculantsDialog extends JDialog {
         }
 
         public void actionPerformed(ActionEvent e) {
-//            Map<String, Integer> capacityOnSpecialitiesMap = capacityOnSpecialitiesPanel.getCapacityOnSpecialities();
-            // todo: code for apportion
+            List<Integer> counts = new ArrayList<Integer>();
+
+            List<Speciality> specialityList = DataAccessFactory.getSpecialities();
+
+            Set<Map.Entry<String, Integer>>
+                    entrySet = capacityOnSpecialitiesPanel.getCapacityOnSpecialities().entrySet();
+
+            for (Speciality speciality : specialityList) {
+                for (Map.Entry<String, Integer> entry : entrySet) {
+                    if (entry.getKey().equals(speciality.getName())) {
+                        counts.add(entry.getValue());
+                        break;
+                    }
+                }
+            }
+
+            matriculantTable.ApportionBySpec(counts);
+            matriculantTable.repaint();
+
+            if (saveInXlsCheckBox.isSelected()) {
+                // todo: save to Excel
+            }
+
+            ApportionMatriculantsDialog.this.setVisible(false);
         }
     }
 

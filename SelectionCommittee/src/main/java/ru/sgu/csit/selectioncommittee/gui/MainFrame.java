@@ -13,9 +13,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.print.PrinterException;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*;
 
 /**
@@ -34,7 +31,7 @@ public class MainFrame extends JFrame {
     private Action aboutAction = new AboutAction();
     private Action infoAction = new InfoAction();
     private Action resizeTableAction = new ResizeTableAction();
-    private Action calcAllMatriculantsAction = new CalcAllMatriculantsAction();
+//    private Action calcAllMatriculantsAction = new CalcAllMatriculantsAction();
     private Action highlightingAction = new HighlightingAction();
     private Action apportionMatriculantsAction = new ApportionMatriculantsAction();
     private Action sortAction = new SortAction();
@@ -381,42 +378,42 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private class CalcForSpecialityAction extends AbstractAction {
-        private String specialityName;
+//    private class CalcForSpecialityAction extends AbstractAction {
+//        private String specialityName;
+//
+//        private CalcForSpecialityAction(String name) {
+//            specialityName = name;
+//            putValue(Action.NAME, tCALCFOR_PREF + name);
+//            putValue(Action.SHORT_DESCRIPTION, tCALCFORSPECIALITY_DESCRIPTION);
+//        }
+//
+//        public void actionPerformed(ActionEvent e) {
+//            JMenuItem showMenuItem = (JMenuItem) e.getSource();
+//
+//            for (Speciality speciality : DataAccessFactory.getSpecialities()) {
+//                if (speciality.getName().equals(specialityName)) {
+//                    mainTable.sortBy(speciality);
+//                    mainTable.repaint();
+//
+//                    return;
+//                }
+//            }
+//        }
+//    }
 
-        private CalcForSpecialityAction(String name) {
-            specialityName = name;
-            putValue(Action.NAME, tCALCFOR_PREF + name);
-            putValue(Action.SHORT_DESCRIPTION, tCALCFORSPECIALITY_DESCRIPTION);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            JMenuItem showMenuItem = (JMenuItem) e.getSource();
-
-            for (Speciality speciality : DataAccessFactory.getSpecialities()) {
-                if (speciality.getName().equals(specialityName)) {
-                    mainTable.sortBy(speciality);
-                    mainTable.repaint();
-                    
-                    return;
-                }
-            }
-        }
-    }
-
-    private class CalcAllMatriculantsAction extends AbstractAction {
-        private CalcAllMatriculantsAction() {
-            putValue(Action.NAME, tCALCALL);
-            putValue(Action.SHORT_DESCRIPTION, tCALCALL_DESCRIPTION);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            JMenuItem columnMenuItem = (JMenuItem) e.getSource();
-
-            MatriculantTable.resetRowIndexes();
-            mainTable.repaint();
-        }
-    }
+//    private class CalcAllMatriculantsAction extends AbstractAction {
+//        private CalcAllMatriculantsAction() {
+//            putValue(Action.NAME, tCALCALL);
+//            putValue(Action.SHORT_DESCRIPTION, tCALCALL_DESCRIPTION);
+//        }
+//
+//        public void actionPerformed(ActionEvent e) {
+//            JMenuItem columnMenuItem = (JMenuItem) e.getSource();
+//
+//            MatriculantTable.resetRowIndexes();
+//            mainTable.repaint();
+//        }
+//    }
 
     private class CalcMatriculantsAction extends AbstractAction {
         private CalcMatriculantsAction() {
@@ -450,7 +447,8 @@ public class MainFrame extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-            ApportionMatriculantsDialog apportionMatriculantsDialog = new ApportionMatriculantsDialog(MainFrame.this);
+            ApportionMatriculantsDialog apportionMatriculantsDialog =
+                    new ApportionMatriculantsDialog(MainFrame.this, mainTable);
             apportionMatriculantsDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             apportionMatriculantsDialog.setVisible(true);
         }
