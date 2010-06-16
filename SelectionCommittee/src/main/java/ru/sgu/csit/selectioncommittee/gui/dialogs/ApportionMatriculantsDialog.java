@@ -23,7 +23,7 @@ public class ApportionMatriculantsDialog extends JDialog {
     private CapacityOnSpecialitiesPanel capacityOnSpecialitiesPanel;
 
     public ApportionMatriculantsDialog(JFrame owner) {
-        super(owner, "Распредесение абитуриентов по специальностям", true);
+        super(owner, "Распределение абитуриентов по специальностям", true);
         setSize(600, 300);
         setLayout(new GridBagLayout());
 

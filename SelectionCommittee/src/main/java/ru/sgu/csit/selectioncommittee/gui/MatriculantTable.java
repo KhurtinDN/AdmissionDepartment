@@ -402,12 +402,14 @@ public class MatriculantTable extends JTable {
             while (currentSpecPriority <= DataAccessFactory.getSpecialities().size()) {
                 theContinue = false;
 
+                System.out.println("\n" + currentSpecPriority + " ***");
                 for (int specIndex = 0; specIndex < DataAccessFactory.getSpecialities().size(); ++specIndex) {
                     Speciality speciality = DataAccessFactory.getSpecialities().get(specIndex);
                     int count = counts.get(specIndex);
                     Iterator<Integer> iter = matriculantIndexes.get(specIndex).iterator();
                     boolean updatedMatriculants = false;
 
+                    System.out.println("\n" + specIndex + ":  ");
                     while (count > 0 && iter.hasNext()) {
                         Integer element = iter.next();
                         Matriculant matriculant = DataAccessFactory.getMatriculants().get(element);
@@ -415,21 +417,29 @@ public class MatriculantTable extends JTable {
                         if ("".equals(matriculant.getEntranceSpecialityName())) {
                                 if (speciality.getName().equals(matriculant.getSpeciality().get(currentSpecPriority))) {
                                     matriculant.setEntranceSpecialityName(speciality.getName());
+                                    System.out.print(count + " - " + matriculant.getReceiptNumber() + ", ");
                                     DataAccessFactory.getMatriculantDAO().update(matriculant);
                                     updatedMatriculants = true;
-                                } /*else {
+                                } else {
                                     if (matriculant.getSpeciality().containsValue(speciality.getName())) {
                                         --count;
+                                        System.out.print(count + ", ");
                                     }
-                                } */
+                                }
                         }
                         if (speciality.getName().equals(matriculant.getEntranceSpecialityName())) {
                             --count;
+                            System.out.print(count + ", ");
                         }
+                        //System.out.print(count + ", ");
                     }
                     if (updatedMatriculants) {
                         //DataAccessFactory.reloadMatriculants();
                         theContinue = true;
+                        if (currentSpecPriority != 1) {
+                            currentSpecPriority = 1;
+                            break;
+                        }
                     }
                 }
                 if (!theContinue) {
