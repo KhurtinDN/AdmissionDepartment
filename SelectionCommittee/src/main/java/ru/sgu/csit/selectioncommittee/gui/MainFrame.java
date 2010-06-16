@@ -4,6 +4,7 @@ import ru.sgu.csit.selectioncommittee.common.Matriculant;
 import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.*;
+import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
 
 import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
 
@@ -24,28 +25,29 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  * @author xx & hd
  */
 public class MainFrame extends JFrame {
-    Action exportToExcelAction = new ExportToExcelAction();   // todo: all fields must be private
-    Action printAction = new PrintAction();
-    Action exitAction = new ExitAction();
-    Action addAction = new AddAction();
-    Action editAction = new EditAction();
-    Action deleteAction = new DeleteAction();
-    Action aboutAction = new AboutAction();
-    Action infoAction = new InfoAction();
-    Action resizeTableAction = new ResizeTableAction();
-    Action calcAllMatriculantsAction = new CalcAllMatriculantsAction();
-    Action highlightingAction = new HighlightingAction();
-    Action apportionMatriculantsAction = new ApportionMatriculantsAction();
-    Action sortAction = new SortAction();
-    Action apportionMatriculantsAction2 = new ApportionMatriculantsAction2();
+    private Action exportToExcelAction = new ExportToExcelAction();
+    private Action exportToExcelApportionAction = new ExportToExcelApportionAction();
+    private Action printAction = new PrintAction();
+    private Action exitAction = new ExitAction();
+    private Action addAction = new AddAction();
+    private Action editAction = new EditAction();
+    private Action deleteAction = new DeleteAction();
+    private Action aboutAction = new AboutAction();
+    private Action infoAction = new InfoAction();
+    private Action resizeTableAction = new ResizeTableAction();
+    private Action calcAllMatriculantsAction = new CalcAllMatriculantsAction();
+    private Action highlightingAction = new HighlightingAction();
+    private Action apportionMatriculantsAction = new ApportionMatriculantsAction();
+    private Action sortAction = new SortAction();
+    private Action apportionMatriculantsAction2 = new ApportionMatriculantsAction2();
 
-    MatriculantTable mainTable = null;
+    private MatriculantTable mainTable = null;
 
-    MatriculantInfoDialog matriculantInfoDialog = new MatriculantInfoDialog(this);
+    private MatriculantInfoDialog matriculantInfoDialog = new MatriculantInfoDialog(this);
+
 
     public MainFrame() {
         mainTable = new MatriculantTable();
-        //mainTable.setAutoCreateRowSorter(true);
         setTitle(tTITLE_OF_APPLICATION);
         setIconImage(iAPP16);
         setSize(800, 600);
@@ -163,9 +165,30 @@ public class MainFrame extends JFrame {
         jToolBar.add(editAction);
         jToolBar.addSeparator();
         jToolBar.add(printAction);
-//        jToolBar.add(exitAction);
+        jToolBar.addSeparator();
+        jToolBar.addSeparator();
+
+        jToolBar.add(createSpecialityPanel());
+        jToolBar.addSeparator();
+
+        jToolBar.add(exportToExcelApportionAction);
+
         jToolBar.setFloatable(false);
         return jToolBar;
+    }
+
+    private JPanel createSpecialityPanel() {
+        JPanel specialityPanel = new JPanel(new GridBagLayout());
+        specialityPanel.add(new JLabel("Специальности:"), new GBConstraints(0, 0));
+
+        JComboBox specialityComboBox = new JComboBox(new Object[] {"Все", "Прикладная", "ИВТ", "ВМ"}); // todo: from db
+
+        specialityPanel.add(specialityComboBox, new GBConstraints(1, 0, true));
+
+        specialityPanel.setMaximumSize(specialityPanel.getPreferredSize());
+//        specialityPanel.setMaximumSize(new Dimension(250, specialityComboBox.getPreferredSize().height));
+
+        return specialityPanel;
     }
 
     public void refresh() {
@@ -180,6 +203,23 @@ public class MainFrame extends JFrame {
             putValue(Action.SMALL_ICON, iEXCEL16);
             putValue(Action.SHORT_DESCRIPTION, tEXPORT_TO_EXCEL_DESCRIPTION);
             putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F2"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (exportDialog == null) {
+                exportDialog = new ExportToExcelDialog(MainFrame.this);
+            }
+            exportDialog.setVisible(true);
+        }
+    }
+
+    private class ExportToExcelApportionAction extends AbstractAction {
+        private JDialog exportDialog;
+
+        private ExportToExcelApportionAction() {
+            putValue(Action.NAME, tEXPORT_TO_EXCEL);
+            putValue(Action.SMALL_ICON, iEXCEL16);
+            putValue(Action.SHORT_DESCRIPTION, tEXPORT_TO_EXCEL_DESCRIPTION);
         }
 
         public void actionPerformed(ActionEvent e) {
