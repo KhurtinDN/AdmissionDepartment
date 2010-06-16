@@ -28,6 +28,7 @@ public class MatriculantTable extends JTable {
     private List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
     private static List<String> columnNames = new ArrayList<String>();
     private static List<Integer> columnWidths = new ArrayList<Integer>();
+    private static List<ColumnType> columnTypes = new ArrayList<ColumnType>();
     private static List<Boolean> columnVisible = new ArrayList<Boolean>();
     private static List<Integer> rowIndexes = new ArrayList<Integer>();
     private static List<Integer> viewRowIndexes = new ArrayList<Integer>();
@@ -104,7 +105,7 @@ public class MatriculantTable extends JTable {
         }
         for (int i = 0; i < columnWidths.size(); ++i) {
             getColumnModel().getColumn(i).setPreferredWidth(columnWidths.get(i));
-            columns.add(new ColumnInfo(getColumnModel().getColumn(i), columnNames.get(i),
+            columns.add(new ColumnInfo(getColumnModel().getColumn(i), columnNames.get(i), columnTypes.get(i),
                     columnVisible.get(i)));
         }
         for (ColumnInfo column : columns) {
@@ -156,56 +157,68 @@ public class MatriculantTable extends JTable {
     private static void regenerateColumnData() {
         columnNames.clear();
         columnWidths.clear();
+        columnTypes.clear();
         columnVisible.clear();
 
         columnNames.add("№");
         columnWidths.add(25);
+        columnTypes.add(ColumnType.NUMERIC);
         columnVisible.add(Boolean.TRUE);
 
         columnNames.add("ФИО");
         columnWidths.add(220);
+        columnTypes.add(ColumnType.STRING);
         columnVisible.add(Boolean.TRUE);
 
         columnNames.add("Рег. №");
         columnWidths.add(70);
+        columnTypes.add(ColumnType.NUMERIC);
         columnVisible.add(Boolean.TRUE);
 
         columnNames.add("Поступает");
         columnWidths.add(100);
+        columnTypes.add(ColumnType.STRING);
         columnVisible.add(Boolean.TRUE);
 
         startSpecialityIndex = 3;
         for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
             columnNames.add(DataAccessFactory.getSpecialities().get(i).getName());
             columnWidths.add(60);
+            columnTypes.add(ColumnType.NUMERIC);
             columnVisible.add(Boolean.FALSE);
         }
 
         columnNames.add("Балл");
         columnWidths.add(45);
+        columnTypes.add(ColumnType.NUMERIC);
         columnVisible.add(Boolean.TRUE);
 
         columnNames.add("Специальность");
         columnWidths.add(95);
+        columnTypes.add(ColumnType.STRING);
         columnVisible.add(Boolean.TRUE);
 
         columnNames.add("Зачислен на");
         columnWidths.add(95);
+        columnTypes.add(ColumnType.STRING);
         columnVisible.add(Boolean.TRUE);
 
         startExaminesIndex = 2 + DataAccessFactory.getSpecialities().size() + startSpecialityIndex;
         for (int i = 0; i < DataAccessFactory.getExamines().size(); ++i) {
             columnNames.add(DataAccessFactory.getExamines().get(i).getName());
             columnWidths.add(60);
+            columnTypes.add(ColumnType.NUMERIC);
             columnVisible.add(Boolean.TRUE);
         }
 
         columnNames.add("Телефон");
         columnWidths.add(150);
+        columnTypes.add(ColumnType.STRING);
         columnVisible.add(Boolean.FALSE);
 
         columnNames.add("Дата");
         columnWidths.add(110);
+        columnTypes.add(ColumnType.STRING);
         columnVisible.add(Boolean.TRUE);
     }
 
@@ -325,6 +338,42 @@ public class MatriculantTable extends JTable {
                     matriculantIndexes.get(i).add(j);
                 }
             }
+        }
+
+        public void sort(final List<Integer> colIndexes) {
+            Collections.sort(viewRowIndexes, new Comparator<Integer>() {
+                public int compare(Integer o1, Integer o2) {
+                    return compareByColumnsPriority(o1, o2, 0);
+                }
+
+                private int compareByColumnsPriority(Integer firstIndex, Integer secondIndex, int columnIndex) {
+                    if (columnIndex == colIndexes.size()) {
+                        return 0;
+                    }
+                    switch (columnTypes.get(colIndexes.get(columnIndex))) {
+                        case NUMERIC:
+                            if (Integer.valueOf(getValueAt(firstIndex, colIndexes.get(columnIndex)).toString()) <
+                                    Integer.valueOf(getValueAt(secondIndex, colIndexes.get(columnIndex)).toString())) {
+                                return 1;
+                            } else if (Integer.valueOf(getValueAt(firstIndex, colIndexes.get(columnIndex)).toString()) >
+                                    Integer.valueOf(getValueAt(secondIndex, colIndexes.get(columnIndex)).toString())) {
+                                return -1;
+                            } else {
+                                return compareByColumnsPriority(firstIndex, secondIndex, columnIndex + 1);
+                            }
+
+                        case STRING:
+                        default:
+                            if (getValueAt(firstIndex, colIndexes.get(columnIndex)).toString().compareTo(
+                                    getValueAt(secondIndex, colIndexes.get(columnIndex)).toString()) == 0) {
+                                return compareByColumnsPriority(firstIndex, secondIndex, columnIndex + 1);
+                            } else {
+                                return getValueAt(firstIndex, colIndexes.get(columnIndex)).toString().compareTo(
+                                    getValueAt(secondIndex, colIndexes.get(columnIndex)).toString());
+                            }
+                    }
+                }
+            });
         }
 
         public void sortBy(final Speciality speciality, int index) {
@@ -619,14 +668,16 @@ public class MatriculantTable extends JTable {
     public static class ColumnInfo {
         private TableColumn column;
         private String columnName;
+        private ColumnType columnType;
         private boolean visible = true;
 
         public ColumnInfo() {
         }
 
-        public ColumnInfo(TableColumn column, String name, boolean visible) {
+        public ColumnInfo(TableColumn column, String name, ColumnType type, boolean visible) {
             this.column = column;
             this.columnName = name;
+            this.columnType = type;
             this.visible = visible;
         }
 
@@ -653,6 +704,10 @@ public class MatriculantTable extends JTable {
         public void setVisible(boolean visible) {
             this.visible = visible;
         }
+    }
+
+    private enum ColumnType {
+        NUMERIC, STRING
     }
 
     private class ShowColumnAction extends AbstractAction {
