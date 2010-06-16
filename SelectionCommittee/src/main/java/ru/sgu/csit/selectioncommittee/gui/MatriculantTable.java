@@ -49,6 +49,7 @@ public class MatriculantTable extends JTable {
         super(matriculantTableModel);
         setDefaultRenderer(Object.class, new MatriculantTableCellRenderer());
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        setColumnsWidth();
         setColumns();
         getTableHeader().setComponentPopupMenu(createColumnPopupMenu());
     }
@@ -100,18 +101,43 @@ public class MatriculantTable extends JTable {
     }
 
     private void setColumns() {
-        if (columns != null) {
+//        if (columns != null) {
+//            for (int i = 0; i < columns.size(); ++i) {
+//                if (!columns.get(i).isVisible()) {
+//                    addColumn(i);
+//                }
+//            }
+//            columns = new ArrayList<ColumnInfo>();
+//        }
+        if (columns == null || columns.isEmpty()) {
             columns = new ArrayList<ColumnInfo>();
+            for (int i = 0; i < columnWidths.size(); ++i) {
+                columns.add(new ColumnInfo(getColumnModel().getColumn(i), columnNames.get(i), columnTypes.get(i),
+                        columnVisible.get(i)));
+            }
+        } else {
+            for (int i = 0; i < columnWidths.size(); ++i) {
+                columns.get(i).setColumn(getColumnModel().getColumn(i));
+            }
         }
+        /*for (ColumnInfo column : columns) {
+                if (!column.isVisible()) {
+                    removeColumn(column.getColumn());
+                }
+                System.out.println(column.getColumnName() + ": " + column.isVisible());
+            }
+            */
+        for (int i = 0; i < columns.size(); ++i) {
+            if (!columns.get(i).isVisible()) {
+                removeColumn(columns.get(i).getColumn());
+            }
+            System.out.println(columns.get(i).getColumnName() + ": " + columns.get(i).isVisible());
+        }
+    }
+
+     private void setColumnsWidth() {
         for (int i = 0; i < columnWidths.size(); ++i) {
             getColumnModel().getColumn(i).setPreferredWidth(columnWidths.get(i));
-            columns.add(new ColumnInfo(getColumnModel().getColumn(i), columnNames.get(i), columnTypes.get(i),
-                    columnVisible.get(i)));
-        }
-        for (ColumnInfo column : columns) {
-            if (!column.isVisible()) {
-                removeColumn(column.getColumn());
-            }
         }
     }
 
@@ -227,6 +253,7 @@ public class MatriculantTable extends JTable {
     public void refresh() {
         //matriculantTableModel.restoreIndexes();
         matriculantTableModel.fireTableStructureChanged();
+        setColumnsWidth();
         setColumns();
     }
 
@@ -731,6 +758,7 @@ public class MatriculantTable extends JTable {
                     } else {
                         removeColumn(i);
                     }
+                    //refresh();
                     repaint();
 
                     return;
