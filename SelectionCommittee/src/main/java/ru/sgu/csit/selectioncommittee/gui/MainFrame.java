@@ -26,7 +26,6 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  */
 public class MainFrame extends JFrame {
     private Action exportToExcelAction = new ExportToExcelAction();
-    private Action exportToExcelApportionAction = new ExportToExcelApportionAction();
     private Action printAction = new PrintAction();
     private Action exitAction = new ExitAction();
     private Action addAction = new AddAction();
@@ -39,7 +38,8 @@ public class MainFrame extends JFrame {
     private Action highlightingAction = new HighlightingAction();
     private Action apportionMatriculantsAction = new ApportionMatriculantsAction();
     private Action sortAction = new SortAction();
-    private Action apportionMatriculantsAction2 = new ApportionMatriculantsAction2();
+
+    private JComboBox specialityComboBox;
 
     private MatriculantTable mainTable = null;
 
@@ -98,8 +98,6 @@ public class MainFrame extends JFrame {
         JMenuBar jMenuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu(tFILE_MENU);
-        fileMenu.add(sortAction); //todo: remove
-        fileMenu.add(apportionMatriculantsAction2); //todo: remove
         fileMenu.add(exportToExcelAction);
         fileMenu.add(printAction);
         fileMenu.addSeparator();
@@ -130,10 +128,11 @@ public class MainFrame extends JFrame {
         viewMenu.add(resizeMenuItem);
 
         JMenu apportionMenu = new JMenu(tAPPORTION_MENU);
-        apportionMenu.add(calcAllMatriculantsAction);
-        for (Speciality speciality : DataAccessFactory.getSpecialities()) {
-            apportionMenu.add(new CalcForSpecialityAction(speciality.getName()));
-        }
+        apportionMenu.add(sortAction);
+//        apportionMenu.add(calcAllMatriculantsAction);
+//        for (Speciality speciality : DataAccessFactory.getSpecialities()) {
+//            apportionMenu.add(new CalcForSpecialityAction(speciality.getName()));
+//        }
         apportionMenu.addSeparator();
         apportionMenu.add(apportionMatriculantsAction);
 
@@ -171,17 +170,21 @@ public class MainFrame extends JFrame {
         jToolBar.add(createSpecialityPanel());
         jToolBar.addSeparator();
 
-        jToolBar.add(exportToExcelApportionAction);
-
         jToolBar.setFloatable(false);
         return jToolBar;
     }
 
     private JPanel createSpecialityPanel() {
         JPanel specialityPanel = new JPanel(new GridBagLayout());
-        specialityPanel.add(new JLabel("Специальности:"), new GBConstraints(0, 0));
+        specialityPanel.add(new JLabel("Ранжировать:"), new GBConstraints(0, 0));
 
-        JComboBox specialityComboBox = new JComboBox(new Object[] {"Все", "Прикладная", "ИВТ", "ВМ"}); // todo: from db
+        Object[] items = new Object[1 + DataAccessFactory.getSpecialities().size()];
+        items[0] = tCALCALL;
+        for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
+            items[i + 1] = tCALCFOR_PREF + DataAccessFactory.getSpecialities().get(i).getName();
+        }
+        specialityComboBox = new JComboBox(items);
+        specialityComboBox.addActionListener(new CalcMatriculantsAction());
 
         specialityPanel.add(specialityComboBox, new GBConstraints(1, 0, true));
 
@@ -203,23 +206,6 @@ public class MainFrame extends JFrame {
             putValue(Action.SMALL_ICON, iEXCEL16);
             putValue(Action.SHORT_DESCRIPTION, tEXPORT_TO_EXCEL_DESCRIPTION);
             putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F2"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if (exportDialog == null) {
-                exportDialog = new ExportToExcelDialog(MainFrame.this);
-            }
-            exportDialog.setVisible(true);
-        }
-    }
-
-    private class ExportToExcelApportionAction extends AbstractAction {
-        private JDialog exportDialog;
-
-        private ExportToExcelApportionAction() {
-            putValue(Action.NAME, tEXPORT_TO_EXCEL);
-            putValue(Action.SMALL_ICON, iEXCEL16);
-            putValue(Action.SHORT_DESCRIPTION, tEXPORT_TO_EXCEL_DESCRIPTION);
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -432,6 +418,31 @@ public class MainFrame extends JFrame {
         }
     }
 
+    private class CalcMatriculantsAction extends AbstractAction {
+        private CalcMatriculantsAction() {
+            putValue(Action.NAME, "Список отображения");
+            putValue(Action.SHORT_DESCRIPTION, tCALCFORSPECIALITY_DESCRIPTION);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            String itemName = (String) specialityComboBox.getSelectedItem();
+
+            if (itemName.equals(tCALCALL)) {
+                MatriculantTable.resetRowIndexes();
+                mainTable.repaint();
+            } else {
+                for (Speciality speciality : DataAccessFactory.getSpecialities()) {
+                    if (itemName.equals(tCALCFOR_PREF + speciality.getName())) {
+                        mainTable.sortBy(speciality);
+                        mainTable.repaint();
+
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
     private class ApportionMatriculantsAction extends AbstractAction {
         private ApportionMatriculantsAction() {
             putValue(Action.NAME, tAPPORTION_SPEC);
@@ -439,14 +450,9 @@ public class MainFrame extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-            JMenuItem showMenuItem = (JMenuItem) e.getSource();
-
-            List<Integer> counts = new ArrayList<Integer>();
-            for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
-                counts.add(20);
-            }
-            mainTable.ApportionBySpec(counts);
-            mainTable.repaint();
+            ApportionMatriculantsDialog apportionMatriculantsDialog = new ApportionMatriculantsDialog(MainFrame.this);
+            apportionMatriculantsDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            apportionMatriculantsDialog.setVisible(true);
         }
     }
 
@@ -486,19 +492,6 @@ public class MainFrame extends JFrame {
             SortDialog sortDialog = new SortDialog(MainFrame.this, mainTable);
             sortDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             sortDialog.setVisible(true);
-        }
-    }
-
-    private class ApportionMatriculantsAction2 extends AbstractAction {
-        private ApportionMatriculantsAction2() {
-            putValue(Action.NAME, "Распределить по специальностям");
-            putValue(Action.SHORT_DESCRIPTION, "Распределить абитуриентов по специальностям");
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            ApportionMatriculantsDialog apportionMatriculantsDialog = new ApportionMatriculantsDialog(MainFrame.this);
-            apportionMatriculantsDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            apportionMatriculantsDialog.setVisible(true);
         }
     }
 }

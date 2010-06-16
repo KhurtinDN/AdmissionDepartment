@@ -44,7 +44,7 @@ public class ResourcesForApplication {
     public final static String tHIGHLIGHTING = "Цветовое выделение";
     public final static String tHIGHLIGHTING_DESCRIPTION = "Выделить строки цветами в соответствии с наличием документов";
 
-    public final static String tAPPORTION_MENU = "Раcсчитать";
+    public final static String tAPPORTION_MENU = "Действие";
     public final static String tCALCFORSPECIALITY_DESCRIPTION = "Сортировать абитуриентов для данной специальности";
     public final static String tCALCALL = "В порядке добавления";
     public final static String tCALCALL_DESCRIPTION = "Показать абитуриентов в порядке добавления";
