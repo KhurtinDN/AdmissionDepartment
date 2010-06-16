@@ -365,7 +365,7 @@ public class MatriculantTable extends JTable {
 
                     switch (columnTypes.get(columnIndexes.get(columnIndex))) {
                         case NUMERIC:
-                            cmp = Integer.valueOf(arg1).compareTo(Integer.valueOf(arg2));                            
+                            cmp = Integer.valueOf(arg1).compareTo(Integer.valueOf(arg2));
                             if (cmp == 0) {
                                 return compareByColumnsPriority(firstIndex, secondIndex, columnIndex + 1);
                             } else {
@@ -499,7 +499,7 @@ public class MatriculantTable extends JTable {
                 }
             }
             DataAccessFactory.reloadMatriculants();
-            
+
             System.out.println("//=== Apportion finished!");
         }
 
