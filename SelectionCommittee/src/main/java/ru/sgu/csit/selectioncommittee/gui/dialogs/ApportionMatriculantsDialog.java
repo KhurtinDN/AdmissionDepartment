@@ -90,7 +90,7 @@ public class ApportionMatriculantsDialog extends JDialog {
                 }
             }
 
-            matriculantTable.ApportionBySpec(counts);
+            matriculantTable.apportionBySpec(counts);
             matriculantTable.repaint();
 
             if (saveInXlsCheckBox.isSelected()) {

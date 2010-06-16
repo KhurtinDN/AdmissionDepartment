@@ -277,6 +277,12 @@ public class MatriculantTable extends JTable {
         MatriculantTable.showEntrances.put(key, value);
     }
 
+    public void sort(final List<Integer> columnIndexes) {
+        if (columnIndexes != null && columnIndexes.size() > 0) {
+            matriculantTableModel.sort(columnIndexes);
+        }
+    }
+
     public void sortBy(Speciality speciality) {
         matriculantTableModel.restoreIndexes();
         if (speciality != null) {
@@ -288,8 +294,8 @@ public class MatriculantTable extends JTable {
         }
     }
 
-    public void ApportionBySpec(List<Integer> counts) {
-        matriculantTableModel.ApportionBySpec(counts);
+    public void apportionBySpec(List<Integer> counts) {
+        matriculantTableModel.apportionBySpec(counts);
     }
 
     public static void resetRowIndexes() {
@@ -340,23 +346,23 @@ public class MatriculantTable extends JTable {
             }
         }
 
-        public void sort(final List<Integer> colIndexes) {
+        public void sort(final List<Integer> columnIndexes) {
             Collections.sort(viewRowIndexes, new Comparator<Integer>() {
                 public int compare(Integer o1, Integer o2) {
                     return compareByColumnsPriority(o1, o2, 0);
                 }
 
                 private int compareByColumnsPriority(Integer firstIndex, Integer secondIndex, int columnIndex) {
-                    if (columnIndex == colIndexes.size()) {
+                    if (columnIndex == columnIndexes.size()) {
                         return 0;
                     }
-                    switch (columnTypes.get(colIndexes.get(columnIndex))) {
+                    switch (columnTypes.get(columnIndexes.get(columnIndex))) {
                         case NUMERIC:
-                            if (Integer.valueOf(getValueAt(firstIndex, colIndexes.get(columnIndex)).toString()) <
-                                    Integer.valueOf(getValueAt(secondIndex, colIndexes.get(columnIndex)).toString())) {
+                            if (Integer.valueOf(getValueAt(firstIndex, columnIndexes.get(columnIndex)).toString()) <
+                                    Integer.valueOf(getValueAt(secondIndex, columnIndexes.get(columnIndex)).toString())) {
                                 return 1;
-                            } else if (Integer.valueOf(getValueAt(firstIndex, colIndexes.get(columnIndex)).toString()) >
-                                    Integer.valueOf(getValueAt(secondIndex, colIndexes.get(columnIndex)).toString())) {
+                            } else if (Integer.valueOf(getValueAt(firstIndex, columnIndexes.get(columnIndex)).toString()) >
+                                    Integer.valueOf(getValueAt(secondIndex, columnIndexes.get(columnIndex)).toString())) {
                                 return -1;
                             } else {
                                 return compareByColumnsPriority(firstIndex, secondIndex, columnIndex + 1);
@@ -364,12 +370,12 @@ public class MatriculantTable extends JTable {
 
                         case STRING:
                         default:
-                            if (getValueAt(firstIndex, colIndexes.get(columnIndex)).toString().compareTo(
-                                    getValueAt(secondIndex, colIndexes.get(columnIndex)).toString()) == 0) {
+                            if (getValueAt(firstIndex, columnIndexes.get(columnIndex)).toString().compareTo(
+                                    getValueAt(secondIndex, columnIndexes.get(columnIndex)).toString()) == 0) {
                                 return compareByColumnsPriority(firstIndex, secondIndex, columnIndex + 1);
                             } else {
-                                return getValueAt(firstIndex, colIndexes.get(columnIndex)).toString().compareTo(
-                                    getValueAt(secondIndex, colIndexes.get(columnIndex)).toString());
+                                return getValueAt(firstIndex, columnIndexes.get(columnIndex)).toString().compareTo(
+                                    getValueAt(secondIndex, columnIndexes.get(columnIndex)).toString());
                             }
                     }
                 }
@@ -395,7 +401,7 @@ public class MatriculantTable extends JTable {
                     } else {
                         Integer firstBalls = firstMatriculant.calculateTotalBallsForSpeciality(speciality.getName());
                         Integer secondBalls = secondMatriculant.calculateTotalBallsForSpeciality(speciality.getName());
-                        //System.out.println(firstBalls + ", " + secondBalls);
+
                         if (firstBalls < secondBalls) { //|| (firstBalls == null && secondBalls > 0)) {
                             return 1;
                         } else if (firstBalls > secondBalls) {
@@ -430,7 +436,7 @@ public class MatriculantTable extends JTable {
             specialityIndex = index;
         }
 
-        public void ApportionBySpec(List<Integer> counts) {
+        public void apportionBySpec(List<Integer> counts) {
             System.out.println("//=== Start apportion.");
             restoreMatriculantIndexes();
 
@@ -451,14 +457,12 @@ public class MatriculantTable extends JTable {
             while (currentSpecPriority <= DataAccessFactory.getSpecialities().size()) {
                 theContinue = false;
 
-                System.out.println("\n" + currentSpecPriority + " ***");
                 for (int specIndex = 0; specIndex < DataAccessFactory.getSpecialities().size(); ++specIndex) {
                     Speciality speciality = DataAccessFactory.getSpecialities().get(specIndex);
                     int count = counts.get(specIndex);
                     Iterator<Integer> iter = matriculantIndexes.get(specIndex).iterator();
                     boolean updatedMatriculants = false;
 
-                    System.out.println("\n" + specIndex + ":  ");
                     while (count > 0 && iter.hasNext()) {
                         Integer element = iter.next();
                         Matriculant matriculant = DataAccessFactory.getMatriculants().get(element);
@@ -466,21 +470,17 @@ public class MatriculantTable extends JTable {
                         if ("".equals(matriculant.getEntranceSpecialityName())) {
                                 if (speciality.getName().equals(matriculant.getSpeciality().get(currentSpecPriority))) {
                                     matriculant.setEntranceSpecialityName(speciality.getName());
-                                    System.out.print(count + " - " + matriculant.getReceiptNumber() + ", ");
                                     DataAccessFactory.getMatriculantDAO().update(matriculant);
                                     updatedMatriculants = true;
                                 } else {
                                     if (matriculant.getSpeciality().containsValue(speciality.getName())) {
                                         --count;
-                                        System.out.print(count + ", ");
                                     }
                                 }
                         }
                         if (speciality.getName().equals(matriculant.getEntranceSpecialityName())) {
                             --count;
-                            System.out.print(count + ", ");
                         }
-                        //System.out.print(count + ", ");
                     }
                     if (updatedMatriculants) {
                         //DataAccessFactory.reloadMatriculants();
