@@ -118,11 +118,13 @@ public class MatriculantTable extends JTable {
     public void removeColumn(int column) {
         removeColumn(columns.get(column).getColumn());
         columns.get(column).setVisible(false);
+        columnVisible.set(column, Boolean.FALSE);
     }
 
     public void addColumn(int column) {
         addColumn(columns.get(column).getColumn());
         columns.get(column).setVisible(true);
+        columnVisible.set(column, Boolean.TRUE);
         moveColumn(column);
     }
 
@@ -349,33 +351,34 @@ public class MatriculantTable extends JTable {
         public void sort(final List<Integer> columnIndexes) {
             Collections.sort(viewRowIndexes, new Comparator<Integer>() {
                 public int compare(Integer o1, Integer o2) {
-                    return compareByColumnsPriority(o1, o2, 0);
+                    return compareByColumnsPriority(viewRowIndexes.indexOf(o1), viewRowIndexes.indexOf(o2), 0);
                 }
 
                 private int compareByColumnsPriority(Integer firstIndex, Integer secondIndex, int columnIndex) {
                     if (columnIndex == columnIndexes.size()) {
                         return 0;
                     }
+
+                    int cmp;
+                    String arg1 = getValueAt(firstIndex, columnIndexes.get(columnIndex)).toString();
+                    String arg2 = getValueAt(secondIndex, columnIndexes.get(columnIndex)).toString();
+
                     switch (columnTypes.get(columnIndexes.get(columnIndex))) {
                         case NUMERIC:
-                            if (Integer.valueOf(getValueAt(firstIndex, columnIndexes.get(columnIndex)).toString()) <
-                                    Integer.valueOf(getValueAt(secondIndex, columnIndexes.get(columnIndex)).toString())) {
-                                return 1;
-                            } else if (Integer.valueOf(getValueAt(firstIndex, columnIndexes.get(columnIndex)).toString()) >
-                                    Integer.valueOf(getValueAt(secondIndex, columnIndexes.get(columnIndex)).toString())) {
-                                return -1;
-                            } else {
+                            cmp = Integer.valueOf(arg1).compareTo(Integer.valueOf(arg2));                            
+                            if (cmp == 0) {
                                 return compareByColumnsPriority(firstIndex, secondIndex, columnIndex + 1);
+                            } else {
+                                return cmp;
                             }
 
                         case STRING:
                         default:
-                            if (getValueAt(firstIndex, columnIndexes.get(columnIndex)).toString().compareTo(
-                                    getValueAt(secondIndex, columnIndexes.get(columnIndex)).toString()) == 0) {
+                            cmp = arg1.compareTo(arg2);
+                            if (cmp == 0) {
                                 return compareByColumnsPriority(firstIndex, secondIndex, columnIndex + 1);
                             } else {
-                                return getValueAt(firstIndex, columnIndexes.get(columnIndex)).toString().compareTo(
-                                    getValueAt(secondIndex, columnIndexes.get(columnIndex)).toString());
+                                return cmp;
                             }
                     }
                 }
