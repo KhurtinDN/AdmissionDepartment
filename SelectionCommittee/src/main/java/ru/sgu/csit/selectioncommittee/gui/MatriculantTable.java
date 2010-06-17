@@ -102,58 +102,24 @@ public class MatriculantTable extends JTable {
         return jPopupMenu;
     }
 
-    private void setColumns() {
-//        if (columns != null) {
-//            for (int i = 0; i < columns.size(); ++i) {
-//                if (!columns.get(i).isVisible()) {
-//                    addColumn(i);
-//                }
-//            }
-//            columns = new ArrayList<ColumnInfo>();
-//        }
-        if (columns == null || columns.isEmpty()) {
-            columns = new ArrayList<ColumnInfo>();
-            for (int i = 0; i < columnWidths.size(); ++i) {
-                columns.add(new ColumnInfo(getColumnModel().getColumn(i), columnNames.get(i),
-                        columnTypes.get(i), columnSortOrders.get(i), columnVisible.get(i)));
-            }
-        } else {
-            for (int i = 0; i < columnWidths.size(); ++i) {
-                columns.get(i).setColumn(getColumnModel().getColumn(i));
-            }
-        }
-        /*for (ColumnInfo column : columns) {
-                if (!column.isVisible()) {
-                    removeColumn(column.getColumn());
-                }
-                System.out.println(column.getColumnName() + ": " + column.isVisible());
-            }
-            */
-        for (int i = 0; i < columns.size(); ++i) {
-            if (!columns.get(i).isVisible()) {
-                removeColumn(columns.get(i).getColumn());
-            }
-            System.out.println(columns.get(i).getColumnName() + ": " + columns.get(i).isVisible());
-        }
-    }
-
-     private void setColumnsWidth() {
-        for (int i = 0; i < columnWidths.size(); ++i) {
-            getColumnModel().getColumn(i).setPreferredWidth(columnWidths.get(i));
-        }
-    }
-
     public void removeColumn(int column) {
+        System.out.println("Remove column " + columns.get(column).getColumnName());
         removeColumn(columns.get(column).getColumn());
         columns.get(column).setVisible(false);
         columnVisible.set(column, Boolean.FALSE);
+        System.out.println("Column " + columns.get(column).getColumnName() + " removed!");
     }
 
     public void addColumn(int column) {
+        System.out.println("Add column " + columns.get(column).getColumnName());
         addColumn(columns.get(column).getColumn());
         columns.get(column).setVisible(true);
         columnVisible.set(column, Boolean.TRUE);
+        System.out.println("Column " + columns.get(column).getColumnName() + " added!");
+        System.out.println("Move column " + columns.get(column).getColumnName());
         moveColumn(column);
+        revalidate();
+        System.out.println("Column " + columns.get(column).getColumnName() + " moved!");
     }
 
     public void moveColumn(int column) {
@@ -168,7 +134,7 @@ public class MatriculantTable extends JTable {
         moveColumn(sourceIndex, targetIndex);
     }
 
-    public void hideGeneratedColumns() {
+    /*public void hideGeneratedColumns() {
         for (int i = startSpecialityIndex; i < startSpecialityIndex + DataAccessFactory.getSpecialities().size(); ++i) {
             removeColumn(i);
         }
@@ -176,7 +142,7 @@ public class MatriculantTable extends JTable {
             removeColumn(i);
         }
         synchronizePopupWithColumns();
-    }
+    }*/
 
     public void synchronizePopupWithColumns() {
         for (int i = 0; i < columns.size(); ++i) {
@@ -218,7 +184,7 @@ public class MatriculantTable extends JTable {
         for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
             columnNames.add(DataAccessFactory.getSpecialities().get(i).getName());
             columnWidths.add(60);
-            columnTypes.add(ColumnType.NUMERIC);
+            columnTypes.add(ColumnType.STRING);
             columnSortOrders.add(SortOrder.ASC);
             columnVisible.add(Boolean.FALSE);
         }
@@ -265,9 +231,52 @@ public class MatriculantTable extends JTable {
 
     public void refresh() {
         //matriculantTableModel.restoreIndexes();
-        matriculantTableModel.fireTableStructureChanged();
-        setColumnsWidth();
-        setColumns();
+        //matriculantTableModel.fireTableStructureChanged();
+        System.out.println("Refresh started");
+        matriculantTableModel.fireTableDataChanged();
+        System.out.println("Refresh finished");
+        //setColumnsWidth();
+        //setColumns();
+    }
+
+    private void setColumnsWidth() {
+        for (int i = 0; i < columnWidths.size(); ++i) {
+            getColumnModel().getColumn(i).setPreferredWidth(columnWidths.get(i));
+        }
+    }
+
+    private void setColumns() {
+//        if (columns != null) {
+//            for (int i = 0; i < columns.size(); ++i) {
+//                if (!columns.get(i).isVisible()) {
+//                    addColumn(i);
+//                }
+//            }
+//            columns = new ArrayList<ColumnInfo>();
+//        }
+        if (columns == null || columns.isEmpty()) {
+            columns = new ArrayList<ColumnInfo>();
+            for (int i = 0; i < columnWidths.size(); ++i) {
+                columns.add(new ColumnInfo(getColumnModel().getColumn(i), columnNames.get(i),
+                        columnTypes.get(i), columnSortOrders.get(i), columnVisible.get(i)));
+            }
+            for (ColumnInfo column : columns) {
+                if (!column.isVisible()) {
+                    removeColumn(column.getColumn());
+                }
+                //System.out.println(column.getColumnName() + ": " + column.isVisible());
+            }
+        } /*else {
+            for (int i = 0; i < columnWidths.size(); ++i) {
+                columns.get(i).setColumn(getColumnModel().getColumn(i));
+            }
+        } */
+        /*for (int i = 0; i < columns.size(); ++i) {
+            if (!columns.get(i).isVisible()) {
+                removeColumn(columns.get(i).getColumn());
+            }
+            System.out.println(columns.get(i).getColumnName() + ": " + columns.get(i).isVisible());
+        }*/
     }
 
     public static boolean isHighlighting() {
@@ -408,7 +417,20 @@ public class MatriculantTable extends JTable {
                         case DESC:
                             k = -1;
                     }
-                    
+
+                    // Обработка случая пустого значения в полях
+                    if (arg1 == null || arg1.isEmpty()) {
+                        if (arg2 == null || arg2.isEmpty()) {
+                            return compareByColumnsPriority(firstIndex, secondIndex, columnIndex + 1);
+                        } else {
+                            return k;
+                        }
+                    } else {
+                        if (arg2 == null || arg2.isEmpty()) {
+                            return -k;
+                        }
+                    }
+
                     switch (columnTypes.get(columnIndexes.get(columnIndex))) {
                         case NUMERIC:
                             cmp = Integer.valueOf(arg1).compareTo(Integer.valueOf(arg2));
@@ -791,9 +813,11 @@ public class MatriculantTable extends JTable {
                         removeColumn(i);
                     }
                     //refresh();
+                    System.out.println("Repaint started");
                     repaint();
+                    System.out.println("Repaint finished");
 
-                    return;
+                    break;
                 }
             }
         }
