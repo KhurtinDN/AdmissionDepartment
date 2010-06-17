@@ -41,6 +41,7 @@
                 <configuration>
                     <excludes>
                         <exclude>/hibernate.properties</exclude>
+                        <exclude>/application.properties</exclude>
                     </excludes>
                     <archive>
                         <manifest>

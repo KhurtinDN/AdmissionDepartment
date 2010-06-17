@@ -278,7 +278,23 @@ public class MatriculantDialog extends JDialog {
     }
 
     private boolean validateForm() {
-        return true; // todo: validate
+        if (!receiptNumberField.getText().matches("\\w+")) {
+            showWarningMessage("Введите корректный номер расписки");
+            return false;
+        }
+        if (!matriculantNameField.getText().matches("[\\w\\sА-Яа-я]+")) {
+            showWarningMessage("Введите корректное имя абитуриента");
+            return false;
+        }
+        if (radioButtonGroup.getSelection() == null) {
+            showWarningMessage("Выбирите тип поступления");
+            return false;
+        }
+        if (specialityPanel.isEmpty()) {
+            showWarningMessage("Выберите хотябы одну специальность");
+            return false;
+        }
+        return true;
     }
 
     private class TakeAwayActionListener implements ActionListener {
@@ -312,16 +328,15 @@ public class MatriculantDialog extends JDialog {
 //                DataAccessFactory.reloadMatriculants();
                 DataAccessFactory.getMatriculants().add(matriculant);
                 MatriculantTable.resetRowIndexes();
-                mainFrame.refresh();
-            } else {
-                showWarningMessage("Исправьте все");
-            }
 
-            if (needExitDuringAddingCheckBox.isSelected()) {
-                MatriculantDialog.this.setVisible(false);
-            } else {
-                matriculant = new Matriculant();
-                setFieldsFromMatriculant(matriculant);
+                if (needExitDuringAddingCheckBox.isSelected()) {
+                    MatriculantDialog.this.setVisible(false);
+                } else {
+                    matriculant = new Matriculant();
+                    setFieldsFromMatriculant(matriculant);
+                }
+
+                mainFrame.refresh();
             }
         }
     }
@@ -338,12 +353,10 @@ public class MatriculantDialog extends JDialog {
             if (validateForm()) {
                 DataAccessFactory.getMatriculantDAO().update(matriculant);
 //                DataAccessFactory.reloadMatriculants();
+                MatriculantDialog.this.setVisible(false);
+                
                 mainFrame.refresh();
-            } else {
-                showWarningMessage("Исправьте все");
             }
-
-            MatriculantDialog.this.setVisible(false);
         }
     }
 
@@ -447,7 +460,7 @@ public class MatriculantDialog extends JDialog {
             originalAttestatCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalAttestat()));
             attestatInsertCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAttestatInsert()));
             originalEgeCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalEge()));
-            if (matriculant.getDocuments()!= null) {
+            if (matriculant.getDocuments() != null) {
                 photosSpinner.setValue(matriculant.getDocuments().getCountPhotos());
                 passportCopySpinner.setValue(matriculant.getDocuments().getCountPassportCopy());
             }
@@ -514,8 +527,8 @@ public class MatriculantDialog extends JDialog {
         documents.setOriginalAttestat(originalAttestatCheckBox.isSelected());
         documents.setAttestatInsert(attestatInsertCheckBox.isSelected());
         documents.setOriginalEge(originalEgeCheckBox.isSelected());
-        documents.setCountPhotos((Integer)photosSpinner.getValue());
-        documents.setCountPassportCopy((Integer)passportCopySpinner.getValue());
+        documents.setCountPhotos((Integer) photosSpinner.getValue());
+        documents.setCountPassportCopy((Integer) passportCopySpinner.getValue());
         documents.setOriginalMedicalCertificate(originalMedicalCertificateCheckBox.isSelected());
         documents.setCopyMedicalPolicy(copyMedicalPolicyCheckBox.isSelected());
         matriculant.setDocuments(documents);

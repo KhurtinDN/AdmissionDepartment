@@ -29,7 +29,7 @@ public class SelectNumbersPanel extends JPanel {
         this.min = min;
     }
 
-    public SelectNumbersPanel(String title, Integer max, Integer min) {
+    public SelectNumbersPanel(String title, Integer min, Integer max) {
         this(title, min);
         this.max = max;
     }

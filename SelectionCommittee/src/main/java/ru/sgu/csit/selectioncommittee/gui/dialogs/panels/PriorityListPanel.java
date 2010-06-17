@@ -38,6 +38,10 @@ public class PriorityListPanel extends JPanel {
         priorityManager.setPriorityList(priorityList);
     }
 
+    public boolean isEmpty() {
+        return priorityManager.isEmpty();
+    }
+
     private class PriorityManager {
         private LinkedList<JToggleButton> selectedConstraintses;
         private LinkedList<JToggleButton> deselectedConstraintses;
@@ -47,6 +51,10 @@ public class PriorityListPanel extends JPanel {
             this.selectedConstraintses = new LinkedList<JToggleButton>();
             this.deselectedConstraintses = new LinkedList<JToggleButton>();
             this.size = 0;
+        }
+
+        private boolean isEmpty() {
+            return selectedConstraintses.size() == 0;
         }
 
         public void add(String labelName) {

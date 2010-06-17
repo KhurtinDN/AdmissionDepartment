@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class MarkPanel extends SelectNumbersPanel {
     public MarkPanel() {
-        super("Баллы по ЕГЭ");
+        super("Баллы по ЕГЭ", 0, 100);
 
         List<String> examineNames = new ArrayList<String>();
 
