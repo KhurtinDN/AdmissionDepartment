@@ -7,6 +7,7 @@ import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import ru.sgu.csit.selectioncommittee.gui.MatriculantTable;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.panels.CapacityOnSpecialitiesPanel;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
+import ru.sgu.csit.selectioncommittee.gui.utils.SomeUtils;
 import ru.sgu.csit.selectioncommittee.service.ArgumentNotExcelFileException;
 import ru.sgu.csit.selectioncommittee.service.ExportToExcel;
 import ru.sgu.csit.selectioncommittee.service.WritingException;
@@ -14,6 +15,7 @@ import ru.sgu.csit.selectioncommittee.service.WritingException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -30,6 +32,8 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  */
 public class ApportionMatriculantsDialog extends JDialog {
     private JCheckBox saveInXlsCheckBox = new JCheckBox("Сохранить в excel файл");
+    private JCheckBox needOpenDocumentCheckBox = new JCheckBox("Открыть документ после экспорта");
+
     private Action apportionAction = new ApportionAction();
     private Action closeAction = new CloseAction();
 
@@ -69,10 +73,22 @@ public class ApportionMatriculantsDialog extends JDialog {
 
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new GridBagLayout());
-        buttonPanel.add(saveInXlsCheckBox, new GBConstraints(0, 0));
-        buttonPanel.add(new JLabel(), new GBConstraints(1, 0, true));
-        buttonPanel.add(new JButton(apportionAction), new GBConstraints(2, 0));
-        buttonPanel.add(new JButton(closeAction), new GBConstraints(3, 0));
+
+        saveInXlsCheckBox.setSelected(true);
+        needOpenDocumentCheckBox.setSelected(true);
+        saveInXlsCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                needOpenDocumentCheckBox.setEnabled(saveInXlsCheckBox.isSelected());
+            }
+        });
+
+        buttonPanel.add(saveInXlsCheckBox, new GBConstraints(0, 0).setInsets(0));
+        buttonPanel.add(needOpenDocumentCheckBox, new GBConstraints(0, 1).setInsets(0));
+
+        buttonPanel.add(new JLabel(), new GBConstraints(1, 1, true));
+        buttonPanel.add(new JButton(apportionAction), new GBConstraints(2, 1));
+        buttonPanel.add(new JButton(closeAction), new GBConstraints(3, 1));
         return buttonPanel;
     }
 
@@ -119,6 +135,10 @@ public class ApportionMatriculantsDialog extends JDialog {
                         showErrorMessage("Файл " + file.getPath() + " не найден.");
                     } catch (WritingException e1) {
                         showErrorMessage("При экспорте произошла ошибка записи.");
+                    }
+
+                    if (needOpenDocumentCheckBox.isSelected()) {
+                        SomeUtils.openExcelViewer(file);
                     }
                 }
             }
@@ -183,11 +203,11 @@ public class ApportionMatriculantsDialog extends JDialog {
             private String getEntranceCategoryName(EntranceCategory entranceCategory) {
                 switch (entranceCategory) {
                     case OUT_EXAMINE_ORPHAN:
-                        return "Без экзаменов (сирота)";
+                        return "Без экзаменов";
                     case OUT_EXAMINE_INVALID:
-                        return "Без экзаменов (инвалид)";
+                        return "Без экзаменов";
                     case OUT_EXAMINE_OTHER:
-                        return "Без экзаменов (другое)";
+                        return "Без экзаменов";
                     case EXAMINE:
                         return "По экзаменам";
                     case NO_EXAMINE:
@@ -199,7 +219,18 @@ public class ApportionMatriculantsDialog extends JDialog {
 
             @Override
             public int compareTo(MatriculantRecord other) {
-                return this.name.compareTo(other.name);
+                int markCompare = this.genericMark.compareTo(other.genericMark) * -1;
+
+                if (markCompare == 0) {
+                    int entranceCategoryCompare = this.entranceCategory.compareTo(other.entranceCategory);
+                    if (entranceCategoryCompare == 0) {
+                        return this.name.compareTo(other.name);
+                    } else {
+                        return entranceCategoryCompare;
+                    }
+                } else {
+                    return markCompare;
+                }
             }
         }
     }

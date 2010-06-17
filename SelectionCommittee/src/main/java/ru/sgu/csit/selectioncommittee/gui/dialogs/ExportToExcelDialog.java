@@ -2,6 +2,7 @@ package ru.sgu.csit.selectioncommittee.gui.dialogs;
 
 import ru.sgu.csit.selectioncommittee.gui.MatriculantTable;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
+import ru.sgu.csit.selectioncommittee.gui.utils.SomeUtils;
 import ru.sgu.csit.selectioncommittee.service.ArgumentNotExcelFileException;
 import ru.sgu.csit.selectioncommittee.service.ExportToExcel;
 import ru.sgu.csit.selectioncommittee.service.WritingException;
@@ -99,46 +100,10 @@ public class ExportToExcelDialog extends JDialog {
                 }
 
                 if (needOpenDocumentCheckBox.isSelected()) {
-                    String program = getExcelExecutor();
-                    try {
-                        String[] arguments = new String[]{program, file.getCanonicalPath()};
-                        Runtime.getRuntime().exec(arguments);
-                    } catch (IOException e1) {
-                        showErrorMessage("Не удалось запустить программу " + program);
-                    }
+                    SomeUtils.openExcelViewer(file);
                 }
             }
             setVisible(false);
-        }
-
-        private String getExcelExecutor() {
-            Properties properties = new Properties();
-            String APPLICATION_PROPERTIES = "application.properties";
-
-            boolean exist = true;
-            try {
-                properties.load(new FileInputStream(APPLICATION_PROPERTIES));
-            } catch (IOException e) {
-                exist = false;
-            }
-
-            String excelExecutor = null;
-            if (exist) {
-                excelExecutor = properties.getProperty("excelExecutor");
-            }
-            if (excelExecutor == null) {
-                excelExecutor = "oocalc";
-                properties.put("excelExecutor", excelExecutor);
-                try {
-                    FileOutputStream fileOutputStream = new FileOutputStream(APPLICATION_PROPERTIES);
-                    properties.store(fileOutputStream, "Application settings");
-                    fileOutputStream.close();
-                } catch (IOException e) {
-                    showErrorMessage("Нет прав создать файл настроек " + APPLICATION_PROPERTIES);
-                }
-            }
-
-            return excelExecutor;
         }
 
         private List<String> createHeaderList() {
