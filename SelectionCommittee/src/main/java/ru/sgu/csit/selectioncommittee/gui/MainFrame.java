@@ -11,7 +11,6 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.print.PrinterException;
 
 import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*;
 
@@ -23,7 +22,6 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  */
 public class MainFrame extends JFrame {
     private Action exportToExcelAction = new ExportToExcelAction();
-    private Action printAction = new PrintAction();
     private Action exitAction = new ExitAction();
     private Action addAction = new AddAction();
     private Action editAction = new EditAction();
@@ -54,7 +52,7 @@ public class MainFrame extends JFrame {
         mainTable.setComponentPopupMenu(createRowPopupMenu());
         add(new JScrollPane(mainTable), BorderLayout.CENTER);
 
-        add(createButtonPanel(), BorderLayout.SOUTH);
+        add(createStatusBar(), BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -82,13 +80,11 @@ public class MainFrame extends JFrame {
         setSize(screenSize);
     }
 
-    private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel(new GridLayout());
-        buttonPanel.add(new JButton(addAction));
-        buttonPanel.add(new JButton(infoAction));
-        buttonPanel.add(new JButton(editAction));
-        buttonPanel.add(new JButton(deleteAction));
-        return buttonPanel;
+    private JComponent createStatusBar() {
+        StatusBar statusBar = new StatusBar();
+        statusBar.addLabel(new JLabel("Количество абитуриентов:"));
+        statusBar.addLabel(new JLabel("" + DataAccessFactory.getMatriculants().size()));
+        return statusBar;
     }
 
     private JMenuBar createJMenuBar() {
@@ -96,7 +92,6 @@ public class MainFrame extends JFrame {
 
         JMenu fileMenu = new JMenu(tFILE_MENU);
         fileMenu.add(exportToExcelAction);
-        fileMenu.add(printAction);
         fileMenu.addSeparator();
         fileMenu.add(exitAction);
 
@@ -160,7 +155,7 @@ public class MainFrame extends JFrame {
         jToolBar.add(infoAction);
         jToolBar.add(editAction);
         jToolBar.addSeparator();
-        jToolBar.add(printAction);
+        jToolBar.add(exportToExcelAction);
         jToolBar.addSeparator();
         jToolBar.addSeparator();
 
@@ -213,23 +208,6 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private class PrintAction extends AbstractAction {
-        private PrintAction() {
-            putValue(Action.NAME, tPRINT);
-            putValue(Action.SMALL_ICON, iPRINT16);
-            putValue(Action.SHORT_DESCRIPTION, tPRINT_DESCRIPTION);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl P"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            try {
-                mainTable.print();
-            } catch (PrinterException e1) {
-                e1.printStackTrace();
-            }
-        }
-    }
-
     private class AddAction extends AbstractAction {
         private AddAction() {
             putValue(Action.NAME, tADD);
@@ -279,7 +257,7 @@ public class MainFrame extends JFrame {
                 if (showConfirmDialog("Удалить абитуриента?")) {
                     Matriculant matriculant = DataAccessFactory.getMatriculants()
                             .get(mainTable.convertViewRowIndexToMatriculants(selectedIndex));
-                    
+
                     DataAccessFactory.getMatriculants().remove(mainTable.convertViewRowIndexToMatriculants(selectedIndex));
                     MatriculantTable.deleteFromViewIndex(selectedIndex);
                     DataAccessFactory.getMatriculantDAO().delete(matriculant);
@@ -480,6 +458,7 @@ public class MainFrame extends JFrame {
             mainTable.repaint();
         }
     }
+
     private class SortAction extends AbstractAction {
         private SortAction() {
             putValue(Action.NAME, "Сортировка");

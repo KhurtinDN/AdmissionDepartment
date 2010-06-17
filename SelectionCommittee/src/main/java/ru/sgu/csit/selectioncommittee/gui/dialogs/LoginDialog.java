@@ -124,6 +124,7 @@ public class LoginDialog extends JDialog {
                         MainFrame mainFrame = new MainFrame();
                         mainFrame.setDefaultCloseOperation(MainFrame.DO_NOTHING_ON_CLOSE);
                         mainFrame.setVisible(true);
+                        mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
                     }
                 });
                 LoginDialog.this.setVisible(false);
