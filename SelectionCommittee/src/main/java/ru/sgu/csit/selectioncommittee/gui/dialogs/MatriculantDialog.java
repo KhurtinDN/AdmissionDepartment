@@ -5,6 +5,7 @@ import ru.sgu.csit.selectioncommittee.common.Matriculant;
 import ru.sgu.csit.selectioncommittee.common.Person;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import ru.sgu.csit.selectioncommittee.gui.MainFrame;
+import ru.sgu.csit.selectioncommittee.gui.MatriculantTable;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.panels.SpecialityPanel;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.panels.MarkPanel;
@@ -310,6 +311,7 @@ public class MatriculantDialog extends JDialog {
                 DataAccessFactory.getMatriculantDAO().save(matriculant);
 //                DataAccessFactory.reloadMatriculants();
                 DataAccessFactory.getMatriculants().add(matriculant);
+                MatriculantTable.resetRowIndexes();
                 mainFrame.refresh();
             } else {
                 showWarningMessage("Исправьте все");
