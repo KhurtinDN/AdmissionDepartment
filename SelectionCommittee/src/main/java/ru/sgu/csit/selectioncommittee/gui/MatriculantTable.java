@@ -29,6 +29,7 @@ public class MatriculantTable extends JTable {
     private static List<String> columnNames = new ArrayList<String>();
     private static List<Integer> columnWidths = new ArrayList<Integer>();
     private static List<ColumnType> columnTypes = new ArrayList<ColumnType>();
+    private static List<SortOrder> columnSortOrders = new ArrayList<SortOrder>();
     private static List<Boolean> columnVisible = new ArrayList<Boolean>();
     private static List<Integer> rowIndexes = new ArrayList<Integer>();
     private static List<Integer> viewRowIndexes = new ArrayList<Integer>();
@@ -69,7 +70,8 @@ public class MatriculantTable extends JTable {
         for (Integer index = 0; index < rowIndexes.size(); ++index) {
             Matriculant matriculant = DataAccessFactory.getMatriculants().get(rowIndexes.get(index));
 
-            if (!showNotEntrance && "".equals(matriculant.getEntranceSpecialityName())) {
+            if (!showNotEntrance && (matriculant.getEntranceSpecialityName() == null
+                    || "".equals(matriculant.getEntranceSpecialityName()))) {
                 //++countHide;
             } else if (showEntrances.get(matriculant.getEntranceSpecialityName()) == Boolean.FALSE) {
                 //++countHide;
@@ -112,8 +114,8 @@ public class MatriculantTable extends JTable {
         if (columns == null || columns.isEmpty()) {
             columns = new ArrayList<ColumnInfo>();
             for (int i = 0; i < columnWidths.size(); ++i) {
-                columns.add(new ColumnInfo(getColumnModel().getColumn(i), columnNames.get(i), columnTypes.get(i),
-                        columnVisible.get(i)));
+                columns.add(new ColumnInfo(getColumnModel().getColumn(i), columnNames.get(i),
+                        columnTypes.get(i), columnSortOrders.get(i), columnVisible.get(i)));
             }
         } else {
             for (int i = 0; i < columnWidths.size(); ++i) {
@@ -191,21 +193,25 @@ public class MatriculantTable extends JTable {
         columnNames.add("№");
         columnWidths.add(25);
         columnTypes.add(ColumnType.NUMERIC);
+        columnSortOrders.add(SortOrder.ASC);
         columnVisible.add(Boolean.TRUE);
 
         columnNames.add("ФИО");
         columnWidths.add(220);
         columnTypes.add(ColumnType.STRING);
+        columnSortOrders.add(SortOrder.ASC);
         columnVisible.add(Boolean.TRUE);
 
         columnNames.add("Рег. №");
         columnWidths.add(70);
         columnTypes.add(ColumnType.NUMERIC);
+        columnSortOrders.add(SortOrder.ASC);
         columnVisible.add(Boolean.TRUE);
 
         columnNames.add("Поступает");
         columnWidths.add(100);
         columnTypes.add(ColumnType.STRING);
+        columnSortOrders.add(SortOrder.ASC);
         columnVisible.add(Boolean.TRUE);
 
         startSpecialityIndex = 3;
@@ -213,22 +219,26 @@ public class MatriculantTable extends JTable {
             columnNames.add(DataAccessFactory.getSpecialities().get(i).getName());
             columnWidths.add(60);
             columnTypes.add(ColumnType.NUMERIC);
+            columnSortOrders.add(SortOrder.ASC);
             columnVisible.add(Boolean.FALSE);
         }
 
         columnNames.add("Балл");
         columnWidths.add(45);
         columnTypes.add(ColumnType.NUMERIC);
+        columnSortOrders.add(SortOrder.DESC);
         columnVisible.add(Boolean.TRUE);
 
         columnNames.add("Специальность");
         columnWidths.add(95);
         columnTypes.add(ColumnType.STRING);
+        columnSortOrders.add(SortOrder.DESC);
         columnVisible.add(Boolean.TRUE);
 
         columnNames.add("Зачислен на");
         columnWidths.add(95);
         columnTypes.add(ColumnType.STRING);
+        columnSortOrders.add(SortOrder.DESC);
         columnVisible.add(Boolean.TRUE);
 
         startExaminesIndex = 2 + DataAccessFactory.getSpecialities().size() + startSpecialityIndex;
@@ -236,17 +246,20 @@ public class MatriculantTable extends JTable {
             columnNames.add(DataAccessFactory.getExamines().get(i).getName());
             columnWidths.add(60);
             columnTypes.add(ColumnType.NUMERIC);
+            columnSortOrders.add(SortOrder.DESC);
             columnVisible.add(Boolean.TRUE);
         }
 
         columnNames.add("Телефон");
         columnWidths.add(150);
         columnTypes.add(ColumnType.STRING);
+        columnSortOrders.add(SortOrder.ASC);
         columnVisible.add(Boolean.FALSE);
 
         columnNames.add("Дата");
         columnWidths.add(110);
         columnTypes.add(ColumnType.STRING);
+        columnSortOrders.add(SortOrder.ASC);
         columnVisible.add(Boolean.TRUE);
     }
 
@@ -386,26 +399,31 @@ public class MatriculantTable extends JTable {
                         return 0;
                     }
 
+                    int k = 1;
                     int cmp;
                     String arg1 = getValueAt(firstIndex, columnIndexes.get(columnIndex)).toString();
                     String arg2 = getValueAt(secondIndex, columnIndexes.get(columnIndex)).toString();
 
+                    switch (columnSortOrders.get(columnIndexes.get(columnIndex))) {
+                        case DESC:
+                            k = -1;
+                    }
+                    
                     switch (columnTypes.get(columnIndexes.get(columnIndex))) {
                         case NUMERIC:
                             cmp = Integer.valueOf(arg1).compareTo(Integer.valueOf(arg2));
                             if (cmp == 0) {
                                 return compareByColumnsPriority(firstIndex, secondIndex, columnIndex + 1);
                             } else {
-                                return cmp;
+                                return cmp * k;
                             }
-
                         case STRING:
                         default:
                             cmp = arg1.compareTo(arg2);
                             if (cmp == 0) {
                                 return compareByColumnsPriority(firstIndex, secondIndex, columnIndex + 1);
                             } else {
-                                return cmp;
+                                return cmp * k;
                             }
                     }
                 }
@@ -595,17 +613,21 @@ public class MatriculantTable extends JTable {
 
             index++;
             if (columnIndex == index) {
-                String value = matriculant.getSpeciality().get(1);
+                String result = matriculant.getSpeciality().get(1);
 
                 if (specialityIndex > -1) {
-                    value += " (" + DataAccessFactory.getSpecialities().get(specialityIndex).getName() + ")";
+                    //result += " (" + DataAccessFactory.getSpecialities().get(specialityIndex).getName() + ")";
                 }
-                return value;
+                return result;
             }
 
             index++;
             if (columnIndex == index) {
-                return matriculant.getEntranceSpecialityName();
+                String result = matriculant.getEntranceSpecialityName();
+
+                if (result != null) {
+                    return matriculant.getEntranceSpecialityName();
+                }
             }
 
             index = columnIndex - (index + 1);
@@ -670,9 +692,6 @@ public class MatriculantTable extends JTable {
                         cell.setBackground(new Color(210, 245, 200));
                     }
                 } else {
-                    if (table.convertColumnIndexToModel(column) == 1) {
-                        cell.setFont(cell.getFont().deriveFont(Font.BOLD));
-                    }
                     if (!matriculant.completeAllDocuments()) {
                         if (matriculant.getDocuments() != null && matriculant.getDocuments().isOriginalAttestat()) {
                             cell.setBackground(new Color(225, 215, 165));
@@ -691,6 +710,13 @@ public class MatriculantTable extends JTable {
                     cell.setForeground(Color.BLACK);
                 }
             }
+
+            if (isSelected) {
+                if (table.convertColumnIndexToModel(column) == 1) {
+                    cell.setFont(cell.getFont().deriveFont(Font.BOLD));
+                }
+            }
+
             return cell;
         }
     }
@@ -699,15 +725,17 @@ public class MatriculantTable extends JTable {
         private TableColumn column;
         private String columnName;
         private ColumnType columnType;
+        private SortOrder columnSortOrder;
         private boolean visible = true;
 
         public ColumnInfo() {
         }
 
-        public ColumnInfo(TableColumn column, String name, ColumnType type, boolean visible) {
+        public ColumnInfo(TableColumn column, String name, ColumnType type, SortOrder sortOrder, boolean visible) {
             this.column = column;
             this.columnName = name;
             this.columnType = type;
+            this.columnSortOrder = sortOrder;
             this.visible = visible;
         }
 
@@ -738,6 +766,10 @@ public class MatriculantTable extends JTable {
 
     private enum ColumnType {
         NUMERIC, STRING
+    }
+
+    private enum SortOrder {
+        ASC, DESC;
     }
 
     private class ShowColumnAction extends AbstractAction {
