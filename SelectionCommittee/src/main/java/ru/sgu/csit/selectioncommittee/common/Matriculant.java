@@ -17,7 +17,10 @@ public class Matriculant extends Person {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(nullable = false)
     private String receiptNumber;
+
     private Date filingDate;
 
     @Embedded
@@ -34,6 +37,7 @@ public class Matriculant extends Person {
     })
     private Person mother;
 
+    @Column(nullable = false)
     private EntranceCategory entranceCategory;
 
     @CollectionOfElements(/*targetElement = Speciality.class,*/ fetch = FetchType.EAGER)
