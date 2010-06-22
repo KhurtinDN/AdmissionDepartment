@@ -531,7 +531,7 @@ public class MatriculantTable extends JTable {
                     && matriculant.getEntranceCategory() != null) {
                 switch (matriculant.getEntranceCategory()) {
                     case EXAMINE:
-                        return "По экзаменам\n";
+                        return "По экзаменам";
                     case NO_EXAMINE:
                         return "Без экзаменов";
                     case OUT_EXAMINE_OTHER:

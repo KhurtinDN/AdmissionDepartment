@@ -181,7 +181,7 @@ public class ApportionMatriculantsDialog extends JDialog {
         }
 
         private List<String> createHeaderList() {
-            return Arrays.asList("№", "ФИО", "Тип поступления", "суммарный балл");
+            return Arrays.asList("№", "ФИО", "Тип поступления", "Суммарный балл");
         }
 
         private class MatriculantRecord implements Comparable<MatriculantRecord> {

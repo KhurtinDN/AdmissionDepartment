@@ -65,6 +65,7 @@ public class ExportToExcelDialog extends JDialog {
 
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new GridBagLayout());
+        needOpenDocumentCheckBox.setSelected(true);
         buttonPanel.add(needOpenDocumentCheckBox, new GBConstraints(0, 0));
         buttonPanel.add(new JLabel(), new GBConstraints(1, 0, true));
         buttonPanel.add(new JButton(new ExportToExcelAction()), new GBConstraints(2, 0));

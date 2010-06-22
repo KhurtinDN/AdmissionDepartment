@@ -220,8 +220,8 @@ public class MainFrame extends JFrame {
     }
 
     public void refresh() {
+        mainTable.refresh();
         matriculantSizeLabel.setText("" + DataAccessFactory.getMatriculants().size());
-//        mainTable.refresh();
     }
 
     private class ExportToExcelAction extends AbstractAction {
@@ -519,6 +519,7 @@ public class MainFrame extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
+            DataAccessFactory.reloadAll();
             refresh();
         }
     }

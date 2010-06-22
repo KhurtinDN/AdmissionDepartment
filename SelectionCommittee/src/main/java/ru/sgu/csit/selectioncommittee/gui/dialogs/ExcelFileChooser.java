@@ -2,6 +2,7 @@ package ru.sgu.csit.selectioncommittee.gui.dialogs;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
 
 /**
  * Date: Jun 16, 2010
@@ -32,5 +33,19 @@ public class ExcelFileChooser extends JFileChooser {
 
         setFileFilter(new FileNameExtensionFilter("Excel файлы (*.xls, *.xlsx)", "xls", "xlsx"));
         setDialogTitle("Сохранение абитуриентов в Excel файл");
+    }
+
+    @Override
+    public File getSelectedFile() {
+        File file = super.getSelectedFile();
+        if (file == null) {
+            return file;
+        }
+
+        String fileName = file.getPath().toLowerCase();
+        if (".xls".endsWith(fileName) || ".xlsx".endsWith(fileName)) {
+            return file;
+        }
+        return new File(fileName + ".xls");
     }
 }

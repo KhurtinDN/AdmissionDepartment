@@ -143,7 +143,7 @@ public class ExportToExcel {
 
     private void resizeColumnWidth(Sheet sheet, List<String> headerList, List<List<String>> contentLists) {
         for (int j = 0, m = headerList.size(); j < m; ++j) {
-            int width = headerList.get(j).length();
+            int width = (int)(headerList.get(j).length() * 1.2);
             for (int i = 0, n = contentLists.size(); i < n; ++i) {
                 width = Math.max(width, contentLists.get(i).get(j).length());
             }

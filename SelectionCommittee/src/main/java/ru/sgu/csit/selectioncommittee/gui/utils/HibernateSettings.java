@@ -50,7 +50,7 @@ public class HibernateSettings {
 
         String url = dbProperties.getProperty("hibernate.connection.url");
         if (url != null) {  // jdbc:postgresql://localhost:5432/SelectionCommittee
-            Pattern pattern = Pattern.compile("jdbc:(\\w+)://(\\w+):(\\d+)/(\\w+)");
+            Pattern pattern = Pattern.compile("jdbc:(\\w+)://([\\w\\.]+):(\\d+)/(\\w+)");
             Matcher matcher = pattern.matcher(url);
             if (matcher.matches()) {
                 databaseType = matcher.group(1);
@@ -108,6 +108,11 @@ public class HibernateSettings {
         
         String url = createDatabaseUrl(databaseType, host, port, databaseName);
         dbProperties.put("hibernate.connection.url", url);
+
+        this.databaseType = databaseType;
+        this.host = host;
+        this.port = port;
+        this.databaseName = databaseName;
 
         configured = true;
     }
