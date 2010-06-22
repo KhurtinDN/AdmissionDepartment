@@ -119,7 +119,7 @@ public class LoginDialog extends JDialog {
                     return;
                 }
 
-                EventQueue.invokeLater(new Runnable() {
+                SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         MainFrame mainFrame = new MainFrame();
                         mainFrame.setDefaultCloseOperation(MainFrame.DO_NOTHING_ON_CLOSE);
