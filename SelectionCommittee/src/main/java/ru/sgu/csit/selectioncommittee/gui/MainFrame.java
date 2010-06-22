@@ -51,7 +51,7 @@ public class MainFrame extends JFrame {
         setJMenuBar(createJMenuBar());
         add(createJToolBar(), BorderLayout.NORTH);
 
-        mainTable.setComponentPopupMenu(createRowPopupMenu());
+//        mainTable.setComponentPopupMenu(createRowPopupMenu());
         add(new JScrollPane(mainTable), BorderLayout.CENTER);
 
         add(createStatusBar(), BorderLayout.SOUTH);
@@ -66,8 +66,33 @@ public class MainFrame extends JFrame {
         });
 
         mainTable.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() > 1) {
+            @Override
+            public void mousePressed(MouseEvent event) {
+                if (SwingUtilities.isRightMouseButton(event)) {
+                    JTable table = (JTable)event.getSource();
+                    Point point = event.getPoint();
+                    int column = table.columnAtPoint(point);
+                    int row = table.rowAtPoint(point);
+
+                    if (column >= 0 && row >= 0) {
+                        table.setColumnSelectionInterval(column, column);
+                        table.setRowSelectionInterval(row, row);
+                    }
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent event) {
+                if (SwingUtilities.isRightMouseButton(event)) {
+                    Point point = event.getPoint();
+                    JTable table = (JTable)event.getSource();
+                    createRowPopupMenu().show(table, point.x, point.y);
+                }
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                if (event.getClickCount() > 1) {
                     infoAction.actionPerformed(null);
                 }
             }
