@@ -14,9 +14,33 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
  * @author xx & hd
  */
 public class ApplicationSettings {
+    private final String APPLICATION_PROPERTIES = "application.properties";
+
     private static ApplicationSettings settings = null;
+    private Properties properties = null;
 
     private ApplicationSettings() {
+        try {
+            loadSettings();
+        } catch (IOException e) {
+            // settings not found
+        }
+    }
+
+    private void loadSettings() throws IOException {
+        properties = new Properties();
+        properties.load(new FileInputStream(APPLICATION_PROPERTIES));
+    }
+
+    private void saveSettings() {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(APPLICATION_PROPERTIES);
+            properties.store(fileOutputStream, "Application settings");
+            fileOutputStream.close();
+        } catch (IOException e) {
+            showErrorMessage("При создании файла настроек " + APPLICATION_PROPERTIES + " возникли проблемы.");
+            System.err.println(e);
+        }
     }
 
     public static ApplicationSettings getSettings() {
@@ -27,32 +51,12 @@ public class ApplicationSettings {
     }
 
     public String getExcelExecutor() {
-        Properties properties = new Properties();
-        String APPLICATION_PROPERTIES = "application.properties";
-
-        boolean exist = true;
-        try {
-            properties.load(new FileInputStream(APPLICATION_PROPERTIES));
-        } catch (IOException e) {
-            exist = false;
-        }
-
-        String excelExecutor = null;
-        if (exist) {
-            excelExecutor = properties.getProperty("excelExecutor");
-        }
+        String excelExecutor = properties.getProperty("excelExecutor");
         if (excelExecutor == null) {
             excelExecutor = "oocalc";
             properties.put("excelExecutor", excelExecutor);
-            try {
-                FileOutputStream fileOutputStream = new FileOutputStream(APPLICATION_PROPERTIES);
-                properties.store(fileOutputStream, "Application settings");
-                fileOutputStream.close();
-            } catch (IOException e) {
-                showErrorMessage("Нет прав создать файл настроек " + APPLICATION_PROPERTIES);
-            }
+            saveSettings();
         }
-
         return excelExecutor;
     }
 }

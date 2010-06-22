@@ -2,40 +2,39 @@ package ru.sgu.csit.selectioncommittee;
 
 import ru.sgu.csit.selectioncommittee.common.*;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
-import ru.sgu.csit.selectioncommittee.factory.LocalSessionFactory;
+import ru.sgu.csit.selectioncommittee.gui.utils.HibernateSettings;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.Console;
 import java.util.*;
 
 /**
  * Hello world!
  */
 public class CreateDBData {
-    private static String HIBERNATE_PROPERTIES = "hibernate.properties";
     public static void main(String[] args) {
-        Properties dbProperties = new Properties();
-        try {
-            FileInputStream fileInputStream = new FileInputStream(HIBERNATE_PROPERTIES);
-            dbProperties.load(fileInputStream);
-        } catch (IOException ioe) {
-            System.out.println("Необходимо настроить доступ к СУБД");
-            return;
+        String login;
+        char[] password;
+
+        Console console = System.console();
+        if (console != null) {
+            login = console.readLine("Enter login: ");
+            password = console.readPassword("Enter password: ");
+        } else {
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Enter login: ");
+            login = scanner.nextLine();
+            System.out.print("Password login: ");
+            password = scanner.nextLine().toCharArray();
         }
 
-        Scanner scanner = new Scanner(System.in);
+        HibernateSettings hibernateSettings = HibernateSettings.getSettings();
+        hibernateSettings.setUserNameAndPassword(login, password);
 
-        System.out.print("Enter login: ");
-        String login = scanner.nextLine();
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
-
-        dbProperties.put("hibernate.connection.username", login);
-        dbProperties.put("hibernate.connection.password", password);
-
-        if (!LocalSessionFactory.createNewSessionFactory(dbProperties)) {
-            System.out.println("Авторизация провалилась.");
+        if (!hibernateSettings.tryLogin()) {
+            System.err.println("Authorization fail.");
             return;
+        } else {
+            System.out.println("Login");
         }
 
         System.out.println("Start process");

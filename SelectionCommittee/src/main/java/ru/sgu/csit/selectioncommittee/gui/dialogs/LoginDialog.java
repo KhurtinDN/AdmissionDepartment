@@ -1,18 +1,14 @@
 package ru.sgu.csit.selectioncommittee.gui.dialogs;
 
-import ru.sgu.csit.selectioncommittee.factory.LocalSessionFactory;
 import ru.sgu.csit.selectioncommittee.gui.MainFrame;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
+import ru.sgu.csit.selectioncommittee.gui.utils.HibernateSettings;
 
 import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Properties;
 import java.util.Vector;
 
 /**
@@ -22,7 +18,7 @@ import java.util.Vector;
  * @author xx & hd
  */
 public class LoginDialog extends JDialog {
-    private static String HIBERNATE_PROPERTIES = "hibernate.properties";
+    private HibernateSettings hibernateSettings = HibernateSettings.getSettings();
 
     private Action openDBOptionAction = new OpenDBOptionAction();
     private Action loginAction = new LoginAction();
@@ -91,27 +87,22 @@ public class LoginDialog extends JDialog {
 
     private class LoginAction extends AbstractAction {
         private LoginAction() {
-            putValue(Action.NAME, "Вход в систему");
+            putValue(Action.NAME, "Войти в систему");
         }
 
         public void actionPerformed(ActionEvent e) {
             if (validateForm()) {
-                Properties dbProperties = new Properties();
-                try {
-                    FileInputStream fileInputStream = new FileInputStream(HIBERNATE_PROPERTIES);
-                    dbProperties.load(fileInputStream);
-                } catch (IOException ioe) {
+                if (!hibernateSettings.isConfigured()) {
                     showWarningMessage("Необходимо настроить доступ к СУБД");
                     return;
                 }
 
-                String login = loginField.getText();
-                String password = new String(passwordField.getPassword());
+                String username = loginField.getText();
+                char[] password = passwordField.getPassword();
 
-                dbProperties.put("hibernate.connection.username", login);
-                dbProperties.put("hibernate.connection.password", password);
+                hibernateSettings.setUserNameAndPassword(username, password);
 
-                if (!LocalSessionFactory.createNewSessionFactory(dbProperties)) {
+                if (!hibernateSettings.tryLogin()) {
                     showWarningMessage("<html>Авторизация провалилась. Возможные причины:<br><ul>" +
                             "<li>Неверный логин или пароль</li>" +
                             "<li>Неправильно настроен доступ к СУБД</li>" +
@@ -150,22 +141,32 @@ public class LoginDialog extends JDialog {
         private Action saveAction = new SaveAction();
         private Action closeAction = new CloseAction();
 
-        private Vector<String> dbNames = new Vector<String>();
-
-        {
-            dbNames.add("Выбрать...");
-            dbNames.add("MySql");
-            dbNames.add("PostgreSQL");
-        }
-
-        private JComboBox dbTypeComboBox = new JComboBox(dbNames);
-        private JTextField dbHostTextField = new JTextField("localhost");
-        private JSpinner dbPortSpinner = new JSpinner();
-        private JTextField dbNameTextField = new JTextField("SelectionCommittee");
+        private JComboBox dbTypeComboBox;
+        private JTextField dbHostTextField;
+        private JSpinner dbPortSpinner;
+        private JTextField dbNameTextField;
 
         private DatabaseOptionDialog(JDialog owner) {
             super(owner, "Настройка доступа к СУБД", true);
             setLayout(new GridBagLayout());
+
+            Vector<String> dbTypes = new Vector<String>();
+            dbTypes.add("Выберите...");
+            dbTypes.addAll(hibernateSettings.getSupportedDatabaseList());
+            String selectedDatabaseType = hibernateSettings.getDatabaseType();
+            int selectedIndex = 0;
+            for (int i = 0; i < dbTypes.size(); ++i) {
+                if (dbTypes.get(i).equals(selectedDatabaseType)) {
+                    selectedIndex = i;
+                }
+            }
+            dbTypeComboBox = new JComboBox(dbTypes);
+            dbTypeComboBox.setSelectedIndex(selectedIndex);
+
+            dbHostTextField = new JTextField(hibernateSettings.getHost());
+            dbPortSpinner = new JSpinner();
+            dbPortSpinner.setValue(hibernateSettings.getPort());
+            dbNameTextField = new JTextField(hibernateSettings.getDatabaseName(), 20);
 
             add(new JLabel("База данных:"), new GBConstraints(0, 0));
             add(dbTypeComboBox, new GBConstraints(1, 0, true));
@@ -228,49 +229,15 @@ public class LoginDialog extends JDialog {
 
             public void actionPerformed(ActionEvent e) {
                 if (validateForm()) {
-                    Properties properties = new Properties();
-
-                    String driver_class = null;
-                    String dialect = null;
-
-                    String selectedDatabaseType = dbTypeComboBox.getSelectedItem().toString().toLowerCase();
-                    if (selectedDatabaseType.equals("mysql")) {
-                        driver_class = "com.mysql.jdbc.Driver";
-                        dialect = "org.hibernate.dialect.MySQL5InnoDBDialect";
-                    } else if (selectedDatabaseType.equals("postgresql")) {
-                        driver_class = "org.postgresql.Driver";
-                        dialect = "org.hibernate.dialect.PostgreSQLDialect";
-                    }
-
+                    String selectedDatabaseType = dbTypeComboBox.getSelectedItem().toString();
                     String host = dbHostTextField.getText();
-                    String port = dbPortSpinner.getValue().toString();
-                    String name = dbNameTextField.getText();
+                    Integer port = (Integer)dbPortSpinner.getValue();
+                    String databaseName = dbNameTextField.getText();
 
-                    String url = createDatabaseUrl(selectedDatabaseType, host, port, name);
-
-                    properties.put("hibernate.connection.driver_class", driver_class);
-                    properties.put("hibernate.connection.dialect", dialect);
-                    properties.put("hibernate.connection.url", url);
-
-                    try {
-                        FileOutputStream fileOutputStream = new FileOutputStream(HIBERNATE_PROPERTIES);
-                        properties.store(fileOutputStream, "Hibernate properties");
-                        fileOutputStream.close();
-                    } catch (IOException e1) {
-                        showErrorMessage("Во время сохранения настроек случилась ошибка:\n" + e);
-                    }
-
+                    hibernateSettings.setConnectionUrl(selectedDatabaseType, host, port, databaseName);
+                    hibernateSettings.saveSettings();
                     closeAction.actionPerformed(null);
                 }
-            }
-
-            private String createDatabaseUrl(String selectedDatabaseType, String host, String port, String name) {
-                StringBuilder urlStringBuilder = new StringBuilder("jdbc:");
-                urlStringBuilder.append(selectedDatabaseType).append("://");
-                urlStringBuilder.append(host).append(":");
-                urlStringBuilder.append(port).append("/");
-                urlStringBuilder.append(name);
-                return urlStringBuilder.toString();
             }
         }
 
