@@ -40,8 +40,8 @@
                 <version>2.3</version>
                 <configuration>
                     <excludes>
-                        <exclude>/hibernate.properties</exclude>
-                        <exclude>/application.properties</exclude>
+                        <exclude>hibernate.properties</exclude>
+                        <exclude>application.properties</exclude>
                     </excludes>
                     <archive>
                         <manifest>

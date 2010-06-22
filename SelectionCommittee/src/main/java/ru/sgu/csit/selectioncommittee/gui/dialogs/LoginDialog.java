@@ -114,7 +114,7 @@ public class LoginDialog extends JDialog {
                 if (!LocalSessionFactory.createNewSessionFactory(dbProperties)) {
                     showWarningMessage("<html>Авторизация провалилась. Возможные причины:<br><ul>" +
                             "<li>Неверный логин или пароль</li>" +
-                            "<li>Неправльно настроен доступ к СУБД</li>" +
+                            "<li>Неправильно настроен доступ к СУБД</li>" +
                             "</ul></html>");
                     return;
                 }

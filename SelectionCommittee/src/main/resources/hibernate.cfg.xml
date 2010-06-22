@@ -5,12 +5,6 @@
 <hibernate-configuration>
     <session-factory>
     <!-- Database connection settings -->
-        <!--<property name="connection.driver_class">${database.driver}</property>-->
-        <!--<property name="dialect">${database.dialect}</property>-->
-        <!--<property name="connection.url">${database.url}</property>-->
-        <!--<property name="connection.username">${database.user}</property>-->
-        <!--<property name="connection.password">${database.password}</property>-->
-
         <property name="connection.characterEncoding">UTF-8</property>
         <!-- JDBC connection pool (use the built-in) -->
         <property name="connection.pool_size">1</property>

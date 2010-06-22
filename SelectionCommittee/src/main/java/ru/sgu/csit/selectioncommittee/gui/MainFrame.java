@@ -33,6 +33,7 @@ public class MainFrame extends JFrame {
     private Action highlightingAction = new HighlightingAction();
     private Action apportionMatriculantsAction = new ApportionMatriculantsAction();
     private Action sortAction = new SortAction();
+    private Action refreshAction = new RefreshAction();
 
     private JComboBox specialityComboBox;
 
@@ -40,6 +41,7 @@ public class MainFrame extends JFrame {
 
     private MatriculantInfoDialog matriculantInfoDialog = new MatriculantInfoDialog(this);
 
+    private JLabel matriculantSizeLabel = new JLabel();
 
     public MainFrame() {
         mainTable = new MatriculantTable();
@@ -78,12 +80,14 @@ public class MainFrame extends JFrame {
 //        int y = (int) (screenSize.getHeight() / 2 - dialogSize.getHeight() / 2);
 //        setLocation(x, y);
         setSize(screenSize);
+
+        refresh();
     }
 
     private JComponent createStatusBar() {
         StatusBar statusBar = new StatusBar();
         statusBar.addLabel(new JLabel("Количество абитуриентов:"));
-        statusBar.addLabel(new JLabel("" + DataAccessFactory.getMatriculants().size()));
+        statusBar.addLabel(matriculantSizeLabel);
         return statusBar;
     }
 
@@ -91,6 +95,7 @@ public class MainFrame extends JFrame {
         JMenuBar jMenuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu(tFILE_MENU);
+        fileMenu.add(refreshAction);
         fileMenu.add(exportToExcelAction);
         fileMenu.addSeparator();
         fileMenu.add(exitAction);
@@ -155,6 +160,8 @@ public class MainFrame extends JFrame {
         jToolBar.add(infoAction);
         jToolBar.add(editAction);
         jToolBar.addSeparator();
+        jToolBar.add(refreshAction);
+        jToolBar.addSeparator();
         jToolBar.add(exportToExcelAction);
         jToolBar.addSeparator();
         jToolBar.addSeparator();
@@ -187,7 +194,8 @@ public class MainFrame extends JFrame {
     }
 
     public void refresh() {
-        mainTable.refresh();
+        matriculantSizeLabel.setText("" + DataAccessFactory.getMatriculants().size());
+//        mainTable.refresh();
     }
 
     private class ExportToExcelAction extends AbstractAction {
@@ -422,6 +430,8 @@ public class MainFrame extends JFrame {
         private ApportionMatriculantsAction() {
             putValue(Action.NAME, tAPPORTION_SPEC);
             putValue(Action.SHORT_DESCRIPTION, tAPPORTION_SPEC_DESCRIPTION);
+            putValue(Action.SMALL_ICON, iAPPORTION16);
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F10"));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -463,12 +473,27 @@ public class MainFrame extends JFrame {
         private SortAction() {
             putValue(Action.NAME, "Сортировка");
             putValue(Action.SHORT_DESCRIPTION, "Выбрать столбцы для сортировки");
+            putValue(Action.SMALL_ICON, iSORT16);
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F9"));
         }
 
         public void actionPerformed(ActionEvent e) {
             SortDialog sortDialog = new SortDialog(MainFrame.this, mainTable);
             sortDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             sortDialog.setVisible(true);
+        }
+    }
+
+    private class RefreshAction extends AbstractAction {
+        private RefreshAction() {
+            putValue(Action.NAME, "Обновить");
+            putValue(Action.SHORT_DESCRIPTION, "Обновить");
+            putValue(Action.SMALL_ICON, iREFRESH16);
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F5"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            refresh();
         }
     }
 }
