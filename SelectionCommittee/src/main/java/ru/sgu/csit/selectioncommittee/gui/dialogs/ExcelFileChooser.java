@@ -43,7 +43,7 @@ public class ExcelFileChooser extends JFileChooser {
         }
 
         String fileName = file.getPath().toLowerCase();
-        if (".xls".endsWith(fileName) || ".xlsx".endsWith(fileName)) {
+        if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
             return file;
         }
         return new File(fileName + ".xls");

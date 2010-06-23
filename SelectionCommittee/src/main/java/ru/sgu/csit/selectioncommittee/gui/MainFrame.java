@@ -195,6 +195,10 @@ public class MainFrame extends JFrame {
         jToolBar.add(createSpecialityPanel());
         jToolBar.addSeparator();
 
+        jToolBar.addSeparator();
+        jToolBar.add(createSearchPanel());
+        jToolBar.addSeparator();
+
         jToolBar.setFloatable(false);
         return jToolBar;
     }
@@ -217,6 +221,51 @@ public class MainFrame extends JFrame {
 //        specialityPanel.setMaximumSize(new Dimension(250, specialityComboBox.getPreferredSize().height));
 
         return specialityPanel;
+    }
+
+    private JPanel createSearchPanel() {
+        JPanel searchPanel = new JPanel(new GridBagLayout());
+        searchPanel.add(new JLabel("Поиск:"), new GBConstraints(0, 0));
+
+        final JTextField searchPhraseTextField = new JTextField(30);
+        searchPhraseTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent event) {
+                if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                    String searchPhrase = searchPhraseTextField.getText();
+                    int beginRow = Math.max(mainTable.getSelectedRow(), 0);
+                    int beginColumn = Math.max(mainTable.getSelectedColumn() + 1, 0);
+                    int rowSize = mainTable.getRowCount();
+                    int columnSize = mainTable.getColumnCount();
+
+                    boolean search;
+                    do {
+                        for (int row = beginRow; row < rowSize; ++row) {
+                            for (int column = beginColumn; column < columnSize; ++column) {
+                                if (mainTable.getValueAt(row, column) != null) {
+                                    String cellValue = mainTable.getValueAt(row, column).toString();
+                                    if (cellValue.indexOf(searchPhrase) >= 0) {
+                                        mainTable.changeSelection(row, column, false, false);
+                                        searchPhraseTextField.selectAll();
+                                        return;
+                                    }
+                                }
+                            }
+                            beginColumn = 0;
+                        }
+                        search = showConfirmDialog("Ничего не найдено. Хотите продолжить поиск с начала таблицы?");
+                        beginRow = 0;
+                        beginColumn = 0;
+                    } while (search);
+                }
+            }
+        });
+
+        searchPanel.add(searchPhraseTextField, new GBConstraints(1, 0, true));
+
+        searchPanel.setMaximumSize(searchPanel.getPreferredSize());
+
+        return searchPanel;
     }
 
     public void refresh() {
