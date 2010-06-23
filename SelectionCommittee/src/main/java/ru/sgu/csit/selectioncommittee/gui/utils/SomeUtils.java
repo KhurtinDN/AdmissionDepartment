@@ -1,5 +1,6 @@
 package ru.sgu.csit.selectioncommittee.gui.utils;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -13,12 +14,14 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.showErrorMess
  */
 public class SomeUtils {
     public static void openExcelViewer(File file) {
-        String program = ApplicationSettings.getSettings().getExcelExecutor();
-        try {
-            String[] arguments = new String[]{program, file.getCanonicalPath()};
-            Runtime.getRuntime().exec(arguments);
-        } catch (IOException e1) {
-            showErrorMessage("Не удалось запустить программу " + program);
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().open(file);
+            } catch (IOException e) {
+                showErrorMessage("Произошла ошибка во время открытия файла " + file.getName() + "\n" + e.getMessage());
+            }
+        } else {
+            showErrorMessage("Desktop API is not supported on the current platform");
         }
     }
 }
