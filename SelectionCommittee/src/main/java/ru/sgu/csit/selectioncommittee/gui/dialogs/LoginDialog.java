@@ -156,7 +156,7 @@ public class LoginDialog extends JDialog {
             String selectedDatabaseType = hibernateSettings.getDatabaseType();
             int selectedIndex = 0;
             for (int i = 0; i < dbTypes.size(); ++i) {
-                if (dbTypes.get(i).equals(selectedDatabaseType)) {
+                if (dbTypes.get(i).equalsIgnoreCase(selectedDatabaseType)) {
                     selectedIndex = i;
                 }
             }

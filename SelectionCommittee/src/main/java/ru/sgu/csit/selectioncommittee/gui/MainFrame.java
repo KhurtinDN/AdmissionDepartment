@@ -457,7 +457,7 @@ public class MainFrame extends JFrame {
             putValue(Action.NAME, tAPPORTION_SPEC);
             putValue(Action.SHORT_DESCRIPTION, tAPPORTION_SPEC_DESCRIPTION);
             putValue(Action.SMALL_ICON, iAPPORTION16);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F10"));
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F9"));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -500,7 +500,7 @@ public class MainFrame extends JFrame {
             putValue(Action.NAME, "Сортировка");
             putValue(Action.SHORT_DESCRIPTION, "Выбрать столбцы для сортировки");
             putValue(Action.SMALL_ICON, iSORT16);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F9"));
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F6"));
         }
 
         public void actionPerformed(ActionEvent e) {
