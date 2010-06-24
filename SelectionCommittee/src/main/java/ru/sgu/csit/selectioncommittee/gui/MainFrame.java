@@ -273,6 +273,11 @@ public class MainFrame extends JFrame {
         matriculantSizeLabel.setText("" + DataAccessFactory.getMatriculants().size());
     }
 
+    public void setPositionToLastRow() {
+        specialityComboBox.setSelectedIndex(0);
+        mainTable.changeSelection(mainTable.getRowCount() - 1, 0, false, false);
+    }
+
     private class ExportToExcelAction extends AbstractAction {
         private JDialog exportDialog;
 
