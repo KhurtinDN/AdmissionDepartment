@@ -582,6 +582,8 @@ public class MainFrame extends JFrame {
 
         public void actionPerformed(ActionEvent e) {
             DataAccessFactory.reloadAll();
+            MatriculantTable.resetRowIndexes();
+            specialityComboBox.setSelectedIndex(0);
             refresh();
         }
     }
