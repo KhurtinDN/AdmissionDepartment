@@ -337,7 +337,7 @@ public class MatriculantDialog extends JDialog {
                 }
 
                 mainFrame.refresh();
-                mainFrame.setPositionToLastRow();
+                mainFrame.resetPositionToLastRow();
             }
         }
     }

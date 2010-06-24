@@ -269,13 +269,21 @@ public class MainFrame extends JFrame {
     }
 
     public void refresh() {
+        int selectedRow = mainTable.getSelectedRow();
+        int selectedColumn = mainTable.getSelectedColumn();
+
         mainTable.refresh();
         matriculantSizeLabel.setText("" + DataAccessFactory.getMatriculants().size());
+        mainTable.changeSelection(selectedRow, selectedColumn, false, false);
     }
 
-    public void setPositionToLastRow() {
+    public void resetPositionToLastRow() {
+        int selectedRow = mainTable.getRowCount() - 1;
+
         specialityComboBox.setSelectedIndex(0);
-        mainTable.changeSelection(mainTable.getRowCount() - 1, 0, false, false);
+        if (selectedRow >= 0 && mainTable.getColumnCount() > 0) {
+            mainTable.changeSelection(selectedRow, 0, false, false);
+        }
     }
 
     private class ExportToExcelAction extends AbstractAction {
