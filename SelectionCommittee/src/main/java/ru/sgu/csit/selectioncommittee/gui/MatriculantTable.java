@@ -204,6 +204,7 @@ public class MatriculantTable extends JTable {
 
     public void refresh() {
         matriculantTableModel.fireTableDataChanged();
+        repaint();
     }
 
     public void reload() {

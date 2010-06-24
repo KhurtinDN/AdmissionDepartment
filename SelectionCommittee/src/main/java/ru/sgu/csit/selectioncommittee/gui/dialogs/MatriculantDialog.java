@@ -368,6 +368,7 @@ public class MatriculantDialog extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             MatriculantDialog.this.setVisible(false);
+            mainFrame.refresh();
         }
     }
 
