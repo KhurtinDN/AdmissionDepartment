@@ -232,7 +232,7 @@ public class MainFrame extends JFrame {
             @Override
             public void keyPressed(KeyEvent event) {
                 if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                    String searchPhrase = searchPhraseTextField.getText();
+                    String searchPhrase = searchPhraseTextField.getText().toLowerCase();
                     int beginRow = Math.max(mainTable.getSelectedRow(), 0);
                     int beginColumn = Math.max(mainTable.getSelectedColumn() + 1, 0);
                     int rowSize = mainTable.getRowCount();
@@ -244,7 +244,7 @@ public class MainFrame extends JFrame {
                             for (int column = beginColumn; column < columnSize; ++column) {
                                 if (mainTable.getValueAt(row, column) != null) {
                                     String cellValue = mainTable.getValueAt(row, column).toString();
-                                    if (cellValue.indexOf(searchPhrase) >= 0) {
+                                    if (cellValue.toLowerCase().indexOf(searchPhrase) >= 0) {
                                         mainTable.changeSelection(row, column, false, false);
                                         searchPhraseTextField.selectAll();
                                         return;

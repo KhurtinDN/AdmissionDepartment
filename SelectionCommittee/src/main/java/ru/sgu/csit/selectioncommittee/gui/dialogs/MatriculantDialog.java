@@ -282,8 +282,16 @@ public class MatriculantDialog extends JDialog {
             showWarningMessage("Введите корректный номер расписки");
             return false;
         }
-        if (!matriculantNameField.getText().matches("[\\w\\sА-Яа-я]+")) {
+        if (!matriculantNameField.getText().matches("[\\w\\sА-Яа-яЁё\\-]+")) {
             showWarningMessage("Введите корректное имя абитуриента");
+            return false;
+        }
+        if (!motherNameField.getText().matches("[\\w\\sА-Яа-яЁё\\-]*")) {
+            showWarningMessage("Введите корректное имя мамы абитуриента");
+            return false;
+        }
+        if (!fatherNameField.getText().matches("[\\w\\sА-Яа-яЁё\\-]*")) {
+            showWarningMessage("Введите корректное имя папы абитуриента");
             return false;
         }
         if (radioButtonGroup.getSelection() == null) {

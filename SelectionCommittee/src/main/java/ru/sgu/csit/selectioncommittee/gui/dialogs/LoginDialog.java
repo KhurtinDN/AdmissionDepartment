@@ -87,7 +87,7 @@ public class LoginDialog extends JDialog {
 
     private class LoginAction extends AbstractAction {
         private LoginAction() {
-            putValue(Action.NAME, "Войти в систему");
+            putValue(Action.NAME, "Войти");
         }
 
         public void actionPerformed(ActionEvent e) {
