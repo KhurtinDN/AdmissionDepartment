@@ -7,7 +7,7 @@ import ru.sgu.csit.selectioncommittee.dao.impl.MatriculantDAOImpl;
 import ru.sgu.csit.selectioncommittee.dao.impl.ReceiptExamineDAOImpl;
 import ru.sgu.csit.selectioncommittee.dao.impl.SpecialityDAOImpl;
 
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,21 +17,13 @@ import java.util.List;
  * @author xx & hd
  */
 public class DataAccessFactory {
-    private static final MatriculantDAOImpl matriculantDAO;
-    private static final ReceiptExamineDAOImpl receiptExamineDAO;
-    private static final SpecialityDAOImpl specialityDAO;
+    private static final MatriculantDAOImpl matriculantDAO = new MatriculantDAOImpl();
+    private static final ReceiptExamineDAOImpl receiptExamineDAO = new ReceiptExamineDAOImpl();
+    private static final SpecialityDAOImpl specialityDAO = new SpecialityDAOImpl();
 
-    private static List<Matriculant> matriculants;
-    private static List<ReceiptExamine> examines;
-    private static List<Speciality> specialities;
-
-    static {
-        matriculantDAO = new MatriculantDAOImpl();
-        receiptExamineDAO = new ReceiptExamineDAOImpl();
-        specialityDAO = new SpecialityDAOImpl();
-
-        reloadAll();
-    }
+    private static List<Matriculant> matriculants = new ArrayList<Matriculant>();
+    private static List<ReceiptExamine> examines = new ArrayList<ReceiptExamine>();
+    private static List<Speciality> specialities = new ArrayList<Speciality>();
 
     private DataAccessFactory() {
     }
@@ -61,9 +53,9 @@ public class DataAccessFactory {
     }
 
     public static void reloadAll() {
-        matriculants = matriculantDAO.findAll();
-        examines = receiptExamineDAO.findAll();
-        specialities = specialityDAO.findAll();
+        reloadMatriculants();
+        reloadExamines();
+        reloadSpecialities();
     }
 
     public static void reloadMatriculants() {

@@ -9,6 +9,8 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Vector;
 
 /**
@@ -24,12 +26,12 @@ public class LoginDialog extends JDialog {
     private Action loginAction = new LoginAction();
     private Action closeAction = new CloseAction();
 
-    private JFrame owner;
+    private MainFrame owner;
 
     private JTextField loginField = new JTextField(20);
     private JPasswordField passwordField = new JPasswordField(20);
 
-    public LoginDialog(JFrame owner) {
+    public LoginDialog(MainFrame owner) {
         super(owner, "Вход в систему", true);
         this.owner = owner;
         setLayout(new GridBagLayout());
@@ -41,6 +43,13 @@ public class LoginDialog extends JDialog {
         add(createButtonPanel(), new GBConstraints(0, 2, 2, 1));
 
         pack();
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
 
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
@@ -100,6 +109,10 @@ public class LoginDialog extends JDialog {
                 String username = loginField.getText();
                 char[] password = passwordField.getPassword();
 
+                passwordField.setText("");
+                loginField.selectAll();
+                loginField.requestFocus();
+
                 hibernateSettings.setUserNameAndPassword(username, password);
 
                 if (!hibernateSettings.tryLogin()) {
@@ -110,14 +123,9 @@ public class LoginDialog extends JDialog {
                     return;
                 }
 
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        MainFrame mainFrame = new MainFrame();
-                        mainFrame.setDefaultCloseOperation(MainFrame.DO_NOTHING_ON_CLOSE);
-                        mainFrame.setVisible(true);
-                        mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                    }
-                });
+                owner.setVisible(true);
+                owner.reloadAllData();
+
                 LoginDialog.this.setVisible(false);
             }
         }
@@ -129,11 +137,7 @@ public class LoginDialog extends JDialog {
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (owner == null) {
-                System.exit(0);
-            } else {
-                LoginDialog.this.setVisible(false);
-            }
+            System.exit(0);
         }
     }
 

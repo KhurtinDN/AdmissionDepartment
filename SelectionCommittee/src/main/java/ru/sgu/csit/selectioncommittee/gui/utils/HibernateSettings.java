@@ -19,6 +19,13 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.showErrorMess
  */
 public class HibernateSettings {
     private final String HIBERNATE_PROPERTIES = "hibernate.properties";
+
+    private final String KEY_USERNAME = "hibernate.connection.username";
+    private final String KEY_PASSWORD = "hibernate.connection.password";
+    private final String KEY_DRIVER = "hibernate.connection.driver_class";
+    private final String KEY_DIALECT = "hibernate.connection.dialect";
+    private final String KEY_URL = "hibernate.connection.url";
+
     private static HibernateSettings settings;
     private Properties dbProperties;
 
@@ -28,7 +35,6 @@ public class HibernateSettings {
     private String databaseName = "SelectionCommittee";
 
     private boolean configured = false;
-    private boolean login = false;
 
     private Map<String, Database> supportedDatabasesMap = createSupportedDatabasesMap();
 
@@ -48,7 +54,7 @@ public class HibernateSettings {
         dbProperties = new Properties();
         dbProperties.load(new FileInputStream(HIBERNATE_PROPERTIES));
 
-        String url = dbProperties.getProperty("hibernate.connection.url");
+        String url = dbProperties.getProperty(KEY_URL);
         if (url != null) {  // jdbc:postgresql://localhost:5432/SelectionCommittee
             Pattern pattern = Pattern.compile("jdbc:(\\w+)://([\\w\\.]+):(\\d+)/(\\w+)");
             Matcher matcher = pattern.matcher(url);
@@ -58,14 +64,16 @@ public class HibernateSettings {
                 port = new Integer(matcher.group(3));
                 databaseName = matcher.group(4);
             } else {
-                throw new WrongSettingsException("In " + HIBERNATE_PROPERTIES + " wrong url.");
+                throw new WrongSettingsException("In " + HIBERNATE_PROPERTIES + " wrong " + KEY_URL + ".");
             }
         } else {
-            throw new WrongSettingsException("In " + HIBERNATE_PROPERTIES + " hibernate.connection.url not found.");
+            throw new WrongSettingsException("In " + HIBERNATE_PROPERTIES + "  " + KEY_URL + " not found.");
         }
     }
 
     public void saveSettings() {
+        dbProperties.remove(KEY_USERNAME);
+        dbProperties.remove(KEY_PASSWORD);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(HIBERNATE_PROPERTIES);
             dbProperties.store(fileOutputStream, "Hibernate settings");
@@ -84,12 +92,7 @@ public class HibernateSettings {
     }
 
     public boolean tryLogin() {
-        login = LocalSessionFactory.createNewSessionFactory(dbProperties);
-        return login;
-    }
-
-    public boolean isLogin() {
-        return login;
+        return LocalSessionFactory.createNewSessionFactory(dbProperties);
     }
 
     public boolean isConfigured() {
@@ -97,17 +100,17 @@ public class HibernateSettings {
     }
 
     public void setUserNameAndPassword(String username, char[] password) {
-        dbProperties.put("hibernate.connection.username", username);
-        dbProperties.put("hibernate.connection.password", new String(password));
+        dbProperties.put(KEY_USERNAME, username);
+        dbProperties.put(KEY_PASSWORD, new String(password));
     }
 
     public void setConnectionUrl(String databaseType, String host, Integer port, String databaseName) {
         Database database = supportedDatabasesMap.get(databaseType);
-        dbProperties.put("hibernate.connection.driver_class", database.getDriver());
-        dbProperties.put("hibernate.connection.dialect", database.getDialect());
+        dbProperties.put(KEY_DRIVER, database.getDriver());
+        dbProperties.put(KEY_DIALECT, database.getDialect());
         
         String url = createDatabaseUrl(databaseType, host, port, databaseName);
-        dbProperties.put("hibernate.connection.url", url);
+        dbProperties.put(KEY_URL, url);
 
         this.databaseType = databaseType;
         this.host = host;

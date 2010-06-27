@@ -30,14 +30,13 @@ public class MatriculantTable extends JTable {
     private static int specialityIndex = -1;
 
     private static boolean highlighting = true;
-    private List<JCheckBoxMenuItem> headerPopupMenu = new ArrayList<JCheckBoxMenuItem>();
 
     private static boolean showNotEntrance = true;
     private static Map<String, Boolean> showEntrances = null;
 
     private static MatriculantTableModel matriculantTableModel = new MatriculantTableModel();
 
-    static {
+    public static void recreateColumnNames() {
         columnNames.clear();
 
         columnNames.add("№");
@@ -45,7 +44,7 @@ public class MatriculantTable extends JTable {
         columnNames.add("Рег. №");
         columnNames.add("Поступает");
 
-        int startSpecialityIndex = 3;
+//        int startSpecialityIndex = 3;
         for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
             columnNames.add(DataAccessFactory.getSpecialities().get(i).getName());
         }
@@ -54,7 +53,7 @@ public class MatriculantTable extends JTable {
         columnNames.add("Специальность");
         columnNames.add("Зачислен на");
 
-        int startExaminesIndex = 2 + DataAccessFactory.getSpecialities().size() + startSpecialityIndex;
+//        int startExaminesIndex = 2 + DataAccessFactory.getSpecialities().size() + startSpecialityIndex;
         for (int i = 0; i < DataAccessFactory.getExamines().size(); ++i) {
             columnNames.add(DataAccessFactory.getExamines().get(i).getName());
         }
@@ -65,11 +64,9 @@ public class MatriculantTable extends JTable {
 
     public MatriculantTable() {
         super(matriculantTableModel);
-        regenerateColumnData();
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         reload();
         setDefaultRenderer(Object.class, new MatriculantTableCellRenderer());
-        getTableHeader().setComponentPopupMenu(createColumnPopupMenu());
     }
 
     private static void setDefaultShowEntrances() {
@@ -113,14 +110,13 @@ public class MatriculantTable extends JTable {
 
             columnMenuItem.setSelected(column.isVisible());
             jPopupMenu.add(columnMenuItem);
-            headerPopupMenu.add(columnMenuItem);
         }
         return jPopupMenu;
     }
 
     public TableColumnModel recreateColumnModel() {
         DefaultTableColumnModel columnModel = new DefaultTableColumnModel();
-        TableCellRenderer cellRenderer = new MatriculantTableCellRenderer();
+//        TableCellRenderer cellRenderer = new MatriculantTableCellRenderer();
 
         for (int i = 0; i < columns.size(); ++i) {
             //if (columns.get(i).isVisible()) {
@@ -143,6 +139,7 @@ public class MatriculantTable extends JTable {
     }
 
     private void regenerateColumnData() {
+        recreateColumnNames();
         columns.clear();
 
         columns.add(new ColumnInfo(null, "№", 25,
@@ -154,7 +151,7 @@ public class MatriculantTable extends JTable {
         columns.add(new ColumnInfo(null, "Поступает", 100,
                 ColumnType.STRING, SortOrder.ASC, true));
 
-        int startSpecialityIndex = 3;
+//        int startSpecialityIndex = 3;
         for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
             columns.add(new ColumnInfo(null, DataAccessFactory.getSpecialities().get(i).getName(), 60,
                 ColumnType.STRING, SortOrder.ASC, false));
@@ -167,7 +164,7 @@ public class MatriculantTable extends JTable {
         columns.add(new ColumnInfo(null, "Зачислен на", 95,
                 ColumnType.STRING, SortOrder.DESC, true));
 
-        int startExaminesIndex = 2 + DataAccessFactory.getSpecialities().size() + startSpecialityIndex;
+//        int startExaminesIndex = 2 + DataAccessFactory.getSpecialities().size() + startSpecialityIndex;
         for (int i = 0; i < DataAccessFactory.getExamines().size(); ++i) {
             columns.add(new ColumnInfo(null, DataAccessFactory.getExamines().get(i).getName(), 60,
                 ColumnType.NUMERIC, SortOrder.DESC, true));
@@ -203,11 +200,16 @@ public class MatriculantTable extends JTable {
     }
 
     public void refresh() {
+        int selectedRow = this.getSelectedRow();
+        int selectedColumn = this.getSelectedColumn();
         matriculantTableModel.fireTableDataChanged();
         repaint();
+        this.changeSelection(selectedRow, selectedColumn, false, false);
     }
 
     public void reload() {
+        regenerateColumnData();
+        getTableHeader().setComponentPopupMenu(createColumnPopupMenu());
         setColumnModel(recreateColumnModel());
         for (int i = 0; i < getColumns().size(); ++i) {
             if (!getColumns().get(i).isVisible()) {

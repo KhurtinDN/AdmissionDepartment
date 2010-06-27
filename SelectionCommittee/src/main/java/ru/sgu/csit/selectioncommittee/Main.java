@@ -1,10 +1,9 @@
 package ru.sgu.csit.selectioncommittee;
 
 
-import ru.sgu.csit.selectioncommittee.gui.dialogs.LoginDialog;
+import ru.sgu.csit.selectioncommittee.gui.MainFrame;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * Date: 03.05.2010
@@ -14,11 +13,10 @@ import java.awt.*;
  */
 public class Main {
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                LoginDialog loginDialog = new LoginDialog(null);
-                loginDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                loginDialog.setVisible(true);
+                MainFrame mainFrame = new MainFrame();
+                mainFrame.setDefaultCloseOperation(MainFrame.DO_NOTHING_ON_CLOSE);
             }
         });
     }

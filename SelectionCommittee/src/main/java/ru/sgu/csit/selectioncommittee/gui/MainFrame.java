@@ -21,6 +21,8 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  * @author xx & hd
  */
 public class MainFrame extends JFrame {
+    private LoginDialog loginDialog;
+
     private Action exportToExcelAction = new ExportToExcelAction();
     private Action exitAction = new ExitAction();
     private Action addAction = new AddAction();
@@ -34,20 +36,21 @@ public class MainFrame extends JFrame {
     private Action apportionMatriculantsAction = new ApportionMatriculantsAction();
     private Action sortAction = new SortAction();
     private Action refreshAction = new RefreshAction();
+    private Action reLogInAction = new ReLogInAction();
 
     private JComboBox specialityComboBox;
 
-    private MatriculantTable mainTable = null;
+    private MatriculantTable mainTable = new MatriculantTable();
 
     private MatriculantInfoDialog matriculantInfoDialog = new MatriculantInfoDialog(this);
 
     private JLabel matriculantSizeLabel = new JLabel();
 
     public MainFrame() {
-        mainTable = new MatriculantTable();
         setTitle(tTITLE_OF_APPLICATION);
         setIconImage(iAPP16);
         setSize(800, 600);
+
         setJMenuBar(createJMenuBar());
         add(createJToolBar(), BorderLayout.NORTH);
 
@@ -106,8 +109,11 @@ public class MainFrame extends JFrame {
 //        int y = (int) (screenSize.getHeight() / 2 - dialogSize.getHeight() / 2);
 //        setLocation(x, y);
         setSize(screenSize);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        refresh();
+        loginDialog = new LoginDialog(this);
+        loginDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        loginDialog.setVisible(true);
     }
 
     private JComponent createStatusBar() {
@@ -123,6 +129,8 @@ public class MainFrame extends JFrame {
         JMenu fileMenu = new JMenu(tFILE_MENU);
         fileMenu.add(refreshAction);
         fileMenu.add(exportToExcelAction);
+        fileMenu.addSeparator();
+        fileMenu.add(reLogInAction);
         fileMenu.addSeparator();
         fileMenu.add(exitAction);
 
@@ -269,12 +277,16 @@ public class MainFrame extends JFrame {
     }
 
     public void refresh() {
-        int selectedRow = mainTable.getSelectedRow();
-        int selectedColumn = mainTable.getSelectedColumn();
-
         mainTable.refresh();
         matriculantSizeLabel.setText("" + DataAccessFactory.getMatriculants().size());
-        mainTable.changeSelection(selectedRow, selectedColumn, false, false);
+    }
+
+    public void reloadAllData() {
+        DataAccessFactory.reloadAll();
+        mainTable.reload();
+        MatriculantTable.resetRowIndexes();
+        specialityComboBox.setSelectedIndex(0);
+        refresh();
     }
 
     public void resetPositionToLastRow() {
@@ -581,10 +593,21 @@ public class MainFrame extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-            DataAccessFactory.reloadAll();
-            MatriculantTable.resetRowIndexes();
-            specialityComboBox.setSelectedIndex(0);
-            refresh();
+            reloadAllData();
+        }
+    }
+
+    private class ReLogInAction extends AbstractAction {
+        private ReLogInAction() {
+            putValue(Action.NAME, "Сменить пользователя");
+            putValue(Action.SHORT_DESCRIPTION, "Войти под другим пользователем");
+            putValue(Action.SMALL_ICON, iABOUT);
+            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F11"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            MainFrame.this.setVisible(false);
+            loginDialog.setVisible(true);
         }
     }
 }
