@@ -95,12 +95,16 @@ public class MatriculantTable extends JTable {
         }
     }
 
-    public static void deleteFromViewIndex(int index) {
-        if (specialityIndex > -1) {
-            MatriculantTableModel.matriculantIndexes.get(specialityIndex).remove(index);
+    public void deleteFromViewIndex(int index) {
+        /*if (specialityIndex > -1) {
+            MatriculantTableModel.matriculantIndexes.get(specialityIndex).remove(
+                    MatriculantTableModel.matriculantIndexes.get(specialityIndex).size() - 1); //viewRowIndexes.get(index));
+            MatriculantTableModel.setRowIndexesFromMatriculantIndexesBy(specialityIndex);
+        } else {
+            rowIndexes.remove(rowIndexes.size() - 1);//viewRowIndexes.get(index));
         }
-        rowIndexes.remove(viewRowIndexes.get(index));
-        viewRowIndexes.remove(index);
+        restoreRowIndexes();*/
+        matriculantTableModel.restoreIndexes();
     }
 
     private JPopupMenu createColumnPopupMenu() {
@@ -336,7 +340,9 @@ public class MatriculantTable extends JTable {
             for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
                 matriculantIndexes.add(new ArrayList<Integer>());
                 for (int j = 0; j < DataAccessFactory.getMatriculants().size(); ++j) {
-                    matriculantIndexes.get(i).add(j);
+                    if (DataAccessFactory.getMatriculants().get(j).onSpeciality(i)) {
+                        matriculantIndexes.get(i).add(j);
+                    }
                 }
             }
         }
@@ -445,7 +451,7 @@ public class MatriculantTable extends JTable {
             });
         }
 
-        public void setRowIndexesFromMatriculantIndexesBy(int index) {
+        public static void setRowIndexesFromMatriculantIndexesBy(int index) {
             rowIndexes = matriculantIndexes.get(index);
             specialityIndex = index;
         }

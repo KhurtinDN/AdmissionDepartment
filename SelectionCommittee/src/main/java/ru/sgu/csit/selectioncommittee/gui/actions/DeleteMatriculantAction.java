@@ -5,6 +5,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import ru.sgu.csit.selectioncommittee.common.Matriculant;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
+import ru.sgu.csit.selectioncommittee.gui.MainFrame;
 import ru.sgu.csit.selectioncommittee.gui.MatriculantTable;
 
 import javax.swing.*;
@@ -24,6 +25,9 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.t
  */
 @Component("deleteMatriculantAction")
 public class DeleteMatriculantAction extends AbstractAction {
+    @Autowired
+    private MainFrame mainFrame;
+
     @Autowired
     private MatriculantTable matriculantTable;
 
@@ -48,9 +52,9 @@ public class DeleteMatriculantAction extends AbstractAction {
 
                 DataAccessFactory.getMatriculants().remove(
                         matriculantTable.convertViewRowIndexToMatriculants(selectedIndex));
-                MatriculantTable.deleteFromViewIndex(selectedIndex);
+                matriculantTable.deleteFromViewIndex(selectedIndex);
                 DataAccessFactory.getMatriculantDAO().delete(matriculant);
-                matriculantTable.refresh();
+                mainFrame.refresh();
             }
         } else {
             showWarningMessage("Выберите сначала абитуриента");

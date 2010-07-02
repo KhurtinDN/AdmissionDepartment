@@ -48,7 +48,7 @@ public class CalculateMatriculantsAction extends AbstractAction {
             for (Speciality speciality : DataAccessFactory.getSpecialities()) {
                 if (itemName.equals(tCALCFOR_PREF + speciality.getName())) {
                     matriculantTable.sortBy(speciality);
-                    matriculantTable.repaint();
+                    matriculantTable.refresh();
 
                     return;
                 }

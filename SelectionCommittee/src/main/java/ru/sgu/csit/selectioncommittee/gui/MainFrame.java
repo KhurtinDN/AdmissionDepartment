@@ -52,6 +52,8 @@ public class MainFrame extends JFrame {
 
     private JToolBar jToolBar;
 
+    private JPopupMenu rowPopupMenu;
+
     private JComboBox specialityComboBox;
 
     private JLabel matriculantSizeLabel = new JLabel();
@@ -72,41 +74,6 @@ public class MainFrame extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 exitAction.actionPerformed(null);
-            }
-        });
-
-        final JPopupMenu rowPopupMenu = createRowPopupMenu();
-
-        mainTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent event) {
-                if (SwingUtilities.isRightMouseButton(event)) {
-                    JTable table = (JTable) event.getSource();
-                    Point point = event.getPoint();
-                    int column = table.columnAtPoint(point);
-                    int row = table.rowAtPoint(point);
-
-                    if (column >= 0 && row >= 0) {
-                        table.setColumnSelectionInterval(column, column);
-                        table.setRowSelectionInterval(row, row);
-                    }
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent event) {
-                if (SwingUtilities.isRightMouseButton(event)) {
-                    Point point = event.getPoint();
-                    JTable table = (JTable) event.getSource();
-                    rowPopupMenu.show(table, point.x, point.y);
-                }
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent event) {
-                if (event.getClickCount() > 1) {
-                    matriculantInfoAction.actionPerformed(null);
-                }
             }
         });
 
@@ -286,6 +253,45 @@ public class MainFrame extends JFrame {
         }
     }
 
+    private void reloadPopupMenu() {
+        if (rowPopupMenu == null) {
+            rowPopupMenu= createRowPopupMenu();
+
+            mainTable.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent event) {
+                    if (SwingUtilities.isRightMouseButton(event)) {
+                        JTable table = (JTable) event.getSource();
+                        Point point = event.getPoint();
+                        int column = table.columnAtPoint(point);
+                        int row = table.rowAtPoint(point);
+
+                        if (column >= 0 && row >= 0) {
+                            table.setColumnSelectionInterval(column, column);
+                            table.setRowSelectionInterval(row, row);
+                        }
+                    }
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent event) {
+                    if (SwingUtilities.isRightMouseButton(event)) {
+                        Point point = event.getPoint();
+                        JTable table = (JTable) event.getSource();
+                        rowPopupMenu.show(table, point.x, point.y);
+                    }
+                }
+
+                @Override
+                public void mouseClicked(MouseEvent event) {
+                    if (event.getClickCount() > 1) {
+                        matriculantInfoAction.actionPerformed(null);
+                    }
+                }
+            });
+        }
+    }
+
     private JPanel createSpecialityPanel() {
         JPanel specialityPanel = new JPanel(new GridBagLayout());
         specialityPanel.add(new JLabel("Ранжировать:"), new GBConstraints(0, 0));
@@ -364,6 +370,7 @@ public class MainFrame extends JFrame {
     public void reloadAllData() {
         DataAccessFactory.reloadAll();
         reloadJToolBar();
+        reloadPopupMenu();
         mainTable.reload();
         MatriculantTable.resetRowIndexes();
         specialityComboBox.setSelectedIndex(0);

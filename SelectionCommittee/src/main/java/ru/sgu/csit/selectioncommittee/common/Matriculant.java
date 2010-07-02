@@ -160,6 +160,30 @@ public class Matriculant extends Person {
         this.info = info;
     }
 
+    public boolean onSpeciality(int specialityIndex) {
+        List<Speciality> specialities = DataAccessFactory.getSpecialities();
+
+        if (specialities != null) {
+            Speciality speciality = specialities.get(specialityIndex);
+            List<ReceiptExamine> exams = speciality.getExams();
+
+            if (entranceCategory != EntranceCategory.EXAMINE) {
+                return speciality.getName().equals(this.speciality.get(1));
+            }
+            if (exams != null) {
+                for (ReceiptExamine examine : exams) {
+                    Integer currentBall = balls.get(examine.getName());
+
+                    if (currentBall == null || currentBall == 0) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Integer calculateTotalBallsForSpeciality(String specialityName) {
         Integer result = null;
 
