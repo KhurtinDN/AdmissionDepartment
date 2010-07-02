@@ -27,10 +27,6 @@ public class ReloadAction extends AbstractAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F5"));
     }
 
-    public MainFrame getMainFrame() {
-        return mainFrame;
-    }
-
     @Secured("ROLE_VIEWER")
     @Override
     public void actionPerformed(ActionEvent e) {

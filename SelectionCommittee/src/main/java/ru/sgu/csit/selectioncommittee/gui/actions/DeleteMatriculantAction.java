@@ -37,10 +37,6 @@ public class DeleteMatriculantAction extends AbstractAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F8"));
     }
 
-    public void setMatriculantTable(MatriculantTable matriculantTable) {
-        this.matriculantTable = matriculantTable;
-    }
-
     @Secured("ROLE_WORKER")
     @Override
     public void actionPerformed(ActionEvent e) {

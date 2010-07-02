@@ -28,10 +28,6 @@ public class SwitchHighlightingTableAction extends AbstractAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl L"));
     }
 
-    public void setMatriculantTable(MatriculantTable matriculantTable) {
-        this.matriculantTable = matriculantTable;
-    }
-
     @Secured("ROLE_VIEWER")
     @Override
     public void actionPerformed(ActionEvent e) {

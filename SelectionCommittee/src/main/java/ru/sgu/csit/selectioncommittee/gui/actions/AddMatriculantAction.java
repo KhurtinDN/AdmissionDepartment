@@ -32,10 +32,6 @@ public class AddMatriculantAction extends AbstractAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F7"));
     }
 
-    public void setOwner(MainFrame owner) {
-        this.owner = owner;
-    }
-
     @Secured("ROLE_WORKER")
     @Override
     public void actionPerformed(ActionEvent e) {

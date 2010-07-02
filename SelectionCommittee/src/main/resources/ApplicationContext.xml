@@ -16,7 +16,6 @@
     <context:annotation-config/>
 
     <bean id="mainFrame" class="ru.sgu.csit.selectioncommittee.gui.MainFrame">
-        <constructor-arg name="mainTable" ref="mainTable"/>
         <property name="logInAction" ref="logInAction"/>
         <property name="addMatriculantAction" ref="addMatriculantAction"/>
         <property name="editMatriculantAction" ref="editMatriculantAction"/>
@@ -29,7 +28,7 @@
         <property name="reloadAction" ref="reloadAction"/>
         <property name="resizeTableAction" ref="resizeTableAction"/>
         <property name="switchHighlightingTableAction" ref="switchHighlightingTableAction"/>
-        <property name="exitAction" ref="exitAction"/>
+        <property name="exitAction" ref="exitAction"/>                                    
         <property name="aboutAction" ref="aboutAction"/>
     </bean>
 

@@ -35,14 +35,6 @@ public class ApportionMatriculantsAction extends AbstractAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F9"));
     }
 
-    public void setOwner(JFrame owner) {
-        this.owner = owner;
-    }
-
-    public void setMatriculantTable(MatriculantTable matriculantTable) {
-        this.matriculantTable = matriculantTable;
-    }
-
     @Secured("ROLE_WORKER")
     @Override
     public void actionPerformed(ActionEvent e) {

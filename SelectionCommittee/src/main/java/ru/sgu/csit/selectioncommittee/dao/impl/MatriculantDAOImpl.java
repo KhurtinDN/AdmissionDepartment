@@ -1,6 +1,7 @@
 package ru.sgu.csit.selectioncommittee.dao.impl;
 
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 import ru.sgu.csit.selectioncommittee.common.Matriculant;
 import ru.sgu.csit.selectioncommittee.dao.MatriculantDAO;
 
@@ -13,6 +14,7 @@ import java.util.List;
  *
  * @author xx & hd
  */
+@Repository("matriculantDAO")
 public class MatriculantDAOImpl extends GenericDAOImpl<Matriculant, Long> implements MatriculantDAO {
     @Override
     public List<Matriculant> findByDate(Date startDate, Date endDate) {

@@ -31,10 +31,6 @@ public class AboutAction extends AbstractAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F1"));
     }
 
-    public void setOwner(JFrame owner) {
-        this.owner = owner;
-    }
-
     @Secured("ROLE_VIEWER")
     @Override
     public void actionPerformed(ActionEvent e) {

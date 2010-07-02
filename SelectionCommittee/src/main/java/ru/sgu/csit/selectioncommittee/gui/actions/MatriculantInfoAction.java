@@ -38,14 +38,6 @@ public class MatriculantInfoAction extends AbstractAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F3"));
     }
 
-    public void setOwner(JFrame owner) {
-        this.owner = owner;
-    }
-
-    public void setMatriculantTable(MatriculantTable matriculantTable) {
-        this.matriculantTable = matriculantTable;
-    }
-
     @Secured("ROLE_VIEWER")
     @Override
     public void actionPerformed(ActionEvent e) {

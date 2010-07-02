@@ -1,6 +1,7 @@
 package ru.sgu.csit.selectioncommittee.dao.impl;
 
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
 import ru.sgu.csit.selectioncommittee.common.ReceiptExamine;
 import ru.sgu.csit.selectioncommittee.dao.ReceiptExamineDAO;
 
@@ -12,6 +13,7 @@ import java.util.List;
  *
  * @author hd (KhurtinDN::a::gmail.com)
  */
+@Repository("receiptExamineDAO")
 public class ReceiptExamineDAOImpl extends GenericDAOImpl<ReceiptExamine, Long> implements ReceiptExamineDAO {
 
     @Override

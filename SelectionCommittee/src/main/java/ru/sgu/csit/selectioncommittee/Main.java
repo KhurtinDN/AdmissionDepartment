@@ -6,7 +6,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.sgu.csit.selectioncommittee.gui.MainFrame;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * Date: 03.05.2010

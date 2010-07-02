@@ -39,14 +39,6 @@ public class EditMatriculantAction extends AbstractAction {
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F4"));
     }
 
-    public void setOwner(MainFrame owner) {
-        this.owner = owner;
-    }
-
-    public void setMatriculantTable(MatriculantTable matriculantTable) {
-        this.matriculantTable = matriculantTable;
-    }
-
     @Secured("ROLE_WORKER")
     @Override
     public void actionPerformed(ActionEvent e) {

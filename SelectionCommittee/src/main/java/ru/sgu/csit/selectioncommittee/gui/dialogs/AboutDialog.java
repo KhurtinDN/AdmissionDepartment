@@ -5,7 +5,6 @@ import ru.sgu.csit.selectioncommittee.gui.actions.CloseAction;
 import javax.swing.*;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*;
 

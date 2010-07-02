@@ -1,5 +1,6 @@
 package ru.sgu.csit.selectioncommittee.gui;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import ru.sgu.csit.selectioncommittee.gui.actions.*;
@@ -7,6 +8,7 @@ import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
 
 import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
 
+import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -20,53 +22,32 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  * @author xx & hd
  */
 public class MainFrame extends JFrame {
+    @Autowired
     private MatriculantTable mainTable;
 
     private Action exportToExcelAction;
-
     private Action exitAction;
-
     private Action addMatriculantAction;
-
     private Action editMatriculantAction;
-
     private Action matriculantInfoAction;
-
     private Action deleteMatriculantAction;
-
     private Action aboutAction;
-
     private Action resizeTableAction;
-
     private Action switchHighlightingTableAction;
-
     private Action calculateMatriculantsAction;
-
     private Action apportionMatriculantsAction;
-
     private Action sortAction;
-
     private Action reloadAction;
-
     private Action logInAction;
-
-    private JToolBar jToolBar;
-
-    private JPopupMenu rowPopupMenu;
 
     private JComboBox specialityComboBox;
 
     private JLabel matriculantSizeLabel = new JLabel();
 
-    public MainFrame(MatriculantTable mainTable) {
-        this.mainTable = mainTable;
+    public MainFrame() {
         setTitle(tTITLE_OF_APPLICATION);
         setIconImage(iAPP16);
         setSize(800, 600);
-
-        setJMenuBar(createJMenuBar());
-
-        add(new JScrollPane(mainTable), BorderLayout.CENTER);
 
         add(createStatusBar(), BorderLayout.SOUTH);
 
@@ -77,16 +58,51 @@ public class MainFrame extends JFrame {
             }
         });
 
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Dimension screenSize = toolkit.getScreenSize();
-//        Dimension dialogSize = getSize();
-//        int x = (int) (screenSize.getWidth() / 2 - dialogSize.getWidth() / 2);
-//        int y = (int) (screenSize.getHeight() / 2 - dialogSize.getHeight() / 2);
-//        setLocation(x, y);
-        setSize(screenSize);
+        setSize(Toolkit.getDefaultToolkit().getScreenSize());
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+    }
 
-//        logInAction.actionPerformed(null);
+    @PostConstruct
+    public void initialize() {
+        setJMenuBar(createJMenuBar());
+        add(createJToolBar(), BorderLayout.NORTH);
+
+        add(new JScrollPane(mainTable), BorderLayout.CENTER);
+
+        final JPopupMenu rowPopupMenu = createRowPopupMenu();
+
+        mainTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent event) {
+                if (SwingUtilities.isRightMouseButton(event)) {
+                    JTable table = (JTable) event.getSource();
+                    Point point = event.getPoint();
+                    int column = table.columnAtPoint(point);
+                    int row = table.rowAtPoint(point);
+
+                    if (column >= 0 && row >= 0) {
+                        table.setColumnSelectionInterval(column, column);
+                        table.setRowSelectionInterval(row, row);
+                    }
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent event) {
+                if (SwingUtilities.isRightMouseButton(event)) {
+                    Point point = event.getPoint();
+                    JTable table = (JTable) event.getSource();
+                    rowPopupMenu.show(table, point.x, point.y);
+                }
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                if (event.getClickCount() > 1) {
+                    matriculantInfoAction.actionPerformed(null);
+                }
+            }
+        });
     }
 
     public void setExportToExcelAction(Action exportToExcelAction) {
@@ -195,10 +211,7 @@ public class MainFrame extends JFrame {
 
         JMenu apportionMenu = new JMenu(tAPPORTION_MENU);
         apportionMenu.add(sortAction);
-//        apportionMenu.add(calcAllMatriculantsAction);
-//        for (Speciality speciality : DataAccessFactory.getSpecialities()) {
-//            apportionMenu.add(new CalcForSpecialityAction(speciality.getName()));
-//        }
+        
         apportionMenu.addSeparator();
         apportionMenu.add(apportionMatriculantsAction);
 
@@ -218,7 +231,6 @@ public class MainFrame extends JFrame {
 
         jPopupMenu.add(matriculantInfoAction);
         jPopupMenu.add(editMatriculantAction);
-//        jPopupMenu.add(deleteMatriculantAction);
 
         return jPopupMenu;
     }
@@ -246,52 +258,6 @@ public class MainFrame extends JFrame {
         return jToolBar;
     }
 
-    private void reloadJToolBar() {
-        if (jToolBar == null) {
-            jToolBar = createJToolBar();
-            add(jToolBar, BorderLayout.NORTH);
-        }
-    }
-
-    private void reloadPopupMenu() {
-        if (rowPopupMenu == null) {
-            rowPopupMenu= createRowPopupMenu();
-
-            mainTable.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent event) {
-                    if (SwingUtilities.isRightMouseButton(event)) {
-                        JTable table = (JTable) event.getSource();
-                        Point point = event.getPoint();
-                        int column = table.columnAtPoint(point);
-                        int row = table.rowAtPoint(point);
-
-                        if (column >= 0 && row >= 0) {
-                            table.setColumnSelectionInterval(column, column);
-                            table.setRowSelectionInterval(row, row);
-                        }
-                    }
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent event) {
-                    if (SwingUtilities.isRightMouseButton(event)) {
-                        Point point = event.getPoint();
-                        JTable table = (JTable) event.getSource();
-                        rowPopupMenu.show(table, point.x, point.y);
-                    }
-                }
-
-                @Override
-                public void mouseClicked(MouseEvent event) {
-                    if (event.getClickCount() > 1) {
-                        matriculantInfoAction.actionPerformed(null);
-                    }
-                }
-            });
-        }
-    }
-
     private JPanel createSpecialityPanel() {
         JPanel specialityPanel = new JPanel(new GridBagLayout());
         specialityPanel.add(new JLabel("Ранжировать:"), new GBConstraints(0, 0));
@@ -303,7 +269,6 @@ public class MainFrame extends JFrame {
         specialityPanel.add(specialityComboBox, new GBConstraints(1, 0, true));
 
         specialityPanel.setMaximumSize(specialityPanel.getPreferredSize());
-//        specialityPanel.setMaximumSize(new Dimension(250, specialityComboBox.getPreferredSize().height));
 
         return specialityPanel;
     }
@@ -369,8 +334,6 @@ public class MainFrame extends JFrame {
 
     public void reloadAllData() {
         DataAccessFactory.reloadAll();
-        reloadJToolBar();
-        reloadPopupMenu();
         mainTable.reload();
         MatriculantTable.resetRowIndexes();
         specialityComboBox.setSelectedIndex(0);
@@ -390,41 +353,4 @@ public class MainFrame extends JFrame {
             mainTable.changeSelection(selectedRow, 0, false, false);
         }
     }
-
-//    private class CalcForSpecialityAction extends AbstractAction {
-//        private String specialityName;
-//
-//        private CalcForSpecialityAction(String name) {
-//            specialityName = name;
-//            putValue(Action.NAME, tCALCFOR_PREF + name);
-//            putValue(Action.SHORT_DESCRIPTION, tCALCFORSPECIALITY_DESCRIPTION);
-//        }
-//
-//        public void actionPerformed(ActionEvent e) {
-//            JMenuItem showMenuItem = (JMenuItem) e.getSource();
-//
-//            for (Speciality speciality : DataAccessFactory.getSpecialities()) {
-//                if (speciality.getName().equals(specialityName)) {
-//                    mainTable.sortBy(speciality);
-//                    mainTable.repaint();
-//
-//                    return;
-//                }
-//            }
-//        }
-//    }
-
-//    private class CalcAllMatriculantsAction extends AbstractAction {
-//        private CalcAllMatriculantsAction() {
-//            putValue(Action.NAME, tCALCALL);
-//            putValue(Action.SHORT_DESCRIPTION, tCALCALL_DESCRIPTION);
-//        }
-//
-//        public void actionPerformed(ActionEvent e) {
-//            JMenuItem columnMenuItem = (JMenuItem) e.getSource();
-//
-//            MatriculantTable.resetRowIndexes();
-//            mainTable.repaint();
-//        }
-//    }
 }       
