@@ -1,5 +1,7 @@
 package ru.sgu.csit.selectioncommittee.gui.dialogs;
 
+import ru.sgu.csit.selectioncommittee.gui.actions.CloseAction;
+
 import javax.swing.*;
 
 import java.awt.*;
@@ -31,20 +33,9 @@ public class AboutDialog extends JDialog {
         int y = (int) (screenSize.getHeight() / 2 - dialogSize.getHeight() / 2);
         setLocation(x, y);
 
-        Action closeAction = new CloseAction();
+        Action closeAction = new CloseAction(this);
         JPanel content = (JPanel) getContentPane();
         content.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "CLOSE_DIALOG");
         content.getActionMap().put("CLOSE_DIALOG", closeAction);
-    }
-
-    private class CloseAction extends AbstractAction {
-        private CloseAction() {
-            putValue(Action.NAME, tCLOSE);
-            putValue(Action.SHORT_DESCRIPTION, tCLOSE_DESCRIPTION);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            AboutDialog.this.setVisible(false);
-        }
     }
 }

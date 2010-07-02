@@ -1,6 +1,8 @@
 package ru.sgu.csit.selectioncommittee.gui.dialogs;
 
 import ru.sgu.csit.selectioncommittee.gui.MatriculantTable;
+import ru.sgu.csit.selectioncommittee.gui.actions.CloseAction;
+import ru.sgu.csit.selectioncommittee.gui.utils.ApplicationSettings;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
 import ru.sgu.csit.selectioncommittee.gui.utils.SomeUtils;
 import ru.sgu.csit.selectioncommittee.service.ArgumentNotExcelFileException;
@@ -12,6 +14,7 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -25,7 +28,7 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  * @author : xx & hd
  */
 public class ExportToExcelDialog extends JDialog {
-    private Action closeAction = new CloseAction();
+    private Action closeAction = new CloseAction(this);
 
     private MatriculantTable matriculantTable = new MatriculantTable();
 
@@ -44,9 +47,10 @@ public class ExportToExcelDialog extends JDialog {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         Dimension dialogSize = getSize();
-        int x = (int) (screenSize.getWidth() / 2 - dialogSize.getWidth() / 2);
+        int x = 0;
         int y = (int) (screenSize.getHeight() / 2 - dialogSize.getHeight() / 2);
         setLocation(x, y);
+        setSize(screenSize.width, dialogSize.height);
 
         JPanel content = (JPanel) getContentPane();
         content.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "CLOSE_DIALOG");
@@ -65,7 +69,18 @@ public class ExportToExcelDialog extends JDialog {
 
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new GridBagLayout());
-        needOpenDocumentCheckBox.setSelected(true);
+        String selected = ApplicationSettings.getSettings().get("ExportToExcelDialog.needOpenDocumentCheckBox.selected");
+        if (selected == null) {
+            selected = "true";
+        }
+        needOpenDocumentCheckBox.setSelected(selected.equalsIgnoreCase("true"));
+        needOpenDocumentCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ApplicationSettings.getSettings().set("ExportToExcelDialog.needOpenDocumentCheckBox.selected",
+                        needOpenDocumentCheckBox.isSelected() + "");
+            }
+        });
         buttonPanel.add(needOpenDocumentCheckBox, new GBConstraints(0, 0));
         buttonPanel.add(new JLabel(), new GBConstraints(1, 0, true));
         buttonPanel.add(new JButton(new ExportToExcelAction()), new GBConstraints(2, 0));
@@ -134,17 +149,6 @@ public class ExportToExcelDialog extends JDialog {
             }
 
             return contentLists;
-        }
-    }
-
-    private class CloseAction extends AbstractAction {
-        private CloseAction() {
-            putValue(Action.NAME, tCLOSE);
-            putValue(Action.SHORT_DESCRIPTION, tCLOSE_DESCRIPTION);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            ExportToExcelDialog.this.setVisible(false);
         }
     }
 }

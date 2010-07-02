@@ -5,6 +5,7 @@ import ru.sgu.csit.selectioncommittee.common.Matriculant;
 import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import ru.sgu.csit.selectioncommittee.gui.MatriculantTable;
+import ru.sgu.csit.selectioncommittee.gui.actions.CloseAction;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.panels.CapacityOnSpecialitiesPanel;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
 import ru.sgu.csit.selectioncommittee.gui.utils.SomeUtils;
@@ -22,7 +23,6 @@ import java.util.*;
 import java.util.List;
 
 import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.showErrorMessage;
-import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*;
 
 /**
  * Date: Jun 15, 2010
@@ -35,7 +35,7 @@ public class ApportionMatriculantsDialog extends JDialog {
     private JCheckBox needOpenDocumentCheckBox = new JCheckBox("Открыть документ после экспорта");
 
     private Action apportionAction = new ApportionAction();
-    private Action closeAction = new CloseAction();
+    private Action closeAction = new CloseAction(this);
 
     private MatriculantTable matriculantTable = null;
 
@@ -45,6 +45,7 @@ public class ApportionMatriculantsDialog extends JDialog {
         super(owner, "Распределение абитуриентов по специальностям", true);
         this.matriculantTable = matriculantTable;
         setSize(600, 300);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
 
         add(createCapacityOnSpecialitiesPanel(),
@@ -232,17 +233,6 @@ public class ApportionMatriculantsDialog extends JDialog {
                     return markCompare;
                 }
             }
-        }
-    }
-
-    private class CloseAction extends AbstractAction {
-        private CloseAction() {
-            putValue(Action.NAME, tCLOSE);
-            putValue(Action.SHORT_DESCRIPTION, tCLOSE_DESCRIPTION);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            ApportionMatriculantsDialog.this.setVisible(false);
         }
     }
 }

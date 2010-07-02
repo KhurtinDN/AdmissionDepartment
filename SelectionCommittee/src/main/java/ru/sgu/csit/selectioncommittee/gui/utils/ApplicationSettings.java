@@ -19,6 +19,8 @@ public class ApplicationSettings {
     private static ApplicationSettings settings = null;
     private Properties properties = null;
 
+    private boolean changedFlag = false;
+
     private ApplicationSettings() {
         try {
             loadSettings();
@@ -27,19 +29,21 @@ public class ApplicationSettings {
         }
     }
 
-    private void loadSettings() throws IOException {
+    public void loadSettings() throws IOException {
         properties = new Properties();
         properties.load(new FileInputStream(APPLICATION_PROPERTIES));
     }
 
-    private void saveSettings() {
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(APPLICATION_PROPERTIES);
-            properties.store(fileOutputStream, "Application settings");
-            fileOutputStream.close();
-        } catch (IOException e) {
-            showErrorMessage("При создании файла настроек " + APPLICATION_PROPERTIES + " возникли проблемы.");
-            System.err.println(e);
+    public void saveSettings() {
+        if (changedFlag) {
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(APPLICATION_PROPERTIES);
+                properties.store(fileOutputStream, "Application settings");
+                fileOutputStream.close();
+            } catch (IOException e) {
+                showErrorMessage("При создании файла настроек " + APPLICATION_PROPERTIES + " возникли проблемы.");
+                System.err.println(e);
+            }
         }
     }
 
@@ -50,13 +54,12 @@ public class ApplicationSettings {
         return settings;
     }
 
-    public String getExcelExecutor() {
-        String excelExecutor = properties.getProperty("excelExecutor");
-        if (excelExecutor == null) {
-            excelExecutor = "oocalc";
-            properties.put("excelExecutor", excelExecutor);
-            saveSettings();
-        }
-        return excelExecutor;
+    public String get(String key) {
+        return properties.getProperty(key);
+    }
+
+    public void set(String key, String value) {
+        changedFlag = true;
+        properties.put(key, value);
     }
 }

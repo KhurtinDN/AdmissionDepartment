@@ -1,9 +1,8 @@
 package ru.sgu.csit.selectioncommittee.gui;
 
-import ru.sgu.csit.selectioncommittee.common.Matriculant;
 import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
-import ru.sgu.csit.selectioncommittee.gui.dialogs.*;
+import ru.sgu.csit.selectioncommittee.gui.actions.*;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
 
 import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
@@ -21,38 +20,49 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  * @author xx & hd
  */
 public class MainFrame extends JFrame {
-    private LoginDialog loginDialog;
+    private MatriculantTable mainTable;
 
-    private Action exportToExcelAction = new ExportToExcelAction();
-    private Action exitAction = new ExitAction();
-    private Action addAction = new AddAction();
-    private Action editAction = new EditAction();
-    private Action deleteAction = new DeleteAction();
-    private Action aboutAction = new AboutAction();
-    private Action infoAction = new InfoAction();
-    private Action resizeTableAction = new ResizeTableAction();
-//    private Action calcAllMatriculantsAction = new CalcAllMatriculantsAction();
-    private Action highlightingAction = new HighlightingAction();
-    private Action apportionMatriculantsAction = new ApportionMatriculantsAction();
-    private Action sortAction = new SortAction();
-    private Action refreshAction = new RefreshAction();
-    private Action reLogInAction = new ReLogInAction();
+    private Action exportToExcelAction;
+
+    private Action exitAction;
+
+    private Action addMatriculantAction;
+
+    private Action editMatriculantAction;
+
+    private Action matriculantInfoAction;
+
+    private Action deleteMatriculantAction;
+
+    private Action aboutAction;
+
+    private Action resizeTableAction;
+
+    private Action switchHighlightingTableAction;
+
+    private Action calculateMatriculantsAction;
+
+    private Action apportionMatriculantsAction;
+
+    private Action sortAction;
+
+    private Action reloadAction;
+
+    private Action logInAction;
+
+    private JToolBar jToolBar;
 
     private JComboBox specialityComboBox;
 
-    private MatriculantTable mainTable = new MatriculantTable();
-
-    private MatriculantInfoDialog matriculantInfoDialog = new MatriculantInfoDialog(this);
-
     private JLabel matriculantSizeLabel = new JLabel();
 
-    public MainFrame() {
+    public MainFrame(MatriculantTable mainTable) {
+        this.mainTable = mainTable;
         setTitle(tTITLE_OF_APPLICATION);
         setIconImage(iAPP16);
         setSize(800, 600);
 
         setJMenuBar(createJMenuBar());
-        add(createJToolBar(), BorderLayout.NORTH);
 
         add(new JScrollPane(mainTable), BorderLayout.CENTER);
 
@@ -61,9 +71,7 @@ public class MainFrame extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                //if (confirm(tCONFIRM_CLOSE_APP)) {
-                System.exit(0);
-                //}
+                exitAction.actionPerformed(null);
             }
         });
 
@@ -73,7 +81,7 @@ public class MainFrame extends JFrame {
             @Override
             public void mousePressed(MouseEvent event) {
                 if (SwingUtilities.isRightMouseButton(event)) {
-                    JTable table = (JTable)event.getSource();
+                    JTable table = (JTable) event.getSource();
                     Point point = event.getPoint();
                     int column = table.columnAtPoint(point);
                     int row = table.rowAtPoint(point);
@@ -89,7 +97,7 @@ public class MainFrame extends JFrame {
             public void mouseReleased(MouseEvent event) {
                 if (SwingUtilities.isRightMouseButton(event)) {
                     Point point = event.getPoint();
-                    JTable table = (JTable)event.getSource();
+                    JTable table = (JTable) event.getSource();
                     rowPopupMenu.show(table, point.x, point.y);
                 }
             }
@@ -97,7 +105,7 @@ public class MainFrame extends JFrame {
             @Override
             public void mouseClicked(MouseEvent event) {
                 if (event.getClickCount() > 1) {
-                    infoAction.actionPerformed(null);
+                    matriculantInfoAction.actionPerformed(null);
                 }
             }
         });
@@ -111,9 +119,67 @@ public class MainFrame extends JFrame {
         setSize(screenSize);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        loginDialog = new LoginDialog(this);
-        loginDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        loginDialog.setVisible(true);
+//        logInAction.actionPerformed(null);
+    }
+
+    public void setExportToExcelAction(Action exportToExcelAction) {
+        this.exportToExcelAction = exportToExcelAction;
+    }
+
+    public void setExitAction(Action exitAction) {
+        this.exitAction = exitAction;
+    }
+
+    public void setAddMatriculantAction(Action addMatriculantAction) {
+        this.addMatriculantAction = addMatriculantAction;
+    }
+
+    public void setEditMatriculantAction(Action editMatriculantAction) {
+        this.editMatriculantAction = editMatriculantAction;
+    }
+
+    public void setMatriculantInfoAction(Action matriculantInfoAction) {
+        this.matriculantInfoAction = matriculantInfoAction;
+    }
+
+    public void setDeleteMatriculantAction(Action deleteMatriculantAction) {
+        this.deleteMatriculantAction = deleteMatriculantAction;
+    }
+
+    public void setAboutAction(Action aboutAction) {
+        this.aboutAction = aboutAction;
+    }
+
+    public void setResizeTableAction(Action resizeTableAction) {
+        this.resizeTableAction = resizeTableAction;
+    }
+
+    public void setSwitchHighlightingTableAction(Action switchHighlightingTableAction) {
+        this.switchHighlightingTableAction = switchHighlightingTableAction;
+    }
+
+    public void setCalculateMatriculantsAction(Action calculateMatriculantsAction) {
+        this.calculateMatriculantsAction = calculateMatriculantsAction;
+    }
+
+    public void setApportionMatriculantsAction(Action apportionMatriculantsAction) {
+        this.apportionMatriculantsAction = apportionMatriculantsAction;
+    }
+
+    public void setSortAction(Action sortAction) {
+        this.sortAction = sortAction;
+    }
+
+    public void setReloadAction(Action reloadAction) {
+        this.reloadAction = reloadAction;
+    }
+
+    public void setLogInAction(Action logInAction) {
+        this.logInAction = logInAction;
+    }
+
+    public void login() {
+        logInAction.actionPerformed(null);
     }
 
     private JComponent createStatusBar() {
@@ -127,31 +193,33 @@ public class MainFrame extends JFrame {
         JMenuBar jMenuBar = new JMenuBar();
 
         JMenu fileMenu = new JMenu(tFILE_MENU);
-        fileMenu.add(refreshAction);
+        fileMenu.add(reloadAction);
         fileMenu.add(exportToExcelAction);
         fileMenu.addSeparator();
-        fileMenu.add(reLogInAction);
+        fileMenu.add(logInAction);
         fileMenu.addSeparator();
         fileMenu.add(exitAction);
 
         JMenu editMenu = new JMenu(tEDIT_MENU);
-        editMenu.add(addAction);
-        editMenu.add(infoAction);
-        editMenu.add(editAction);
+        editMenu.add(addMatriculantAction);
+        editMenu.add(matriculantInfoAction);
+        editMenu.add(editMatriculantAction);
         editMenu.addSeparator();
-        editMenu.add(deleteAction);
+        editMenu.add(deleteMatriculantAction);
 
         JMenu viewMenu = new JMenu(tVIEW_MENU);
-        JCheckBoxMenuItem showNotEntranceMenuItem = new JCheckBoxMenuItem(new ShowMatriculantsAction(tSHOWNOTENT_ITEM));
+        JCheckBoxMenuItem showNotEntranceMenuItem = new JCheckBoxMenuItem(
+                new ShowMatriculantsAction(mainTable, tSHOWNOTENT_ITEM));
         showNotEntranceMenuItem.setSelected(MatriculantTable.isShowNotEntrance());
         viewMenu.add(showNotEntranceMenuItem);
         for (Speciality speciality : DataAccessFactory.getSpecialities()) {
-            JCheckBoxMenuItem showEntranceMenuItem = new JCheckBoxMenuItem(new ShowMatriculantsAction(speciality.getName()));
+            JCheckBoxMenuItem showEntranceMenuItem = new JCheckBoxMenuItem(
+                    new ShowMatriculantsAction(mainTable, speciality.getName()));
             showEntranceMenuItem.setSelected(MatriculantTable.isShowEntrance(speciality.getName()));
             viewMenu.add(showEntranceMenuItem);
         }
         viewMenu.addSeparator();
-        JCheckBoxMenuItem lightMenuItem = new JCheckBoxMenuItem(highlightingAction);
+        JCheckBoxMenuItem lightMenuItem = new JCheckBoxMenuItem(switchHighlightingTableAction);
         lightMenuItem.setSelected(MatriculantTable.isHighlighting());
         viewMenu.add(lightMenuItem);
         JCheckBoxMenuItem resizeMenuItem = new JCheckBoxMenuItem(resizeTableAction);
@@ -181,20 +249,20 @@ public class MainFrame extends JFrame {
     private JPopupMenu createRowPopupMenu() {
         JPopupMenu jPopupMenu = new JPopupMenu();
 
-        jPopupMenu.add(infoAction);
-        jPopupMenu.add(editAction);
-//        jPopupMenu.add(deleteAction);
+        jPopupMenu.add(matriculantInfoAction);
+        jPopupMenu.add(editMatriculantAction);
+//        jPopupMenu.add(deleteMatriculantAction);
 
         return jPopupMenu;
     }
 
     private JToolBar createJToolBar() {
         JToolBar jToolBar = new JToolBar();
-        jToolBar.add(addAction);
-        jToolBar.add(infoAction);
-        jToolBar.add(editAction);
+        jToolBar.add(addMatriculantAction);
+        jToolBar.add(matriculantInfoAction);
+        jToolBar.add(editMatriculantAction);
         jToolBar.addSeparator();
-        jToolBar.add(refreshAction);
+        jToolBar.add(reloadAction);
         jToolBar.addSeparator();
         jToolBar.add(exportToExcelAction);
         jToolBar.addSeparator();
@@ -211,17 +279,20 @@ public class MainFrame extends JFrame {
         return jToolBar;
     }
 
+    private void reloadJToolBar() {
+        if (jToolBar == null) {
+            jToolBar = createJToolBar();
+            add(jToolBar, BorderLayout.NORTH);
+        }
+    }
+
     private JPanel createSpecialityPanel() {
         JPanel specialityPanel = new JPanel(new GridBagLayout());
         specialityPanel.add(new JLabel("Ранжировать:"), new GBConstraints(0, 0));
 
-        Object[] items = new Object[1 + DataAccessFactory.getSpecialities().size()];
-        items[0] = tCALCALL;
-        for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
-            items[i + 1] = tCALCFOR_PREF + DataAccessFactory.getSpecialities().get(i).getName();
-        }
-        specialityComboBox = new JComboBox(items);
-        specialityComboBox.addActionListener(new CalcMatriculantsAction());
+        specialityComboBox = new JComboBox();
+        reloadDataSpecialityComboBox();
+        specialityComboBox.addActionListener(calculateMatriculantsAction);
 
         specialityPanel.add(specialityComboBox, new GBConstraints(1, 0, true));
 
@@ -229,6 +300,15 @@ public class MainFrame extends JFrame {
 //        specialityPanel.setMaximumSize(new Dimension(250, specialityComboBox.getPreferredSize().height));
 
         return specialityPanel;
+    }
+
+    private void reloadDataSpecialityComboBox() {
+        Object[] items = new Object[1 + DataAccessFactory.getSpecialities().size()];
+        items[0] = tCALCALL;
+        for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
+            items[i + 1] = tCALCFOR_PREF + DataAccessFactory.getSpecialities().get(i).getName();
+        }
+        specialityComboBox.setModel(new DefaultComboBoxModel(items));
     }
 
     private JPanel createSearchPanel() {
@@ -283,9 +363,15 @@ public class MainFrame extends JFrame {
 
     public void reloadAllData() {
         DataAccessFactory.reloadAll();
+        reloadJToolBar();
         mainTable.reload();
         MatriculantTable.resetRowIndexes();
         specialityComboBox.setSelectedIndex(0);
+        setJMenuBar(createJMenuBar());
+        reloadDataSpecialityComboBox();
+        if (isVisible()) {
+            setVisible(true);
+        }
         refresh();
     }
 
@@ -295,172 +381,6 @@ public class MainFrame extends JFrame {
         specialityComboBox.setSelectedIndex(0);
         if (selectedRow >= 0 && mainTable.getColumnCount() > 0) {
             mainTable.changeSelection(selectedRow, 0, false, false);
-        }
-    }
-
-    private class ExportToExcelAction extends AbstractAction {
-        private JDialog exportDialog;
-
-        private ExportToExcelAction() {
-            putValue(Action.NAME, tEXPORT_TO_EXCEL);
-            putValue(Action.SMALL_ICON, iEXCEL16);
-            putValue(Action.SHORT_DESCRIPTION, tEXPORT_TO_EXCEL_DESCRIPTION);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F2"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if (exportDialog == null) {
-                exportDialog = new ExportToExcelDialog(MainFrame.this);
-            }
-            exportDialog.setVisible(true);
-        }
-    }
-
-    private class AddAction extends AbstractAction {
-        private AddAction() {
-            putValue(Action.NAME, tADD);
-            putValue(Action.SMALL_ICON, iADD16);
-            putValue(Action.SHORT_DESCRIPTION, tADD_DESCRIPTION);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F7"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            MatriculantDialog matriculantDialog = new MatriculantDialog(MainFrame.this, true, new Matriculant());
-            matriculantDialog.setVisible(true);
-        }
-    }
-
-    private class EditAction extends AbstractAction {
-        private EditAction() {
-            putValue(Action.NAME, tEDIT);
-            putValue(Action.SMALL_ICON, iEDIT16);
-            putValue(Action.SHORT_DESCRIPTION, tEDIT_DESCRIPTION);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F4"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            int selectedIndex = mainTable.getSelectedRow();
-            if (selectedIndex >= 0) {
-                Matriculant matriculant = DataAccessFactory.getMatriculants()
-                        .get(mainTable.convertViewRowIndexToMatriculants(selectedIndex));
-                MatriculantDialog matriculantDialog = new MatriculantDialog(MainFrame.this, false, matriculant);
-                matriculantDialog.setVisible(true);
-            } else {
-                showWarningMessage("Выберите сначала абитуриента");
-            }
-        }
-    }
-
-    private class DeleteAction extends AbstractAction {
-        private DeleteAction() {
-            putValue(Action.NAME, tDELETE);
-            putValue(Action.SMALL_ICON, iDELETE16);
-            putValue(Action.SHORT_DESCRIPTION, tDELETE_DESCRIPTION);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F8"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            int selectedIndex = mainTable.getSelectedRow();
-            if (selectedIndex >= 0) {
-                if (showConfirmDialog("Удалить абитуриента?")) {
-                    Matriculant matriculant = DataAccessFactory.getMatriculants()
-                            .get(mainTable.convertViewRowIndexToMatriculants(selectedIndex));
-
-                    DataAccessFactory.getMatriculants().remove(mainTable.convertViewRowIndexToMatriculants(selectedIndex));
-                    MatriculantTable.deleteFromViewIndex(selectedIndex);
-                    DataAccessFactory.getMatriculantDAO().delete(matriculant);
-//                    DataAccessFactory.reloadMatriculants();
-                    mainTable.refresh();
-                }
-            } else {
-                showWarningMessage("Выберите сначала абитуриента");
-            }
-        }
-    }
-
-    private class ExitAction extends AbstractAction {
-        private ExitAction() {
-            putValue(Action.NAME, tEXIT);
-            putValue(Action.SMALL_ICON, iEXIT16);
-            putValue(Action.SHORT_DESCRIPTION, tEXIT_DESCRIPTION);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F12"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            //if (confirm(tCONFIRM_CLOSE_APP)) {
-            System.exit(0);
-            //}
-        }
-    }
-
-    private class AboutAction extends AbstractAction {
-        private AboutDialog dialog = null;
-
-        private AboutAction() {
-            putValue(Action.NAME, tABOUT);
-            putValue(Action.SMALL_ICON, iABOUT);
-            putValue(Action.SHORT_DESCRIPTION, tABOUT_DESCRIPTION);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F1"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            if (dialog == null) {
-                dialog = new AboutDialog(MainFrame.this);
-            }
-            dialog.setVisible(true);
-        }
-    }
-
-    private class InfoAction extends AbstractAction {
-        private InfoAction() {
-            putValue(Action.NAME, tINFO);
-            putValue(Action.SMALL_ICON, iINFO16);
-            putValue(Action.SHORT_DESCRIPTION, tINFO_DESCRIPTION);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F3"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            int selectedIndex = mainTable.getSelectedRow();
-            if (selectedIndex >= 0) {
-                Matriculant matriculant = DataAccessFactory.getMatriculants()
-                        .get(mainTable.convertViewRowIndexToMatriculants(selectedIndex));
-                matriculantInfoDialog.showInfo(matriculant.printToString());
-            } else {
-                showWarningMessage("Выберите сначала абитуриента");
-            }
-        }
-    }
-
-    private class ResizeTableAction extends AbstractAction {
-        private ResizeTableAction() {
-            putValue(Action.NAME, tAUTORESIZE);
-            putValue(Action.SHORT_DESCRIPTION, tAUTORESIZE_DESCRIPTION);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl R"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            JCheckBoxMenuItem resizeMenuItem = (JCheckBoxMenuItem) e.getSource();
-
-            if (resizeMenuItem.isSelected()) {
-                mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-            } else {
-                mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-            }
-        }
-    }
-
-    private class HighlightingAction extends AbstractAction {
-        private HighlightingAction() {
-            putValue(Action.NAME, tHIGHLIGHTING);
-            putValue(Action.SHORT_DESCRIPTION, tHIGHLIGHTING_DESCRIPTION);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl L"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            JCheckBoxMenuItem lightMenuItem = (JCheckBoxMenuItem) e.getSource();
-
-            MatriculantTable.setHighlighting(lightMenuItem.isSelected());
-            mainTable.repaint();
         }
     }
 
@@ -500,114 +420,4 @@ public class MainFrame extends JFrame {
 //            mainTable.repaint();
 //        }
 //    }
-
-    private class CalcMatriculantsAction extends AbstractAction {
-        private CalcMatriculantsAction() {
-            putValue(Action.NAME, "Список отображения");
-            putValue(Action.SHORT_DESCRIPTION, tCALCFORSPECIALITY_DESCRIPTION);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            String itemName = (String) specialityComboBox.getSelectedItem();
-
-            if (itemName.equals(tCALCALL)) {
-                MatriculantTable.resetRowIndexes();
-                mainTable.repaint();
-            } else {
-                for (Speciality speciality : DataAccessFactory.getSpecialities()) {
-                    if (itemName.equals(tCALCFOR_PREF + speciality.getName())) {
-                        mainTable.sortBy(speciality);
-                        mainTable.repaint();
-
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    private class ApportionMatriculantsAction extends AbstractAction {
-        private ApportionMatriculantsAction() {
-            putValue(Action.NAME, tAPPORTION_SPEC);
-            putValue(Action.SHORT_DESCRIPTION, tAPPORTION_SPEC_DESCRIPTION);
-            putValue(Action.SMALL_ICON, iAPPORTION16);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F9"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            ApportionMatriculantsDialog apportionMatriculantsDialog =
-                    new ApportionMatriculantsDialog(MainFrame.this, mainTable);
-            apportionMatriculantsDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            apportionMatriculantsDialog.setVisible(true);
-        }
-    }
-
-    private class ShowMatriculantsAction extends AbstractAction {
-        private String specialityName;
-
-        private ShowMatriculantsAction(String name) {
-            specialityName = name;
-            if (tSHOWNOTENT_ITEM.equals(name)) {
-                putValue(Action.NAME, name);
-            } else {
-                putValue(Action.NAME, tSHOWENT_PREF + name);
-            }
-            putValue(Action.SHORT_DESCRIPTION, tSHOWENT_DESCRIPTION);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            JCheckBoxMenuItem showMenuItem = (JCheckBoxMenuItem) e.getSource();
-
-            if (tSHOWNOTENT_ITEM.equals(specialityName)) {
-                MatriculantTable.setShowNotEntrance(showMenuItem.isSelected());
-            } else {
-                MatriculantTable.setShowEntrance(specialityName, showMenuItem.isSelected());
-            }
-            MatriculantTable.recalculateViewRows();
-            mainTable.refresh();
-            mainTable.repaint();
-        }
-    }
-
-    private class SortAction extends AbstractAction {
-        private SortAction() {
-            putValue(Action.NAME, "Сортировка");
-            putValue(Action.SHORT_DESCRIPTION, "Выбрать столбцы для сортировки");
-            putValue(Action.SMALL_ICON, iSORT16);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F6"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            SortDialog sortDialog = new SortDialog(MainFrame.this, mainTable);
-            sortDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            sortDialog.setVisible(true);
-        }
-    }
-
-    private class RefreshAction extends AbstractAction {
-        private RefreshAction() {
-            putValue(Action.NAME, "Обновить");
-            putValue(Action.SHORT_DESCRIPTION, "Обновить");
-            putValue(Action.SMALL_ICON, iREFRESH16);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F5"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            reloadAllData();
-        }
-    }
-
-    private class ReLogInAction extends AbstractAction {
-        private ReLogInAction() {
-            putValue(Action.NAME, "Сменить пользователя");
-            putValue(Action.SHORT_DESCRIPTION, "Войти под другим пользователем");
-            putValue(Action.SMALL_ICON, iABOUT);
-            putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F11"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            MainFrame.this.setVisible(false);
-            loginDialog.setVisible(true);
-        }
-    }
-}
+}       

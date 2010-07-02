@@ -1,6 +1,7 @@
 package ru.sgu.csit.selectioncommittee.gui.dialogs;
 
 import ru.sgu.csit.selectioncommittee.gui.MatriculantTable;
+import ru.sgu.csit.selectioncommittee.gui.actions.CloseAction;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.panels.SortColumnPanel;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
 
@@ -10,8 +11,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*;
-
 /**
  * Date: Jun 15, 2010
  * Time: 5:26:58 PM
@@ -20,7 +19,7 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.*
  */
 public class SortDialog extends JDialog {
     private Action sortAction = new SortAction();
-    private Action closeAction = new CloseAction();
+    private Action closeAction = new CloseAction(this);
 
     private SortColumnPanel sortColumnPanel;
 
@@ -30,6 +29,7 @@ public class SortDialog extends JDialog {
         super(owner, "Поля для сортирровки", true);
         this.matriculantTable = matriculantTable;
         setSize(600, 300);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
 
         add(createSelectSortColumnPanel(),
@@ -61,9 +61,6 @@ public class SortDialog extends JDialog {
             }
         }
         sortColumnPanel = new SortColumnPanel(columnList);
-
-//        List<String> columnNameList = matriculantTable.getSortColumnList(); //todo: set saving set column name
-//        sortColumnPanel.setColumnNameList(columnNameList);
 
         return sortColumnPanel;
     }
@@ -102,17 +99,6 @@ public class SortDialog extends JDialog {
 
             matriculantTable.sort(columnIndexList);
             matriculantTable.repaint();
-        }
-    }
-
-    private class CloseAction extends AbstractAction {
-        private CloseAction() {
-            putValue(Action.NAME, tCLOSE);
-            putValue(Action.SHORT_DESCRIPTION, tCLOSE_DESCRIPTION);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            SortDialog.this.setVisible(false);
         }
     }
 }

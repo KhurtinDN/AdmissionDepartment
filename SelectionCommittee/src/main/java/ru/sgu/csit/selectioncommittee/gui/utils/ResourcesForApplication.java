@@ -74,4 +74,6 @@ public class ResourcesForApplication {
     public final static String tCONFIRM = "Подтверждение";
     public final static String tYES = "Да";
     public final static String tNO = "Нет";
+
+    public final static String mWARN_ACCESS_DENIED = "У Вас недостаточно прав для этой операции!";
 }

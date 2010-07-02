@@ -1,5 +1,6 @@
 package ru.sgu.csit.selectioncommittee.gui;
 
+import org.springframework.stereotype.*;
 import ru.sgu.csit.selectioncommittee.common.Matriculant;
 import ru.sgu.csit.selectioncommittee.common.ReceiptExamine;
 import ru.sgu.csit.selectioncommittee.common.Speciality;
@@ -8,6 +9,7 @@ import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,6 +24,7 @@ import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.t
  *
  * @author xx & hd
  */
+@org.springframework.stereotype.Component("mainTable")
 public class MatriculantTable extends JTable {
     private static List<String> columnNames = new ArrayList<String>();
     private List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
@@ -70,11 +73,9 @@ public class MatriculantTable extends JTable {
     }
 
     private static void setDefaultShowEntrances() {
-        if (showEntrances == null) {
-            showEntrances = new HashMap<String, Boolean>();
-            for (Speciality speciality : DataAccessFactory.getSpecialities()) {
-                showEntrances.put(speciality.getName(), Boolean.TRUE);
-            }
+        showEntrances = new HashMap<String, Boolean>();
+        for (Speciality speciality : DataAccessFactory.getSpecialities()) {
+            showEntrances.put(speciality.getName(), Boolean.TRUE);
         }
     }
 
@@ -120,15 +121,15 @@ public class MatriculantTable extends JTable {
 
         for (int i = 0; i < columns.size(); ++i) {
             //if (columns.get(i).isVisible()) {
-                TableColumn column = new TableColumn();
+            TableColumn column = new TableColumn();
 
-                column.setModelIndex(i);
-                column.setHeaderValue(columns.get(i).getColumnName());
-                column.setPreferredWidth(columns.get(i).getColumnWidth());
-                //column.setCellRenderer(cellRenderer);
+            column.setModelIndex(i);
+            column.setHeaderValue(columns.get(i).getColumnName());
+            column.setPreferredWidth(columns.get(i).getColumnWidth());
+            //column.setCellRenderer(cellRenderer);
 
-                columnModel.addColumn(column);
-                columns.get(i).setColumn(column);
+            columnModel.addColumn(column);
+            columns.get(i).setColumn(column);
             //}
         }
         return columnModel;
@@ -154,7 +155,7 @@ public class MatriculantTable extends JTable {
 //        int startSpecialityIndex = 3;
         for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
             columns.add(new ColumnInfo(null, DataAccessFactory.getSpecialities().get(i).getName(), 60,
-                ColumnType.STRING, SortOrder.ASC, false));
+                    ColumnType.STRING, SortOrder.ASC, false));
         }
 
         columns.add(new ColumnInfo(null, "Балл", 45,
@@ -167,7 +168,7 @@ public class MatriculantTable extends JTable {
 //        int startExaminesIndex = 2 + DataAccessFactory.getSpecialities().size() + startSpecialityIndex;
         for (int i = 0; i < DataAccessFactory.getExamines().size(); ++i) {
             columns.add(new ColumnInfo(null, DataAccessFactory.getExamines().get(i).getName(), 60,
-                ColumnType.NUMERIC, SortOrder.DESC, true));
+                    ColumnType.NUMERIC, SortOrder.DESC, true));
         }
 
         columns.add(new ColumnInfo(null, "Телефон", 150,
@@ -209,6 +210,7 @@ public class MatriculantTable extends JTable {
 
     public void reload() {
         regenerateColumnData();
+        setDefaultShowEntrances();
         getTableHeader().setComponentPopupMenu(createColumnPopupMenu());
         setColumnModel(recreateColumnModel());
         for (int i = 0; i < getColumns().size(); ++i) {
@@ -480,15 +482,15 @@ public class MatriculantTable extends JTable {
                         Matriculant matriculant = DataAccessFactory.getMatriculants().get(element);
 
                         if ("".equals(matriculant.getEntranceSpecialityName())) {
-                                if (speciality.getName().equals(matriculant.getSpeciality().get(currentSpecPriority))) {
-                                    matriculant.setEntranceSpecialityName(speciality.getName());
-                                    DataAccessFactory.getMatriculantDAO().update(matriculant);
-                                    updatedMatriculants = true;
-                                } else {
-                                    if (matriculant.getSpeciality().containsValue(speciality.getName())) {
-                                        --count;
-                                    }
+                            if (speciality.getName().equals(matriculant.getSpeciality().get(currentSpecPriority))) {
+                                matriculant.setEntranceSpecialityName(speciality.getName());
+                                DataAccessFactory.getMatriculantDAO().update(matriculant);
+                                updatedMatriculants = true;
+                            } else {
+                                if (matriculant.getSpeciality().containsValue(speciality.getName())) {
+                                    --count;
                                 }
+                            }
                         }
                         if (speciality.getName().equals(matriculant.getEntranceSpecialityName())) {
                             --count;
@@ -634,7 +636,7 @@ public class MatriculantTable extends JTable {
             Matriculant matriculant = DataAccessFactory.getMatriculants().get(
                     rowIndexes.get(viewRowIndexes.get(table.convertRowIndexToModel(row))));
 
-            if (((MatriculantTable)table).convertViewColumnIndexToModel(column) ==
+            if (((MatriculantTable) table).convertViewColumnIndexToModel(column) ==
                     DataAccessFactory.getSpecialities().size() + 4) {
                 cell.setFont(cell.getFont().deriveFont(Font.BOLD));
             }
@@ -679,7 +681,7 @@ public class MatriculantTable extends JTable {
             }
 
             if (isSelected) {
-                if (((MatriculantTable)table).convertViewColumnIndexToModel(column) == 1) {
+                if (((MatriculantTable) table).convertViewColumnIndexToModel(column) == 1) {
                     cell.setFont(cell.getFont().deriveFont(Font.BOLD));
                 }
             }

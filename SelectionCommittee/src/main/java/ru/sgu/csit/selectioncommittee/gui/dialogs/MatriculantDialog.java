@@ -6,6 +6,7 @@ import ru.sgu.csit.selectioncommittee.common.Person;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
 import ru.sgu.csit.selectioncommittee.gui.MainFrame;
 import ru.sgu.csit.selectioncommittee.gui.MatriculantTable;
+import ru.sgu.csit.selectioncommittee.gui.actions.CloseAction;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.panels.SpecialityPanel;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
 import ru.sgu.csit.selectioncommittee.gui.dialogs.panels.MarkPanel;
@@ -25,7 +26,7 @@ import java.util.*;
  * @author xx & hd
  */
 public class MatriculantDialog extends JDialog {
-    private Action closeAction = new CloseAction("Закрыть");
+    private Action closeAction = new CloseAction(this);
 
     private ActionListener takeAwayActionListener = new TakeAwayActionListener();
 
@@ -61,7 +62,7 @@ public class MatriculantDialog extends JDialog {
     private SpecialityPanel specialityPanel = new SpecialityPanel();
 
     // markPanel
-    MarkPanel markPanel = new MarkPanel();
+    private MarkPanel markPanel = new MarkPanel();
 
     // documentsPanel
     private JCheckBox takeAwayDocumentsCheckBox = new JCheckBox("Забрал документы");
@@ -133,6 +134,11 @@ public class MatriculantDialog extends JDialog {
         JPanel content = (JPanel) getContentPane();
         content.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "CLOSE_DIALOG");
         content.getActionMap().put("CLOSE_DIALOG", closeAction);
+    }
+
+    public void setMatriculant(Matriculant matriculant) {
+        this.matriculant = matriculant;
+        setFieldsFromMatriculant(matriculant);
     }
 
     private JPanel getTopPanel() {
@@ -256,9 +262,9 @@ public class MatriculantDialog extends JDialog {
 
         JButton actionButton;
         if (add) {
-            actionButton = new JButton(new AddMatriculantAction("Добавить"));
+            actionButton = new JButton(new AddMatriculantAction());
         } else {
-            actionButton = new JButton(new EditMatriculantAction("Изменить"));
+            actionButton = new JButton(new EditMatriculantAction());
         }
         JButton closeButton = new JButton(closeAction);
 
@@ -323,8 +329,8 @@ public class MatriculantDialog extends JDialog {
     }
 
     private class AddMatriculantAction extends AbstractAction {
-        private AddMatriculantAction(String name) {
-            super(name);
+        private AddMatriculantAction() {
+            super("Добавить");
         }
 
         @Override
@@ -333,7 +339,6 @@ public class MatriculantDialog extends JDialog {
 
             if (validateForm()) {
                 DataAccessFactory.getMatriculantDAO().save(matriculant);
-//                DataAccessFactory.reloadMatriculants();
                 DataAccessFactory.getMatriculants().add(matriculant);
                 MatriculantTable.resetRowIndexes();
 
@@ -351,8 +356,8 @@ public class MatriculantDialog extends JDialog {
     }
 
     private class EditMatriculantAction extends AbstractAction {
-        private EditMatriculantAction(String name) {
-            super(name);
+        private EditMatriculantAction() {
+            super("Изменить");
         }
 
         @Override
@@ -361,23 +366,10 @@ public class MatriculantDialog extends JDialog {
 
             if (validateForm()) {
                 DataAccessFactory.getMatriculantDAO().update(matriculant);
-//                DataAccessFactory.reloadMatriculants();
                 MatriculantDialog.this.setVisible(false);
                 
                 mainFrame.refresh();
             }
-        }
-    }
-
-    private class CloseAction extends AbstractAction {
-        private CloseAction(String name) {
-            super(name);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MatriculantDialog.this.setVisible(false);
-            mainFrame.refresh();
         }
     }
 
@@ -443,6 +435,7 @@ public class MatriculantDialog extends JDialog {
             motherPhoneNumberField.setText("");
         }
 
+        radioButtonGroup.clearSelection();
         examineRadioButton.setSelected(EntranceCategory.EXAMINE.equals(matriculant.getEntranceCategory()));
         noExamineRadioButton.setSelected(EntranceCategory.NO_EXAMINE.equals(matriculant.getEntranceCategory()));
         orphanOutExamineRadioButton.setSelected(
@@ -466,7 +459,6 @@ public class MatriculantDialog extends JDialog {
 
         if (matriculant.getDocuments() != null) {
             takeAwayDocumentsCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isTookDocuments()));
-            takeAwayActionListener.actionPerformed(null);
             originalAttestatCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalAttestat()));
             attestatInsertCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isAttestatInsert()));
             originalEgeCheckBox.setSelected(Boolean.TRUE.equals(matriculant.getDocuments().isOriginalEge()));
@@ -479,12 +471,16 @@ public class MatriculantDialog extends JDialog {
             copyMedicalPolicyCheckBox.setSelected(
                     Boolean.TRUE.equals(matriculant.getDocuments().isCopyMedicalPolicy()));
         } else {
+            takeAwayDocumentsCheckBox.setSelected(false);
             originalAttestatCheckBox.setSelected(false);
             attestatInsertCheckBox.setSelected(false);
             originalEgeCheckBox.setSelected(false);
             originalMedicalCertificateCheckBox.setSelected(false);
             copyMedicalPolicyCheckBox.setSelected(false);
+            photosSpinner.setValue(0);
+            passportCopySpinner.setValue(0);
         }
+        takeAwayActionListener.actionPerformed(null);
 
         if (matriculant.getSchoolName() != null) {
             schoolNameField.setText(matriculant.getSchoolName());

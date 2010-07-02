@@ -1,9 +1,12 @@
 package ru.sgu.csit.selectioncommittee;
 
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.sgu.csit.selectioncommittee.gui.MainFrame;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Date: 03.05.2010
@@ -13,10 +16,14 @@ import javax.swing.*;
  */
 public class Main {
     public static void main(String[] args) {
+        System.setProperty("sun.awt.exception.handler",
+                "ru.sgu.csit.selectioncommittee.gui.utils.SecurityExceptionHandler");
+
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                MainFrame mainFrame = new MainFrame();
-                mainFrame.setDefaultCloseOperation(MainFrame.DO_NOTHING_ON_CLOSE);
+                ApplicationContext applicationContext = new ClassPathXmlApplicationContext("ApplicationContext.xml");
+                MainFrame mainFrame = applicationContext.getBean(MainFrame.class);
+                mainFrame.login();
             }
         });
     }
