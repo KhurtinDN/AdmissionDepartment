@@ -1,22 +1,25 @@
 package ru.sgu.csit.selectioncommittee.gui;
 
-import org.springframework.stereotype.*;
 import ru.sgu.csit.selectioncommittee.common.Matriculant;
 import ru.sgu.csit.selectioncommittee.common.ReceiptExamine;
 import ru.sgu.csit.selectioncommittee.common.Speciality;
 import ru.sgu.csit.selectioncommittee.factory.DataAccessFactory;
+import ru.sgu.csit.selectioncommittee.gui.actions.SelectColumnDialogAction;
+import ru.sgu.csit.selectioncommittee.gui.actions.ShowColumnAction;
+import ru.sgu.csit.selectioncommittee.gui.dialogs.SelectColumnDialog;
 
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
-import static ru.sgu.csit.selectioncommittee.gui.utils.ResourcesForApplication.tSHOWCOLUMN_DESCRIPTION;
+import static ru.sgu.csit.selectioncommittee.gui.utils.MessageUtil.*;
 
 /**
  * Date: May 5, 2010
@@ -107,13 +110,18 @@ public class MatriculantTable extends JTable {
         matriculantTableModel.restoreIndexes();
     }
 
-    private JPopupMenu createColumnPopupMenu() {
+    private JPopupMenu createColumnPopupMenu(String excludeItemName) {
         JPopupMenu jPopupMenu = new JPopupMenu();
 
+        //jPopupMenu.add(new SelectColumnDialogAction(this));
         for (ColumnInfo column : columns) {
-            JCheckBoxMenuItem columnMenuItem = new JCheckBoxMenuItem(new ShowColumnAction(column.getColumnName()));
+            JCheckBoxMenuItem columnMenuItem = new JCheckBoxMenuItem(
+                    new ShowColumnAction(column.getColumnName(), this));
 
             columnMenuItem.setSelected(column.isVisible());
+            if (column.getColumnName().equals(excludeItemName)) {
+                columnMenuItem.setEnabled(false);
+            }
             jPopupMenu.add(columnMenuItem);
         }
         return jPopupMenu;
@@ -215,11 +223,24 @@ public class MatriculantTable extends JTable {
     public void reload() {
         regenerateColumnData();
         setDefaultShowEntrances();
-        getTableHeader().setComponentPopupMenu(createColumnPopupMenu());
+        getTableHeader().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent event) {
+                if (SwingUtilities.isRightMouseButton(event)) {
+                    JTableHeader tableHeader = (JTableHeader) event.getSource();
+                    Point point = event.getPoint();
+                    JPopupMenu popupMenu = createColumnPopupMenu(tableHeader.getColumnModel().getColumn(
+                            tableHeader.columnAtPoint(point)).getHeaderValue().toString());
+
+                    popupMenu.show(getTableHeader(), point.x, point.y);
+                }
+            }
+        });
+//        getTableHeader().setComponentPopupMenu(createColumnPopupMenu());
         setColumnModel(recreateColumnModel());
         for (int i = 0; i < getColumns().size(); ++i) {
             if (!getColumns().get(i).isVisible()) {
-                removeColumn(getColumns().get(i).getColumn());//matriculantTableModel.turnOffColumn(i);
+                removeColumn(getColumns().get(i).getColumn());
             }
         }
     }
@@ -771,31 +792,5 @@ public class MatriculantTable extends JTable {
 
     private enum SortOrder {
         ASC, DESC
-    }
-
-    public class ShowColumnAction extends AbstractAction {
-        private ShowColumnAction(String name) {
-            putValue(Action.NAME, name);
-            putValue(Action.SHORT_DESCRIPTION, tSHOWCOLUMN_DESCRIPTION);
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            JCheckBoxMenuItem columnMenuItem = (JCheckBoxMenuItem) e.getSource();
-
-            for (int i = 0; i < getColumns().size(); ++i) {
-                ColumnInfo column = getColumns().get(i);
-
-                if (column.getColumnName().equals(columnMenuItem.getText())) {
-                    if (columnMenuItem.isSelected()) {
-                        addColumn(i);
-                    } else {
-                        removeColumn(i);
-                    }
-                    repaint();
-
-                    break;
-                }
-            }
-        }
     }
 }

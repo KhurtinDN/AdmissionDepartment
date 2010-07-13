@@ -1,6 +1,7 @@
 package ru.sgu.csit.selectioncommittee.gui.dialogs;
 
 import ru.sgu.csit.selectioncommittee.gui.MatriculantTable;
+import ru.sgu.csit.selectioncommittee.gui.actions.ShowColumnAction;
 import ru.sgu.csit.selectioncommittee.gui.utils.GBConstraints;
 
 import javax.swing.*;
@@ -58,7 +59,8 @@ public class SelectColumnDialog extends JDialog {
         for (int column = 0, n = columnInfoList.size(); column < n; ++column) {
             MatriculantTable.ColumnInfo columnInfo = columnInfoList.get(column);
 
-            JCheckBox columnCheckBox = new JCheckBox(columnInfo.getColumnName());
+            JCheckBox columnCheckBox = new JCheckBox(
+                    new ShowColumnAction(columnInfo.getColumnName(), matriculantTable));//columnInfo.getColumnName());
             columnCheckBox.getModel().setActionCommand("" + column);
             columnCheckBox.setSelected(columnInfo.isVisible());   // todo: need check in table (not TableModel)
             columnCheckBoxList.add(columnCheckBox);
