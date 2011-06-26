@@ -7,8 +7,8 @@
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
 
-    <name>SelectionCommittee</name>
-    <url>http://maven.apache.org</url>
+    <name>AdmissionDepartment</name>
+    <url>http://www.sgu.ru</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
