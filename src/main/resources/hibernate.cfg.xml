@@ -17,8 +17,8 @@
         <!-- Drop and re-create the database schema on startup -->
         <property name="hbm2ddl.auto">update</property>
 
-        <mapping class="ru.sgu.csit.selectioncommittee.common.Matriculant" />
-        <mapping class="ru.sgu.csit.selectioncommittee.common.Speciality" />
-        <mapping class="ru.sgu.csit.selectioncommittee.common.ReceiptExamine" />
+        <mapping class="ru.sgu.csit.admissiondepartment.common.Matriculant" />
+        <mapping class="ru.sgu.csit.admissiondepartment.common.Speciality" />
+        <mapping class="ru.sgu.csit.admissiondepartment.common.ReceiptExamine" />
     </session-factory>
 </hibernate-configuration>

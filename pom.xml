@@ -48,7 +48,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>../lib/</classpathPrefix>
-                            <mainClass>ru.sgu.csit.selectioncommittee.Main</mainClass>
+                            <mainClass>ru.sgu.csit.admissiondepartment.Main</mainClass>
                         </manifest>
                     </archive>
                     <outputDirectory>target/bin</outputDirectory>

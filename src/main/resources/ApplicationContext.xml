@@ -10,12 +10,12 @@
                             http://www.springframework.org/schema/security
                             http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 
-    <context:component-scan base-package="ru.sgu.csit.selectioncommittee.security"/>
-    <context:component-scan base-package="ru.sgu.csit.selectioncommittee.gui"/>
-    <context:component-scan base-package="ru.sgu.csit.selectioncommittee.gui.actions"/>
+    <context:component-scan base-package="ru.sgu.csit.admissiondepartment.security"/>
+    <context:component-scan base-package="ru.sgu.csit.admissiondepartment.gui"/>
+    <context:component-scan base-package="ru.sgu.csit.admissiondepartment.gui.actions"/>
     <context:annotation-config/>
 
-    <bean id="mainFrame" class="ru.sgu.csit.selectioncommittee.gui.MainFrame">
+    <bean id="mainFrame" class="ru.sgu.csit.admissiondepartment.gui.MainFrame">
         <property name="logInAction" ref="logInAction"/>
         <property name="addMatriculantAction" ref="addMatriculantAction"/>
         <property name="editMatriculantAction" ref="editMatriculantAction"/>
@@ -32,18 +32,18 @@
         <property name="aboutAction" ref="aboutAction"/>
     </bean>
 
-    <bean id="loginDialog" class="ru.sgu.csit.selectioncommittee.gui.dialogs.LogInDialog">
+    <bean id="loginDialog" class="ru.sgu.csit.admissiondepartment.gui.dialogs.LogInDialog">
         <property name="owner" ref="mainFrame"/>
         <property name="authenticationManager" ref="authenticationManager"/>
     </bean>
 
-    <bean id="logInAction" class="ru.sgu.csit.selectioncommittee.gui.actions.LogInAction">
+    <bean id="logInAction" class="ru.sgu.csit.admissiondepartment.gui.actions.LogInAction">
         <property name="owner" ref="mainFrame"/>
     </bean>
 
     <security:global-method-security secured-annotations="enabled">
         <security:protect-pointcut
-                expression="execution(* ru.sgu.csit.selectioncommittee.gui.actions.AddMatriculantAction.open*(..))" 
+                expression="execution(* ru.sgu.csit.admissiondepartment.gui.actions.AddMatriculantAction.open*(..))"
                 access="ROLE_WORKER"/>
     </security:global-method-security>
 
