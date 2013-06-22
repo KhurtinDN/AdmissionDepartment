@@ -42,10 +42,14 @@ public class CreateDBData {
         //Session session = LocalSessionFactory.getSessionFactory().getCurrentSession();
         //Matriculant matriculant = new Matriculant();
         ReceiptExamine receiptExamine = new ReceiptExamine();
-        Speciality speciality1 = new Speciality("ПМ 101");
-        Speciality speciality2 = new Speciality("ВМ 102");
-        Speciality speciality3 = new Speciality("КБ 103");
-        Speciality speciality4 = new Speciality("ИВТ 104");
+        Speciality speciality1 = new Speciality("КБ 101");
+        Speciality speciality2 = new Speciality("ИВТ 102");
+        Speciality speciality3 = new Speciality("МОАИС 103");
+        Speciality speciality4 = new Speciality("ФИИТ 104");
+        Speciality speciality5 = new Speciality("ПИ 105");
+        Speciality speciality6 = new Speciality("ПОПИ 106");
+        Speciality speciality7 = new Speciality("ИВТ_маг 107");
+
         //MatriculantDAOImpl matriculantDAO = new MatriculantDAOImpl();
 
         receiptExamine.setName("ЕГЭ РЯ");
@@ -54,11 +58,11 @@ public class CreateDBData {
         DataAccessFactory.getReceiptExamineDAO().save(receiptExamine);
         receiptExamine.setName("ЕГЭ ИНФ");
         DataAccessFactory.getReceiptExamineDAO().save(receiptExamine);
-        receiptExamine.setName("ЕГЭ ФИЗ");
+        receiptExamine.setName("ЕГЭ ОБЩ");
         DataAccessFactory.getReceiptExamineDAO().save(receiptExamine);
 
         speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
-        speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ФИЗ").get(0));
+        speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
         speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         DataAccessFactory.getSpecialityDAO().save(speciality1);
 
@@ -77,13 +81,23 @@ public class CreateDBData {
         speciality4.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         DataAccessFactory.getSpecialityDAO().save(speciality4);
 
+        speciality5.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
+        speciality5.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
+        speciality5.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
+        DataAccessFactory.getSpecialityDAO().save(speciality5);
+
+        speciality6.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ОБЩ").get(0));
+        speciality6.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
+        speciality6.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
+        DataAccessFactory.getSpecialityDAO().save(speciality6);
+
         DataAccessFactory.reloadAll();
 
-        for (int i = 0; i < 700; ++i) {
+        /*for (int i = 0; i < 700; ++i) {
             Matriculant matriculant = MatriculantGenerator.getRandomMatriculant();
             DataAccessFactory.getMatriculantDAO().save(matriculant);
         }
-        /*
+
         matriculant.setName("Петров Сидор Иванович");
         matriculant.setPhoneNumbers("02, +7 877 777 34 22");
         Calendar date = Calendar.getInstance();
