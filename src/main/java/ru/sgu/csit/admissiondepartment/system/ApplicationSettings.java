@@ -1,4 +1,6 @@
-package ru.sgu.csit.admissiondepartment.gui.utils;
+package ru.sgu.csit.admissiondepartment.system;
+
+import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,15 +15,18 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.MessageUtil.*;
  *
  * @author xx & hd
  */
+@Component
 public class ApplicationSettings {
-    private final String APPLICATION_PROPERTIES = "application.properties";
 
-    private static ApplicationSettings settings = null;
-    private Properties properties = null;
+    private static final String APPLICATION_PROPERTIES = "application.properties";
 
-    private boolean changedFlag = false;
+    public static final String NEED_OPEN_DOCUMENT_IN_EXPORT_TO_EXCEL_DIALOG = "ExportToExcelDialog.needOpenDocumentCheckBox.selected";
 
-    private ApplicationSettings() {
+    private Properties properties;
+
+    private boolean changedFlag;
+
+    public ApplicationSettings() {
         try {
             loadSettings();
         } catch (IOException e) {
@@ -47,13 +52,6 @@ public class ApplicationSettings {
         }
     }
 
-    public static ApplicationSettings getSettings() {
-        if (settings == null) {
-            settings = new ApplicationSettings();
-        }
-        return settings;
-    }
-
     public String get(String key) {
         return properties.getProperty(key);
     }
@@ -61,5 +59,14 @@ public class ApplicationSettings {
     public void set(String key, String value) {
         changedFlag = true;
         properties.put(key, value);
+    }
+
+    public boolean getOpenDocumentInExportToExcelDialog() {
+        String value = get(NEED_OPEN_DOCUMENT_IN_EXPORT_TO_EXCEL_DIALOG);
+        return value == null || Boolean.parseBoolean(value);
+    }
+
+    public void setOpenDocumentInExportToExcelDialog(boolean value) {
+        set(NEED_OPEN_DOCUMENT_IN_EXPORT_TO_EXCEL_DIALOG, Boolean.toString(value));
     }
 }

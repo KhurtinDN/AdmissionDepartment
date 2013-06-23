@@ -13,6 +13,7 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  * @author : xx & hd
  */
 public class CloseAction extends AbstractAction {
+
     private JDialog owner;
 
     public CloseAction(JDialog owner) {

@@ -2,7 +2,8 @@ package ru.sgu.csit.admissiondepartment.gui.dialogs;
 
 import ru.sgu.csit.admissiondepartment.gui.actions.CloseAction;
 import ru.sgu.csit.admissiondepartment.gui.utils.GBConstraints;
-import ru.sgu.csit.admissiondepartment.gui.utils.HibernateSettings;
+import ru.sgu.csit.admissiondepartment.system.ApplicationContextHolder;
+import ru.sgu.csit.admissiondepartment.system.DatabaseSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,12 +19,13 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.MessageUtil.showWarningM
  * @author : xx & hd
  */
 public class DatabaseOptionDialog extends JDialog {
+
     private Action saveAction = new SaveAction();
     private Action closeAction = new CloseAction(this);
 
-    private HibernateSettings hibernateSettings = HibernateSettings.getSettings();
+    private DatabaseSettings databaseSettings = ApplicationContextHolder.getBean(DatabaseSettings.class);
 
-    private JComboBox dbTypeComboBox;
+    private JComboBox<String> dbTypeComboBox;
     private JTextField dbHostTextField;
     private JSpinner dbPortSpinner;
     private JTextField dbNameTextField;
@@ -34,21 +36,21 @@ public class DatabaseOptionDialog extends JDialog {
 
         Vector<String> dbTypes = new Vector<String>();
         dbTypes.add("Выберите...");
-        dbTypes.addAll(hibernateSettings.getSupportedDatabaseList());
-        String selectedDatabaseType = hibernateSettings.getDatabaseType();
+        dbTypes.addAll(databaseSettings.getSupportedDatabaseList());
+        String selectedDatabaseType = databaseSettings.getDatabaseType();
         int selectedIndex = 0;
         for (int i = 0; i < dbTypes.size(); ++i) {
             if (dbTypes.get(i).equalsIgnoreCase(selectedDatabaseType)) {
                 selectedIndex = i;
             }
         }
-        dbTypeComboBox = new JComboBox(dbTypes);
+        dbTypeComboBox = new JComboBox<String>(dbTypes);
         dbTypeComboBox.setSelectedIndex(selectedIndex);
 
-        dbHostTextField = new JTextField(hibernateSettings.getHost());
+        dbHostTextField = new JTextField(databaseSettings.getHost());
         dbPortSpinner = new JSpinner();
-        dbPortSpinner.setValue(hibernateSettings.getPort());
-        dbNameTextField = new JTextField(hibernateSettings.getDatabaseName(), 20);
+        dbPortSpinner.setValue(databaseSettings.getPort());
+        dbNameTextField = new JTextField(databaseSettings.getDatabaseName(), 20);
 
         add(new JLabel("База данных:"), new GBConstraints(0, 0));
         add(dbTypeComboBox, new GBConstraints(1, 0, true));
@@ -116,8 +118,8 @@ public class DatabaseOptionDialog extends JDialog {
                 Integer port = (Integer) dbPortSpinner.getValue();
                 String databaseName = dbNameTextField.getText();
 
-                hibernateSettings.setConnectionUrl(selectedDatabaseType, host, port, databaseName);
-                hibernateSettings.saveSettings();
+                databaseSettings.setConnectionUrl(selectedDatabaseType, host, port, databaseName);
+                databaseSettings.saveSettings();
                 closeAction.actionPerformed(null);
             }
         }

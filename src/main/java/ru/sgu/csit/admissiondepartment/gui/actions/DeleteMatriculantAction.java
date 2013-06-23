@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import ru.sgu.csit.admissiondepartment.common.Matriculant;
+import ru.sgu.csit.admissiondepartment.dao.MatriculantDAO;
 import ru.sgu.csit.admissiondepartment.factory.DataAccessFactory;
 import ru.sgu.csit.admissiondepartment.gui.MainFrame;
 import ru.sgu.csit.admissiondepartment.gui.MatriculantTable;
@@ -23,13 +24,17 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author : xx & hd
  */
-@Component("deleteMatriculantAction")
+@Component
 public class DeleteMatriculantAction extends AbstractAction {
+
     @Autowired
     private MainFrame mainFrame;
 
     @Autowired
     private MatriculantTable matriculantTable;
+
+    @Autowired
+    private MatriculantDAO matriculantDAO;
 
     public DeleteMatriculantAction() {
         super(tDELETE, iDELETE16);
@@ -41,6 +46,7 @@ public class DeleteMatriculantAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         int selectedIndex = matriculantTable.getSelectedRow();
+
         if (selectedIndex >= 0) {
             if (showConfirmDialog("Удалить абитуриента?")) {
                 Matriculant matriculant = DataAccessFactory.getMatriculants()
@@ -49,7 +55,7 @@ public class DeleteMatriculantAction extends AbstractAction {
                 DataAccessFactory.getMatriculants().remove(
                         matriculantTable.convertViewRowIndexToMatriculants(selectedIndex));
                 matriculantTable.deleteFromViewIndex(selectedIndex);
-                DataAccessFactory.getMatriculantDAO().delete(matriculant);
+                matriculantDAO.delete(matriculant);
                 mainFrame.refresh();
             }
         } else {

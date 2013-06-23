@@ -1,5 +1,7 @@
 package ru.sgu.csit.admissiondepartment.gui.dialogs.panels;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import ru.sgu.csit.admissiondepartment.common.ReceiptExamine;
 import ru.sgu.csit.admissiondepartment.factory.DataAccessFactory;
 
@@ -16,7 +18,13 @@ public class MarkPanel extends SelectNumbersPanel {
     public MarkPanel() {
         super("Баллы по ЕГЭ", 0, 100);
 
-        List<String> examineNames = new ArrayList<String>();
+        List<String> examineNames = Lists.transform(DataAccessFactory.getExamines(),
+                new Function<ReceiptExamine, String>() {
+                    @Override
+                    public String apply(ReceiptExamine receiptExamine) {
+                        return receiptExamine.getName();
+                    }
+                });
 
         List<ReceiptExamine> receiptExamineList = DataAccessFactory.getExamines();
         for (ReceiptExamine receiptExamine : receiptExamineList) {

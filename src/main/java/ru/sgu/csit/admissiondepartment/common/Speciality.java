@@ -1,7 +1,9 @@
 package ru.sgu.csit.admissiondepartment.common;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,10 +12,8 @@ import java.util.List;
  * @author xx & hd
  */
 @Entity
-public class Speciality {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+public class Speciality extends PersistentItem {
+
     private String name;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -24,14 +24,6 @@ public class Speciality {
 
     public Speciality(String name) {
         this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -52,16 +44,39 @@ public class Speciality {
 
     public void addExam(ReceiptExamine exam) {
         if (exams == null) {
-            exams = new ArrayList<ReceiptExamine>();
+            exams = Lists.newArrayList();
         }
         exams.add(exam);
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Speciality that = (Speciality) obj;
+
+        return super.equals(that) &&
+                Objects.equal(this.name, that.name) &&
+                Objects.equal(this.exams, that.exams);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), name, exams);
+    }
+
+    @Override
     public String toString() {
-        return "Speciality{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+        return Objects.toStringHelper(this)
+                .addValue(super.toString())
+                .add("name", name)
+                .add("exams", exams)
+                .toString();
     }
 }

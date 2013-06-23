@@ -5,7 +5,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import ru.sgu.csit.admissiondepartment.common.Matriculant;
 import ru.sgu.csit.admissiondepartment.factory.DataAccessFactory;
-import ru.sgu.csit.admissiondepartment.gui.MainFrame;
 import ru.sgu.csit.admissiondepartment.gui.MatriculantTable;
 import ru.sgu.csit.admissiondepartment.gui.dialogs.MatriculantDialog;
 
@@ -13,9 +12,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 import static ru.sgu.csit.admissiondepartment.gui.utils.MessageUtil.showWarningMessage;
-import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.iEDIT16;
-import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.tEDIT;
-import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.tEDIT_DESCRIPTION;
+import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.*;
 
 /**
  * Date: Jun 27, 2010
@@ -23,14 +20,13 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author : xx & hd
  */
-@Component("editMatriculantAction")
+@Component
 public class EditMatriculantAction extends AbstractAction {
-    @Autowired
-    private MainFrame owner;
 
     @Autowired
     private MatriculantTable matriculantTable;
 
+    @Autowired
     private MatriculantDialog matriculantDialog;
 
     public EditMatriculantAction() {
@@ -43,15 +39,13 @@ public class EditMatriculantAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         int selectedIndex = matriculantTable.getSelectedRow();
+
         if (selectedIndex >= 0) {
             Matriculant matriculant = DataAccessFactory.getMatriculants()
                     .get(matriculantTable.convertViewRowIndexToMatriculants(selectedIndex));
 
-            if (matriculantDialog == null) {
-                matriculantDialog = new MatriculantDialog(owner, false, matriculant);
-            } else {
-                matriculantDialog.setMatriculant(matriculant);
-            }
+            matriculantDialog.setTitle("Редактирование данных студента");
+            matriculantDialog.setMatriculant(matriculant);
             matriculantDialog.setVisible(true);
         } else {
             showWarningMessage("Выберите сначала абитуриента");

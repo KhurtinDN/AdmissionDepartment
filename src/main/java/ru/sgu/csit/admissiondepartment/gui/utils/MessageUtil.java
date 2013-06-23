@@ -13,6 +13,7 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  * @author : xx & hd
  */
 public class MessageUtil {
+
     public static void showInformationMessage(String message) {
         JOptionPane.showMessageDialog(null, message, "Информация", JOptionPane.INFORMATION_MESSAGE);
     }

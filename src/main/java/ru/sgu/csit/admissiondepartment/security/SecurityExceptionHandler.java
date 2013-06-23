@@ -1,4 +1,4 @@
-package ru.sgu.csit.admissiondepartment.gui.utils;
+package ru.sgu.csit.admissiondepartment.security;
 
 import org.springframework.security.access.AccessDeniedException;
 
@@ -25,10 +25,10 @@ public class SecurityExceptionHandler {
 
     private void saveStackTrace(Throwable aThrowable) {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream("SelectionCommittee.errors", true);
+            FileOutputStream fileOutputStream = new FileOutputStream("AdmissionDepartment.errors", true);  // todo: configure LOGGER
             PrintWriter printWriter = new PrintWriter(fileOutputStream);
             try {
-                printWriter.println(getStackTrace(aThrowable));
+                aThrowable.printStackTrace(printWriter);
             } finally {
                 printWriter.close();
                 fileOutputStream.close();
@@ -36,12 +36,5 @@ public class SecurityExceptionHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private String getStackTrace(Throwable aThrowable) {
-        final Writer result = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(result);
-        aThrowable.printStackTrace(printWriter);
-        return result.toString();
     }
 }

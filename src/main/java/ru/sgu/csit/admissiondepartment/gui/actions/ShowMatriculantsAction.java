@@ -17,6 +17,7 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  * @author : xx & hd
  */
 public class ShowMatriculantsAction extends AbstractAction {
+
     private MatriculantTable matriculantTable;
 
     private String specialityName;

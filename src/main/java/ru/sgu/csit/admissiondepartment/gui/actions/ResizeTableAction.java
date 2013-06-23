@@ -17,8 +17,9 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author : xx & hd
  */
-@Component("resizeTableAction")
+@Component
 public class ResizeTableAction extends AbstractAction {
+
     @Autowired
     private MatriculantTable matriculantTable;
 

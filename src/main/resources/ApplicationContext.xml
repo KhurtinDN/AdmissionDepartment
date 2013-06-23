@@ -2,21 +2,29 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                             http://www.springframework.org/schema/beans/spring-beans.xsd
                             http://www.springframework.org/schema/context
-                            http://www.springframework.org/schema/context/spring-context.xsd
-                            http://www.springframework.org/schema/security
-                            http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+                            http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="ru.sgu.csit.admissiondepartment.security"/>
-    <context:component-scan base-package="ru.sgu.csit.admissiondepartment.gui"/>
-    <context:component-scan base-package="ru.sgu.csit.admissiondepartment.gui.actions"/>
+    <!-- Use @Autowired annotations for property injection -->
     <context:annotation-config/>
 
+    <!-- Use @Service and @Repository annotations for services and dao components. -->
+    <context:component-scan base-package="ru.sgu.csit.admissiondepartment.gui"/>
+    <context:component-scan base-package="ru.sgu.csit.admissiondepartment.dao"/>
+    <context:component-scan base-package="ru.sgu.csit.admissiondepartment.system"/>
+    <context:component-scan base-package="ru.sgu.csit.admissiondepartment.security"/>
+
+    <!-- In this file we configure Hibernate and transactional behavior -->
+    <import resource="PersistenceContext.xml"/>
+
+    <!-- In this file we configure Spring security -->
+    <import resource="SecurityContext.xml"/>
+
+    <!-- Main frame of application -->
     <bean id="mainFrame" class="ru.sgu.csit.admissiondepartment.gui.MainFrame">
-        <property name="logInAction" ref="logInAction"/>
+        <property name="logInAction" ref="openLoginDialogAction"/>
         <property name="addMatriculantAction" ref="addMatriculantAction"/>
         <property name="editMatriculantAction" ref="editMatriculantAction"/>
         <property name="matriculantInfoAction" ref="matriculantInfoAction"/>
@@ -29,22 +37,7 @@
         <property name="resizeTableAction" ref="resizeTableAction"/>
         <property name="switchHighlightingTableAction" ref="switchHighlightingTableAction"/>
         <property name="exitAction" ref="exitAction"/>                                    
-        <property name="aboutAction" ref="aboutAction"/>
+        <property name="aboutAction" ref="openAboutDialogAction"/>
     </bean>
-
-    <bean id="loginDialog" class="ru.sgu.csit.admissiondepartment.gui.dialogs.LogInDialog">
-        <property name="owner" ref="mainFrame"/>
-        <property name="authenticationManager" ref="authenticationManager"/>
-    </bean>
-
-    <bean id="logInAction" class="ru.sgu.csit.admissiondepartment.gui.actions.LogInAction">
-        <property name="owner" ref="mainFrame"/>
-    </bean>
-
-    <security:global-method-security secured-annotations="enabled">
-        <security:protect-pointcut
-                expression="execution(* ru.sgu.csit.admissiondepartment.gui.actions.AddMatriculantAction.open*(..))"
-                access="ROLE_WORKER"/>
-    </security:global-method-security>
 
 </beans>

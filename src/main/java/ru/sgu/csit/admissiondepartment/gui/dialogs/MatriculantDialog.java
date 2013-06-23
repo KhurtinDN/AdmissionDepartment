@@ -1,23 +1,30 @@
 package ru.sgu.csit.admissiondepartment.gui.dialogs;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import ru.sgu.csit.admissiondepartment.common.Documents;
 import ru.sgu.csit.admissiondepartment.common.EntranceCategory;
 import ru.sgu.csit.admissiondepartment.common.Matriculant;
 import ru.sgu.csit.admissiondepartment.common.Person;
+import ru.sgu.csit.admissiondepartment.dao.MatriculantDAO;
 import ru.sgu.csit.admissiondepartment.factory.DataAccessFactory;
 import ru.sgu.csit.admissiondepartment.gui.MainFrame;
 import ru.sgu.csit.admissiondepartment.gui.MatriculantTable;
 import ru.sgu.csit.admissiondepartment.gui.actions.CloseAction;
+import ru.sgu.csit.admissiondepartment.gui.dialogs.panels.MarkPanel;
 import ru.sgu.csit.admissiondepartment.gui.dialogs.panels.SpecialityPanel;
 import ru.sgu.csit.admissiondepartment.gui.utils.GBConstraints;
-import ru.sgu.csit.admissiondepartment.gui.dialogs.panels.MarkPanel;
-
-import static ru.sgu.csit.admissiondepartment.gui.utils.MessageUtil.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.TreeMap;
+
+import static ru.sgu.csit.admissiondepartment.gui.utils.MessageUtil.showWarningMessage;
 
 /**
  * Date: May 4, 2010
@@ -25,13 +32,14 @@ import java.util.*;
  *
  * @author xx & hd
  */
+@Component
 public class MatriculantDialog extends JDialog {
+
     private Action closeAction = new CloseAction(this);
 
     private ActionListener takeAwayActionListener = new TakeAwayActionListener();
 
     private Matriculant matriculant;
-    private MainFrame mainFrame;
 
     // topPanel
     private JTextField receiptNumberField = new JTextField(10);
@@ -86,11 +94,17 @@ public class MatriculantDialog extends JDialog {
     // buttonsPanel
     private JCheckBox needExitDuringAddingCheckBox = new JCheckBox("Закрыть при добавлении", true);
 
+    private MainFrame mainFrame;
 
-    public MatriculantDialog(MainFrame owner, boolean add, Matriculant matriculant) {
-        super(owner, add ? "Добавление нового абитуриента" : "Редактирование данных абитуриента", add);
-        this.matriculant = matriculant;
+    @Autowired
+    private MatriculantDAO matriculantDAO;
+
+    @Autowired
+    public MatriculantDialog(MainFrame owner) {
+        super(owner);
         this.mainFrame = owner;
+
+        boolean add = true; // todo: REMOVE
 
         setLayout(new GridBagLayout());
 
@@ -119,10 +133,6 @@ public class MatriculantDialog extends JDialog {
         add(emptyLabel2, new GBConstraints(1, 20, true));
 
         pack();
-
-        if (!add) {
-            setFieldsFromMatriculant(matriculant);
-        }
 
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
@@ -338,7 +348,7 @@ public class MatriculantDialog extends JDialog {
             Matriculant matriculant = getMatriculantFromFields();
 
             if (validateForm()) {
-                DataAccessFactory.getMatriculantDAO().save(matriculant);
+                matriculantDAO.save(matriculant);
                 DataAccessFactory.getMatriculants().add(matriculant);
                 MatriculantTable.resetRowIndexes();
 
@@ -365,7 +375,7 @@ public class MatriculantDialog extends JDialog {
             Matriculant matriculant = getMatriculantFromFields();
 
             if (validateForm()) {
-                DataAccessFactory.getMatriculantDAO().update(matriculant);
+                matriculantDAO.update(matriculant);
                 MatriculantDialog.this.setVisible(false);
                 
                 mainFrame.refresh();
@@ -528,7 +538,7 @@ public class MatriculantDialog extends JDialog {
 
         matriculant.setBalls(markPanel.getMarks());
 
-        Matriculant.Documents documents = new Matriculant.Documents();
+        Documents documents = new Documents();
         documents.setTookDocuments(takeAwayDocumentsCheckBox.isSelected());
         documents.setOriginalAttestat(originalAttestatCheckBox.isSelected());
         documents.setAttestatInsert(attestatInsertCheckBox.isSelected());
@@ -555,11 +565,12 @@ public class MatriculantDialog extends JDialog {
 
         Calendar timeCalendar = Calendar.getInstance();
         timeCalendar.setTime((Date) timeSpinner.getModel().getValue());
-        Calendar calendar = Calendar.getInstance();
+
         int hour = timeCalendar.get(Calendar.HOUR_OF_DAY);
         int minute = timeCalendar.get(Calendar.MINUTE);
         int second = timeCalendar.get(Calendar.SECOND);
 
+        Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day, hour, minute, second);
         return calendar.getTime();
     }

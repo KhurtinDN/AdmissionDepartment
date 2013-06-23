@@ -17,8 +17,9 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author : xx & hd
  */
-@Component("sortAction")
+@Component
 public class SortAction extends AbstractAction {
+
     @Autowired
     private JFrame owner;
 

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import ru.sgu.csit.admissiondepartment.common.Matriculant;
-import ru.sgu.csit.admissiondepartment.gui.MainFrame;
 import ru.sgu.csit.admissiondepartment.gui.dialogs.MatriculantDialog;
 
 import javax.swing.*;
@@ -19,11 +18,10 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author : xx & hd
  */
-@Component("addMatriculantAction")
+@Component
 public class AddMatriculantAction extends AbstractAction {
-    @Autowired
-    private MainFrame owner;
 
+    @Autowired
     private MatriculantDialog matriculantDialog;
 
     public AddMatriculantAction() {
@@ -35,12 +33,8 @@ public class AddMatriculantAction extends AbstractAction {
     @Secured("ROLE_WORKER")
     @Override
     public void actionPerformed(ActionEvent e) {
-        Matriculant matriculant = new Matriculant();
-        if (matriculantDialog == null) {
-            matriculantDialog = new MatriculantDialog(owner, true, matriculant);
-        } else {
-            matriculantDialog.setMatriculant(matriculant);
-        }
+        matriculantDialog.setTitle("Добавление нового абитуриента");
+        matriculantDialog.setMatriculant(new Matriculant());
         matriculantDialog.setVisible(true);
     }
 }

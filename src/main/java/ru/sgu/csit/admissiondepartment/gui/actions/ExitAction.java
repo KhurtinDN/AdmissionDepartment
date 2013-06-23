@@ -1,7 +1,10 @@
 package ru.sgu.csit.admissiondepartment.gui.actions;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.sgu.csit.admissiondepartment.gui.utils.ApplicationSettings;
+import ru.sgu.csit.admissiondepartment.gui.utils.MessageUtil;
+import ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication;
+import ru.sgu.csit.admissiondepartment.system.ApplicationSettings;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,8 +19,12 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author xx & hd
  */
-@Component("exitAction")
+@Component
 public class ExitAction extends AbstractAction {
+
+    @Autowired
+    private ApplicationSettings applicationSettings;
+
     public ExitAction() {
         super(tEXIT, iEXIT16);
         putValue(Action.SHORT_DESCRIPTION, tEXIT_DESCRIPTION);
@@ -26,9 +33,9 @@ public class ExitAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-//        if (confirm(tCONFIRM_CLOSE_APP)) {
-        ApplicationSettings.getSettings().saveSettings();
-        System.exit(0);
-//        }
+        if (MessageUtil.showConfirmDialog(ResourcesForApplication.tCONFIRM_CLOSE_APP)) {
+            applicationSettings.saveSettings();
+            System.exit(0);
+        }
     }
 }

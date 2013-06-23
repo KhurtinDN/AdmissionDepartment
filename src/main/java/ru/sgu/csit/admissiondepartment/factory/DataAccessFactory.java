@@ -1,13 +1,14 @@
 package ru.sgu.csit.admissiondepartment.factory;
 
+import com.google.common.collect.Lists;
 import ru.sgu.csit.admissiondepartment.common.Matriculant;
 import ru.sgu.csit.admissiondepartment.common.ReceiptExamine;
 import ru.sgu.csit.admissiondepartment.common.Speciality;
-import ru.sgu.csit.admissiondepartment.dao.impl.MatriculantDAOImpl;
-import ru.sgu.csit.admissiondepartment.dao.impl.ReceiptExamineDAOImpl;
-import ru.sgu.csit.admissiondepartment.dao.impl.SpecialityDAOImpl;
+import ru.sgu.csit.admissiondepartment.dao.MatriculantDAO;
+import ru.sgu.csit.admissiondepartment.dao.ReceiptExamineDAO;
+import ru.sgu.csit.admissiondepartment.dao.SpecialityDAO;
+import ru.sgu.csit.admissiondepartment.system.ApplicationContextHolder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,26 +18,27 @@ import java.util.List;
  * @author xx & hd
  */
 public class DataAccessFactory {
-    private static final MatriculantDAOImpl matriculantDAO = new MatriculantDAOImpl();
-    private static final ReceiptExamineDAOImpl receiptExamineDAO = new ReceiptExamineDAOImpl();
-    private static final SpecialityDAOImpl specialityDAO = new SpecialityDAOImpl();
 
-    private static List<Matriculant> matriculants = new ArrayList<Matriculant>();
-    private static List<ReceiptExamine> examines = new ArrayList<ReceiptExamine>();
-    private static List<Speciality> specialities = new ArrayList<Speciality>();
+    private static final MatriculantDAO matriculantDAO = ApplicationContextHolder.getBean(MatriculantDAO.class);
+    private static final ReceiptExamineDAO receiptExamineDAO = ApplicationContextHolder.getBean(ReceiptExamineDAO.class);
+    private static final SpecialityDAO specialityDAO = ApplicationContextHolder.getBean(SpecialityDAO.class);
+
+    private static List<Matriculant> matriculants = Lists.newArrayList();
+    private static List<ReceiptExamine> examines = Lists.newArrayList();
+    private static List<Speciality> specialities = Lists.newArrayList();
 
     private DataAccessFactory() {
     }
 
-    public static MatriculantDAOImpl getMatriculantDAO() {
+    public static MatriculantDAO getMatriculantDAO() {
         return matriculantDAO;
     }
 
-    public static ReceiptExamineDAOImpl getReceiptExamineDAO() {
+    public static ReceiptExamineDAO getReceiptExamineDAO() {
         return receiptExamineDAO;
     }
 
-    public static SpecialityDAOImpl getSpecialityDAO() {
+    public static SpecialityDAO getSpecialityDAO() {
         return specialityDAO;
     }
 

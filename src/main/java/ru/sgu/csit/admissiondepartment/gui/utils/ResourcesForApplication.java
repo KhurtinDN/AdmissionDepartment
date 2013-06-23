@@ -70,7 +70,7 @@ public class ResourcesForApplication {
     public final static Icon iAPPORTION16 =
             new ImageIcon(ResourcesForApplication.class.getResource("/icons/apportion16.png"));
 
-//    public final static String tCONFIRM_CLOSE_APP = "Вы действительно хотите закрыть приложение?";
+    public final static String tCONFIRM_CLOSE_APP = "Вы действительно хотите закрыть приложение?";
     public final static String tCONFIRM = "Подтверждение";
     public final static String tYES = "Да";
     public final static String tNO = "Нет";

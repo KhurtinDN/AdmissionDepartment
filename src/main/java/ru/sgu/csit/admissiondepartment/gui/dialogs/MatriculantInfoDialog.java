@@ -1,10 +1,12 @@
 package ru.sgu.csit.admissiondepartment.gui.dialogs;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import ru.sgu.csit.admissiondepartment.gui.actions.CloseAction;
 import ru.sgu.csit.admissiondepartment.gui.utils.GBConstraints;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 /**
  * Date: Jun 11, 2010
@@ -12,16 +14,19 @@ import java.awt.event.ActionEvent;
  *
  * @author xx & hd
  */
+@Component
 public class MatriculantInfoDialog extends JDialog {
+
     private JTextArea textArea = new JTextArea();
 
+    @Autowired
     public MatriculantInfoDialog(JFrame owner) {
         super(owner, "Информация об абитуриенте", false);
         setLayout(new GridBagLayout());
 
         add(getContentPanel(), new GBConstraints(0, 0).setFill(GBConstraints.BOTH).setWeight(100, 100).setInsets(10));
 
-        Action closeAction = new CloseAction("Закрыть");
+        Action closeAction = new CloseAction(this);
         JPanel content = (JPanel) getContentPane();
         content.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "CLOSE_DIALOG");
         content.getActionMap().put("CLOSE_DIALOG", closeAction);
@@ -31,6 +36,7 @@ public class MatriculantInfoDialog extends JDialog {
         textArea.setText(info);
 
         pack();
+
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         Dimension dialogSize = getSize();
@@ -50,16 +56,5 @@ public class MatriculantInfoDialog extends JDialog {
         matriculantInfoPanel.setAutoscrolls(true);
         matriculantInfoPanel.setBorder(BorderFactory.createEtchedBorder());
         return new JScrollPane(matriculantInfoPanel);
-    }
-
-    private class CloseAction extends AbstractAction {
-        private CloseAction(String name) {
-            super(name);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            MatriculantInfoDialog.this.setVisible(false);
-        }
     }
 }

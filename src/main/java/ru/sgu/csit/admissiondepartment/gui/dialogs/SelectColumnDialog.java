@@ -1,5 +1,6 @@
 package ru.sgu.csit.admissiondepartment.gui.dialogs;
 
+import com.google.common.collect.Lists;
 import ru.sgu.csit.admissiondepartment.gui.MatriculantTable;
 import ru.sgu.csit.admissiondepartment.gui.actions.ShowColumnAction;
 import ru.sgu.csit.admissiondepartment.gui.utils.GBConstraints;
@@ -20,6 +21,7 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  * @author xx & hd
  */
 public class SelectColumnDialog extends JDialog {
+
     private Action applyAction = new ApplyAction();
     private Action closeAction = new CloseAction();
 
@@ -89,7 +91,8 @@ public class SelectColumnDialog extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            List<Integer> columnIndexList = new ArrayList<Integer>();
+            List<Integer> columnIndexList = Lists.newArrayList();
+
             for (JCheckBox columnCheckBox : columnCheckBoxList) {
                 Integer columnIndex = new Integer(columnCheckBox.getActionCommand());
                 columnIndexList.add(columnIndex);

@@ -1,8 +1,12 @@
 package ru.sgu.csit.admissiondepartment.gui;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.sgu.csit.admissiondepartment.common.Matriculant;
 import ru.sgu.csit.admissiondepartment.common.ReceiptExamine;
 import ru.sgu.csit.admissiondepartment.common.Speciality;
+import ru.sgu.csit.admissiondepartment.dao.MatriculantDAO;
 import ru.sgu.csit.admissiondepartment.factory.DataAccessFactory;
 import ru.sgu.csit.admissiondepartment.gui.actions.ShowColumnAction;
 
@@ -25,18 +29,19 @@ import java.util.List;
  */
 @org.springframework.stereotype.Component("mainTable")
 public class MatriculantTable extends JTable {
-    private static List<String> columnNames = new ArrayList<String>();
-    private List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
-    private static List<Integer> rowIndexes = new ArrayList<Integer>();
-    private static List<Integer> viewRowIndexes = new ArrayList<Integer>();
+
+    private static List<String> columnNames = Lists.newArrayList();
+    private List<ColumnInfo> columns = Lists.newArrayList();
+    private static List<Integer> rowIndexes = Lists.newArrayList();
+    private static List<Integer> viewRowIndexes = Lists.newArrayList();
     private static int specialityIndex = -1;
 
     private static boolean highlighting = true;
 
     private static boolean showNotEntrance = true;
-    private static Map<String, Boolean> showEntrances = null;
+    private static Map<String, Boolean> showEntrances;
 
-    private static MatriculantTableModel matriculantTableModel = new MatriculantTableModel();
+    private static MatriculantTableModel matriculantTableModel;
 
     public static void recreateColumnNames() {
         columnNames.clear();
@@ -47,8 +52,8 @@ public class MatriculantTable extends JTable {
         columnNames.add("Поступает");
 
 //        int startSpecialityIndex = 3;
-        for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
-            columnNames.add(DataAccessFactory.getSpecialities().get(i).getName());
+        for (Speciality speciality : DataAccessFactory.getSpecialities()) {
+            columnNames.add(speciality.getName());
         }
 
         columnNames.add("Балл");
@@ -56,23 +61,26 @@ public class MatriculantTable extends JTable {
         columnNames.add("Зачислен на");
 
 //        int startExaminesIndex = 2 + DataAccessFactory.getSpecialities().size() + startSpecialityIndex;
-        for (int i = 0; i < DataAccessFactory.getExamines().size(); ++i) {
-            columnNames.add(DataAccessFactory.getExamines().get(i).getName());
+        for (ReceiptExamine receiptExamine : DataAccessFactory.getExamines()) {
+            columnNames.add(receiptExamine.getName());
         }
 
         columnNames.add("Телефон");
         columnNames.add("Дата");
     }
 
-    public MatriculantTable() {
+    @Autowired
+    public MatriculantTable(MatriculantTableModel matriculantTableModel) {
         super(matriculantTableModel);
+        this.matriculantTableModel = matriculantTableModel;
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         reload();
         setDefaultRenderer(Object.class, new MatriculantTableCellRenderer());
     }
 
     private static void setDefaultShowEntrances() {
-        showEntrances = new HashMap<String, Boolean>();
+        showEntrances = Maps.newHashMap();
+
         for (Speciality speciality : DataAccessFactory.getSpecialities()) {
             showEntrances.put(speciality.getName(), Boolean.TRUE);
         }
@@ -337,9 +345,14 @@ public class MatriculantTable extends JTable {
 
     //============= MatriculantTableModel ==============
 
+    @org.springframework.stereotype.Component
     private static class MatriculantTableModel extends AbstractTableModel {
+
         private static DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd hh:mm");
-        static List<List<Integer>> matriculantIndexes = new ArrayList<List<Integer>>();
+        private static List<List<Integer>> matriculantIndexes = Lists.newArrayList();
+
+        @Autowired
+        private MatriculantDAO matriculantDAO;
 
         public MatriculantTableModel() {
             MatriculantTable.setDefaultShowEntrances();
@@ -483,7 +496,7 @@ public class MatriculantTable extends JTable {
             for (Matriculant matriculant : DataAccessFactory.getMatriculants()) {
                 if (!"".equals(matriculant.getEntranceSpecialityName())) {
                     matriculant.setEntranceSpecialityName("");
-                    DataAccessFactory.getMatriculantDAO().update(matriculant);
+                    matriculantDAO.update(matriculant);
                 }
             }
             //DataAccessFactory.reloadMatriculants();
@@ -507,7 +520,7 @@ public class MatriculantTable extends JTable {
                         if ("".equals(matriculant.getEntranceSpecialityName())) {
                             if (speciality.getName().equals(matriculant.getSpeciality().get(currentSpecPriority))) {
                                 matriculant.setEntranceSpecialityName(speciality.getName());
-                                DataAccessFactory.getMatriculantDAO().update(matriculant);
+                                matriculantDAO.update(matriculant);
                                 updatedMatriculants = true;
                             } else {
                                 if (matriculant.getSpeciality().containsValue(speciality.getName())) {

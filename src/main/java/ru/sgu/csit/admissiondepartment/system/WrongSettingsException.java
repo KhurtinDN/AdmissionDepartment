@@ -1,4 +1,4 @@
-package ru.sgu.csit.admissiondepartment.gui.utils;
+package ru.sgu.csit.admissiondepartment.system;
 
 /**
  * Date: Jun 22, 2010

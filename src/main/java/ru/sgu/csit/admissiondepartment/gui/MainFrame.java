@@ -22,6 +22,7 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  * @author xx & hd
  */
 public class MainFrame extends JFrame {
+
     @Autowired
     private MatriculantTable mainTable;
 
@@ -40,7 +41,7 @@ public class MainFrame extends JFrame {
     private Action reloadAction;
     private Action logInAction;
 
-    private JComboBox specialityComboBox;
+    private JComboBox<String> specialityComboBox;
 
     private JLabel matriculantSizeLabel = new JLabel();
 
@@ -161,10 +162,6 @@ public class MainFrame extends JFrame {
         this.logInAction = logInAction;
     }
 
-    public void login() {
-        logInAction.actionPerformed(null);
-    }
-
     private JComponent createStatusBar() {
         StatusBar statusBar = new StatusBar();
         statusBar.addLabel(new JLabel("Количество абитуриентов:"));
@@ -262,7 +259,7 @@ public class MainFrame extends JFrame {
         JPanel specialityPanel = new JPanel(new GridBagLayout());
         specialityPanel.add(new JLabel("Ранжировать:"), new GBConstraints(0, 0));
 
-        specialityComboBox = new JComboBox();
+        specialityComboBox = new JComboBox<String>();
         reloadDataSpecialityComboBox();
         specialityComboBox.addActionListener(calculateMatriculantsAction);
 
@@ -274,12 +271,12 @@ public class MainFrame extends JFrame {
     }
 
     private void reloadDataSpecialityComboBox() {
-        Object[] items = new Object[1 + DataAccessFactory.getSpecialities().size()];
+        String[] items = new String[1 + DataAccessFactory.getSpecialities().size()];
         items[0] = tCALCALL;
         for (int i = 0; i < DataAccessFactory.getSpecialities().size(); ++i) {
             items[i + 1] = tCALCFOR_PREF + DataAccessFactory.getSpecialities().get(i).getName();
         }
-        specialityComboBox.setModel(new DefaultComboBoxModel(items));
+        specialityComboBox.setModel(new DefaultComboBoxModel<String>(items));
     }
 
     private JPanel createSearchPanel() {
@@ -303,7 +300,7 @@ public class MainFrame extends JFrame {
                             for (int column = beginColumn; column < columnSize; ++column) {
                                 if (mainTable.getValueAt(row, column) != null) {
                                     String cellValue = mainTable.getValueAt(row, column).toString();
-                                    if (cellValue.toLowerCase().indexOf(searchPhrase) >= 0) {
+                                    if (cellValue.toLowerCase().contains(searchPhrase)) {
                                         mainTable.changeSelection(row, column, false, false);
                                         searchPhraseTextField.selectAll();
                                         return;

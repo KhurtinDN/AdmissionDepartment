@@ -22,14 +22,13 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author : xx & hd
  */
-@Component("matriculantInfoAction")
+@Component
 public class MatriculantInfoAction extends AbstractAction {
-    @Autowired
-    private JFrame owner;
 
     @Autowired
     private MatriculantTable matriculantTable;
-    
+
+    @Autowired
     private MatriculantInfoDialog matriculantInfoDialog;
 
     public MatriculantInfoAction() {
@@ -46,9 +45,6 @@ public class MatriculantInfoAction extends AbstractAction {
             Matriculant matriculant = DataAccessFactory.getMatriculants()
                     .get(matriculantTable.convertViewRowIndexToMatriculants(selectedIndex));
 
-            if (matriculantInfoDialog == null) {
-                matriculantInfoDialog = new MatriculantInfoDialog(owner);
-            }
             matriculantInfoDialog.showInfo(matriculant.printToString());
         } else {
             showWarningMessage("Выберите сначала абитуриента");

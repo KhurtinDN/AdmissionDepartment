@@ -1,5 +1,7 @@
 package ru.sgu.csit.admissiondepartment.common;
 
+import com.google.common.base.Objects;
+
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
 
@@ -10,7 +12,8 @@ import javax.persistence.MappedSuperclass;
  */
 @MappedSuperclass
 @Embeddable
-public class Person {
+public class Person extends PersistentItem {
+
     protected String name;
     protected String phoneNumbers;
 
@@ -39,10 +42,33 @@ public class Person {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Person that = (Person) obj;
+
+        return super.equals(that) &&
+                Objects.equal(this.name, that.name) &&
+                Objects.equal(this.phoneNumbers, that.phoneNumbers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), name, phoneNumbers);
+    }
+
+    @Override
     public String toString() {
-        return "Person{" +
-                "name='" + name + '\'' +
-                ", phoneNumbers='" + phoneNumbers + '\'' +
-                '}';
+        return Objects.toStringHelper(this)
+                .addValue(super.toString())
+                .add("name", name)
+                .add("phoneNumbers", phoneNumbers)
+                .toString();
     }
 }

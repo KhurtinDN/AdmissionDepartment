@@ -9,6 +9,7 @@ import java.util.List;
  * @author xx & hd
  */
 public class SortColumnPanel extends PriorityListPanel {
+
     public SortColumnPanel(List<String> labelNames) {
         super("Поля для сортировки");
 

@@ -15,6 +15,7 @@ import java.util.List;
  * @author xx & hd
  */
 public class PriorityListPanel extends JPanel {
+
     PriorityManager priorityManager;
 
     public PriorityListPanel(String title) {
@@ -132,6 +133,7 @@ public class PriorityListPanel extends JPanel {
     }
 
     private class SelectItemAction extends AbstractAction {
+
         private SelectItemAction(String name) {
             this.putValue(Action.NAME, name);
         }

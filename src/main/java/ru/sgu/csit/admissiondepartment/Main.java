@@ -1,9 +1,7 @@
 package ru.sgu.csit.admissiondepartment;
 
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.sgu.csit.admissiondepartment.gui.MainFrame;
+import ru.sgu.csit.admissiondepartment.gui.dialogs.LoginDialog;
+import ru.sgu.csit.admissiondepartment.system.ApplicationContextHolder;
 
 import javax.swing.*;
 
@@ -16,13 +14,12 @@ import javax.swing.*;
 public class Main {
     public static void main(String[] args) {
         System.setProperty("sun.awt.exception.handler",
-                "ru.sgu.csit.admissiondepartment.gui.utils.SecurityExceptionHandler");
+                "ru.sgu.csit.admissiondepartment.security.SecurityExceptionHandler");
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                ApplicationContext applicationContext = new ClassPathXmlApplicationContext("ApplicationContext.xml");
-                MainFrame mainFrame = applicationContext.getBean(MainFrame.class);
-                mainFrame.login();
+                LoginDialog loginDialog = ApplicationContextHolder.getBean(LoginDialog.class);
+                loginDialog.setVisible(true);
             }
         });
     }

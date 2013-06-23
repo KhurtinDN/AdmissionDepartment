@@ -1,25 +1,29 @@
 package ru.sgu.csit.admissiondepartment.gui.dialogs;
 
-import ru.sgu.csit.admissiondepartment.service.ArgumentNotExcelFileException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import ru.sgu.csit.admissiondepartment.gui.MatriculantTable;
 import ru.sgu.csit.admissiondepartment.gui.actions.CloseAction;
-import ru.sgu.csit.admissiondepartment.gui.utils.ApplicationSettings;
 import ru.sgu.csit.admissiondepartment.gui.utils.GBConstraints;
 import ru.sgu.csit.admissiondepartment.gui.utils.SomeUtils;
+import ru.sgu.csit.admissiondepartment.service.ArgumentNotExcelFileException;
 import ru.sgu.csit.admissiondepartment.service.ExportToExcel;
 import ru.sgu.csit.admissiondepartment.service.WritingException;
-
-import static ru.sgu.csit.admissiondepartment.gui.utils.MessageUtil.*;
+import ru.sgu.csit.admissiondepartment.system.ApplicationSettings;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
-import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.*;
+import static ru.sgu.csit.admissiondepartment.gui.utils.MessageUtil.showErrorMessage;
+import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.tEXPORT_TO_EXCEL;
+import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.tEXPORT_TO_EXCEL_DESCRIPTION;
 
 /**
  * Date: 03.06.2010
@@ -27,14 +31,20 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author : xx & hd
  */
+@Component
 public class ExportToExcelDialog extends JDialog {
     private Action closeAction = new CloseAction(this);
 
-    private MatriculantTable matriculantTable = new MatriculantTable();
-
     private JCheckBox needOpenDocumentCheckBox = new JCheckBox("Открыть документ после экспорта");
 
-    public ExportToExcelDialog(JFrame owner) {
+    @Autowired
+    private MatriculantTable matriculantTable;
+
+    @Autowired
+    private ApplicationSettings applicationSettings;
+
+    @Autowired
+    public ExportToExcelDialog(@Qualifier("mainFrame") JFrame owner) {
         super(owner, "Экспорт в excel", false);
 
         setLayout(new GridBagLayout());
@@ -69,18 +79,15 @@ public class ExportToExcelDialog extends JDialog {
 
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new GridBagLayout());
-        String selected = ApplicationSettings.getSettings().get("ExportToExcelDialog.needOpenDocumentCheckBox.selected");
-        if (selected == null) {
-            selected = "true";
-        }
-        needOpenDocumentCheckBox.setSelected(selected.equalsIgnoreCase("true"));
+
+        needOpenDocumentCheckBox.setSelected(applicationSettings.getOpenDocumentInExportToExcelDialog());
         needOpenDocumentCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ApplicationSettings.getSettings().set("ExportToExcelDialog.needOpenDocumentCheckBox.selected",
-                        needOpenDocumentCheckBox.isSelected() + "");
+                applicationSettings.setOpenDocumentInExportToExcelDialog(needOpenDocumentCheckBox.isSelected());
             }
         });
+
         buttonPanel.add(needOpenDocumentCheckBox, new GBConstraints(0, 0));
         buttonPanel.add(new JLabel(), new GBConstraints(1, 0, true));
         buttonPanel.add(new JButton(new ExportToExcelAction()), new GBConstraints(2, 0));

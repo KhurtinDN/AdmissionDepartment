@@ -1,5 +1,6 @@
 package ru.sgu.csit.admissiondepartment.gui.dialogs.panels;
 
+import com.google.common.collect.Maps;
 import ru.sgu.csit.admissiondepartment.gui.utils.GBConstraints;
 
 import javax.swing.*;
@@ -14,7 +15,8 @@ import java.util.List;
  * @author xx & hd
  */
 public class SelectNumbersPanel extends JPanel {
-    private Map<String, JSpinner> spinners = new HashMap<String, JSpinner>();
+
+    private Map<String, JSpinner> spinners = Maps.newHashMap();
 
     private Integer max = null;
     private Integer min = null;
@@ -67,7 +69,7 @@ public class SelectNumbersPanel extends JPanel {
     }
 
     public Map<String, Integer> getNumbers() {
-        Map<String, Integer> numbers = new HashMap<String, Integer>();
+        Map<String, Integer> numbers = Maps.newHashMap();
 
         for (Map.Entry<String, JSpinner> entry : spinners.entrySet()) {
             String labelName = entry.getKey();

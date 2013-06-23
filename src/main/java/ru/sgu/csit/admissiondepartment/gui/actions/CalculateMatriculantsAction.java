@@ -20,8 +20,9 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author : xx & hd
  */
-@Component("calculateMatriculantsAction")
+@Component
 public class CalculateMatriculantsAction extends AbstractAction {
+
     @Autowired
     private MatriculantTable matriculantTable;
 

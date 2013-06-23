@@ -1,5 +1,7 @@
 package ru.sgu.csit.admissiondepartment.gui.dialogs.panels;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import ru.sgu.csit.admissiondepartment.common.Speciality;
 import ru.sgu.csit.admissiondepartment.factory.DataAccessFactory;
 
@@ -18,14 +20,15 @@ public class CapacityOnSpecialitiesPanel extends SelectNumbersPanel {
     public CapacityOnSpecialitiesPanel() {
         super("Количество мест на каждой специальности", 0);
 
-        List<String> examineNames = new ArrayList<String>();
+        List<String> specialityNames = Lists.transform(DataAccessFactory.getSpecialities(),
+                new Function<Speciality, String>() {
+                    @Override
+                    public String apply(Speciality speciality) {
+                        return speciality.getName();
+                    }
+                });
 
-        List<Speciality> specialityList = DataAccessFactory.getSpecialities();
-        for (Speciality speciality : specialityList) {
-            examineNames.add(speciality.getName());
-        }
-
-        createLabelList(examineNames);
+        createLabelList(specialityNames);
     }
 
     public void setCapacityOnSpecialities(Map<String, Integer> capacityMap) {

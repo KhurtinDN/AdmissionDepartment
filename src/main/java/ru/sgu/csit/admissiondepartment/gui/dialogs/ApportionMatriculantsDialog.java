@@ -1,8 +1,8 @@
 package ru.sgu.csit.admissiondepartment.gui.dialogs;
 
-import ru.sgu.csit.admissiondepartment.service.ArgumentNotExcelFileException;
-import ru.sgu.csit.admissiondepartment.service.ExportToExcel;
-import ru.sgu.csit.admissiondepartment.service.WritingException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import ru.sgu.csit.admissiondepartment.common.EntranceCategory;
 import ru.sgu.csit.admissiondepartment.common.Matriculant;
 import ru.sgu.csit.admissiondepartment.common.Speciality;
@@ -12,6 +12,9 @@ import ru.sgu.csit.admissiondepartment.gui.actions.CloseAction;
 import ru.sgu.csit.admissiondepartment.gui.dialogs.panels.CapacityOnSpecialitiesPanel;
 import ru.sgu.csit.admissiondepartment.gui.utils.GBConstraints;
 import ru.sgu.csit.admissiondepartment.gui.utils.SomeUtils;
+import ru.sgu.csit.admissiondepartment.service.ArgumentNotExcelFileException;
+import ru.sgu.csit.admissiondepartment.service.ExportToExcel;
+import ru.sgu.csit.admissiondepartment.service.WritingException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,20 +33,24 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.MessageUtil.showErrorMes
  *
  * @author xx & hd
  */
+@Component
 public class ApportionMatriculantsDialog extends JDialog {
+
     private JCheckBox saveInXlsCheckBox = new JCheckBox("Сохранить в excel файл");
     private JCheckBox needOpenDocumentCheckBox = new JCheckBox("Открыть документ после экспорта");
 
     private Action apportionAction = new ApportionAction();
     private Action closeAction = new CloseAction(this);
 
-    private MatriculantTable matriculantTable = null;
+    private MatriculantTable matriculantTable;
 
     private CapacityOnSpecialitiesPanel capacityOnSpecialitiesPanel;
 
-    public ApportionMatriculantsDialog(JFrame owner, MatriculantTable matriculantTable) {
+    @Autowired
+    public ApportionMatriculantsDialog(@Qualifier("mainFrame") JFrame owner, MatriculantTable matriculantTable) {
         super(owner, "Распределение абитуриентов по специальностям", true);
         this.matriculantTable = matriculantTable;
+
         setSize(600, 300);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());

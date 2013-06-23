@@ -1,14 +1,13 @@
-package ru.sgu.csit.admissiondepartment;
+package ru.sgu.csit.admissiondepartment.system;
 
 import ru.sgu.csit.admissiondepartment.common.*;
 import ru.sgu.csit.admissiondepartment.factory.DataAccessFactory;
-import ru.sgu.csit.admissiondepartment.gui.utils.HibernateSettings;
 
 import java.io.Console;
 import java.util.*;
 
 /**
- * Hello world!
+ * Generator of initial db data
  */
 public class CreateDBData {
     public static void main(String[] args) {
@@ -27,11 +26,10 @@ public class CreateDBData {
             password = scanner.nextLine().toCharArray();
         }
 
-        HibernateSettings hibernateSettings = HibernateSettings.getSettings();
-        hibernateSettings.setUserNameAndPassword(login, password);
+        DatabaseSettings databaseSettings = ApplicationContextHolder.getBean(DatabaseSettings.class);
 
-        if (!hibernateSettings.tryLogin()) {
-            System.err.println("Authorization fail.");
+        if (!databaseSettings.tryLogin(login, password)) {
+            System.err.println("Authorization failed.");
             return;
         } else {
             System.out.println("Login");
@@ -39,19 +37,7 @@ public class CreateDBData {
 
         System.out.println("Start process");
 
-        //Session session = LocalSessionFactory.getSessionFactory().getCurrentSession();
-        //Matriculant matriculant = new Matriculant();
         ReceiptExamine receiptExamine = new ReceiptExamine();
-        Speciality speciality1 = new Speciality("КБ 101");
-        Speciality speciality2 = new Speciality("ИВТ 102");
-        Speciality speciality3 = new Speciality("МОАИС 103");
-        Speciality speciality4 = new Speciality("ФИИТ 104");
-        Speciality speciality5 = new Speciality("ПИ 105");
-        Speciality speciality6 = new Speciality("ПОПИ 106");
-        Speciality speciality7 = new Speciality("ИВТ_маг 107");
-
-        //MatriculantDAOImpl matriculantDAO = new MatriculantDAOImpl();
-
         receiptExamine.setName("ЕГЭ РЯ");
         DataAccessFactory.getReceiptExamineDAO().save(receiptExamine);
         receiptExamine.setName("ЕГЭ МАТ");
@@ -61,37 +47,46 @@ public class CreateDBData {
         receiptExamine.setName("ЕГЭ ОБЩ");
         DataAccessFactory.getReceiptExamineDAO().save(receiptExamine);
 
+        Speciality speciality1 = new Speciality("КБ 101");
         speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
         speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
         speciality1.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         DataAccessFactory.getSpecialityDAO().save(speciality1);
 
+        Speciality speciality2 = new Speciality("ИВТ 102");
         speciality2.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
         speciality2.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
         speciality2.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         DataAccessFactory.getSpecialityDAO().save(speciality2);
 
+        Speciality speciality3 = new Speciality("МОАИС 103");
         speciality3.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
         speciality3.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
         speciality3.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         DataAccessFactory.getSpecialityDAO().save(speciality3);
 
+        Speciality speciality4 = new Speciality("ФИИТ 104");
         speciality4.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
         speciality4.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
         speciality4.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         DataAccessFactory.getSpecialityDAO().save(speciality4);
 
+        Speciality speciality5 = new Speciality("ПИ 105");
         speciality5.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ МАТ").get(0));
         speciality5.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
         speciality5.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         DataAccessFactory.getSpecialityDAO().save(speciality5);
 
+        Speciality speciality6 = new Speciality("ПОПИ 106");
         speciality6.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ОБЩ").get(0));
         speciality6.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ ИНФ").get(0));
         speciality6.addExam(DataAccessFactory.getReceiptExamineDAO().findByName("ЕГЭ РЯ").get(0));
         DataAccessFactory.getSpecialityDAO().save(speciality6);
 
-        DataAccessFactory.reloadAll();
+        Speciality speciality7 = new Speciality("ИВТ_маг 107");
+        DataAccessFactory.getSpecialityDAO().save(speciality7);
+
+//        DataAccessFactory.reloadAll();
 
         /*for (int i = 0; i < 700; ++i) {
             Matriculant matriculant = MatriculantGenerator.getRandomMatriculant();
@@ -217,8 +212,8 @@ public class CreateDBData {
             return EntranceCategory.EXAMINE;
         }
 
-        private static Matriculant.Documents getRandomDocuments() {
-            Matriculant.Documents documents = new Matriculant.Documents();
+        private static Documents getRandomDocuments() {
+            Documents documents = new Documents();
 
             documents.setOriginalAttestat(generator.nextBoolean());
             documents.setAttestatInsert(generator.nextBoolean());

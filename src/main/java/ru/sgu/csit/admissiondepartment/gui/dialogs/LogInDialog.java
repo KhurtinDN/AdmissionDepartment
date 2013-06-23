@@ -1,20 +1,16 @@
 package ru.sgu.csit.admissiondepartment.gui.dialogs;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import ru.sgu.csit.admissiondepartment.gui.MainFrame;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.sgu.csit.admissiondepartment.gui.actions.ExitAction;
+import ru.sgu.csit.admissiondepartment.gui.actions.login.LoginAction;
+import ru.sgu.csit.admissiondepartment.gui.actions.login.OpenDBSettingsDialogAction;
 import ru.sgu.csit.admissiondepartment.gui.utils.GBConstraints;
-import ru.sgu.csit.admissiondepartment.gui.utils.HibernateSettings;
 
 import static ru.sgu.csit.admissiondepartment.gui.utils.MessageUtil.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -24,21 +20,22 @@ import java.awt.event.WindowEvent;
  *
  * @author xx & hd
  */
-public class LogInDialog extends JDialog {
-    private AuthenticationManager authenticationManager;
+@Component
+public class LoginDialog extends JDialog {
 
-    private HibernateSettings hibernateSettings = HibernateSettings.getSettings();
+    @Autowired
+    private OpenDBSettingsDialogAction openDBSettingsDialogAction;
 
-    private Action openDBOptionAction = new OpenDBOptionAction();
-    private Action loginAction = new LoginAction();
-    private Action exitAction = new ExitAction();
+    @Autowired
+    private LoginAction loginAction;
 
-    private MainFrame owner;
+    @Autowired
+    private ExitAction exitAction;
 
     private JTextField loginField = new JTextField(20);
     private JPasswordField passwordField = new JPasswordField(20);
 
-    public LogInDialog() {
+    public LoginDialog() {
         super((JFrame)null, "Вход в систему", true);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
@@ -70,32 +67,7 @@ public class LogInDialog extends JDialog {
         content.getActionMap().put("CLOSE_DIALOG", exitAction);
     }
 
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
-
-    public void setOwner(MainFrame owner) {
-        this.owner = owner;
-    }
-
-    public MainFrame getOwner() {
-        return owner;
-    }
-
-    private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel(new GridBagLayout());
-        buttonPanel.add(new JButton(openDBOptionAction), new GBConstraints(0, 0));
-        buttonPanel.add(new JLabel(), new GBConstraints(1, 0, true));
-
-        JButton loginButton = new JButton(loginAction);
-        getRootPane().setDefaultButton(loginButton);
-        
-        buttonPanel.add(loginButton, new GBConstraints(2, 0));
-        buttonPanel.add(new JButton(exitAction), new GBConstraints(3, 0));
-        return buttonPanel;
-    }
-
-    private boolean validateForm() {
+    public boolean validateForm() {
         if (!loginField.getText().matches("\\w+")) {
             showWarningMessage("Введите логин");
             return false;
@@ -103,60 +75,30 @@ public class LogInDialog extends JDialog {
         return true;
     }
 
-    private class OpenDBOptionAction extends AbstractAction {
-        private OpenDBOptionAction() {
-            putValue(Action.NAME, "Настроить доступ к СУБД");
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            new DatabaseOptionDialog(LogInDialog.this).setVisible(true);
-        }
+    public String getLogin() {
+        return loginField.getText();
     }
 
-    private class LoginAction extends AbstractAction {
-        private LoginAction() {
-            putValue(Action.NAME, "Войти");
-        }
+    public char[] getPassword() {
+        return passwordField.getPassword();
+    }
 
-        public void actionPerformed(ActionEvent e) {
-            if (validateForm()) {
-                if (!hibernateSettings.isConfigured()) {
-                    showWarningMessage("Необходимо настроить доступ к СУБД");
-                    return;
-                }
+    public void reset() {
+        loginField.selectAll();
+        loginField.requestFocus();
+        passwordField.setText("");
+    }
 
-                String username = loginField.getText();
-                char[] password = passwordField.getPassword();
+    private JPanel createButtonPanel() {
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        buttonPanel.add(new JButton(openDBSettingsDialogAction), new GBConstraints(0, 0));
+        buttonPanel.add(new JLabel(), new GBConstraints(1, 0, true));
 
-                passwordField.setText("");
-                loginField.selectAll();
-                loginField.requestFocus();
+        JButton loginButton = new JButton(loginAction);
+        getRootPane().setDefaultButton(loginButton);
 
-                hibernateSettings.setUserNameAndPassword(username, password);
-
-                if (!hibernateSettings.tryLogin()) {
-                    showWarningMessage("<html>Авторизация провалилась. Возможные причины:<br><ul>" +
-                            "<li>Неверный логин или пароль</li>" +
-                            "<li>Неправильно настроен доступ к СУБД</li>" +
-                            "</ul></html>");
-                    return;
-                }
-
-                Authentication authentication = null;
-                try {
-                    Authentication requestAuthentication = new UsernamePasswordAuthenticationToken(username, password);
-                    authentication = authenticationManager.authenticate(requestAuthentication);
-                } catch (AuthenticationException ae) {
-                    System.err.println("Authentication failed: " + ae.getMessage());
-                } finally {
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
-
-                owner.setVisible(true);
-                owner.reloadAllData();
-
-                LogInDialog.this.setVisible(false);
-            }
-        }
+        buttonPanel.add(loginButton, new GBConstraints(2, 0));
+        buttonPanel.add(new JButton(exitAction), new GBConstraints(3, 0));
+        return buttonPanel;
     }
 }

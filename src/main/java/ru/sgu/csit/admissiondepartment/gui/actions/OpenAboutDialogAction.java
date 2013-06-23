@@ -18,14 +18,13 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author : xx & hd
  */
-@Component("aboutAction")
-public class AboutAction extends AbstractAction {
+@Component
+public class OpenAboutDialogAction extends AbstractAction {
+
     @Autowired
-    private JFrame owner;
+    private AboutDialog aboutDialog;
 
-    private AboutDialog dialog = null;
-
-    public AboutAction() {
+    public OpenAboutDialogAction() {
         super(tABOUT, iABOUT);
         putValue(Action.SHORT_DESCRIPTION, tABOUT_DESCRIPTION);
         putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("F1"));
@@ -34,9 +33,6 @@ public class AboutAction extends AbstractAction {
     @Secured("ROLE_VIEWER")
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (dialog == null) {
-            dialog = new AboutDialog(owner);
-        }
-        dialog.setVisible(true);
+        aboutDialog.setVisible(true);
     }
 }

@@ -16,8 +16,9 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author : xx & hd
  */
-@Component("reloadAction")
+@Component
 public class ReloadAction extends AbstractAction {
+
     @Autowired
     private MainFrame mainFrame;
 

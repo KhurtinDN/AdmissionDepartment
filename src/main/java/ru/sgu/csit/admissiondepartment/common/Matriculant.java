@@ -1,6 +1,6 @@
 package ru.sgu.csit.admissiondepartment.common;
 
-import org.hibernate.annotations.CollectionOfElements;
+import com.google.common.base.Objects;
 import ru.sgu.csit.admissiondepartment.factory.DataAccessFactory;
 
 import javax.persistence.*;
@@ -14,9 +14,6 @@ import java.util.*;
  */
 @Entity
 public class Matriculant extends Person {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
     @Column(nullable = false)
     private String receiptNumber;
@@ -40,11 +37,10 @@ public class Matriculant extends Person {
     @Column(nullable = false)
     private EntranceCategory entranceCategory;
 
-    @CollectionOfElements(/*targetElement = Speciality.class,*/ fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     private Map<Integer, String> speciality = new TreeMap<Integer, String>();
 
-    @CollectionOfElements(fetch = FetchType.EAGER)
-    //@MapKey(name = "id")
+    @ElementCollection(fetch = FetchType.EAGER)
     private Map<String, Integer> balls = new HashMap<String, Integer>();
 
     @Embedded
@@ -56,14 +52,6 @@ public class Matriculant extends Person {
 
     public Boolean completeAllDocuments() {
         return documents != null && documents.completeAllDocuments();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getReceiptNumber() {
@@ -110,7 +98,6 @@ public class Matriculant extends Person {
         this.entranceCategory = entranceCategory;
     }
 
-    @CollectionOfElements
     public Map<Integer, String> getSpeciality() {
         return speciality;
     }
@@ -119,7 +106,6 @@ public class Matriculant extends Person {
         this.speciality = speciality;
     }
 
-    @CollectionOfElements
     public Map<String, Integer> getBalls() {
         return balls;
     }
@@ -214,142 +200,6 @@ public class Matriculant extends Person {
         return result;
     }
 
-    @Embeddable
-    public static class Documents {
-        private Boolean originalAttestat;
-        private Boolean attestatInsert;
-        private Boolean originalEge;
-        private Integer countPhotos = 0;
-        private Integer countPassportCopy = 0;
-        private Boolean originalMedicalCertificate;
-        private Boolean copyMedicalPolicy;
-        private Boolean tookDocuments;
-
-        public Boolean isOriginalAttestat() {
-            return originalAttestat;
-        }
-
-        public void setOriginalAttestat(Boolean originalAttestat) {
-            this.originalAttestat = originalAttestat;
-        }
-
-        public Boolean isAttestatInsert() {
-            return attestatInsert;
-        }
-
-        public void setAttestatInsert(Boolean attestatInsert) {
-            this.attestatInsert = attestatInsert;
-        }
-
-        public Boolean isOriginalEge() {
-            return originalEge;
-        }
-
-        public void setOriginalEge(Boolean originalEge) {
-            this.originalEge = originalEge;
-        }
-
-        public Integer getCountPhotos() {
-            return countPhotos;
-        }
-
-        public void setCountPhotos(Integer countPhotos) {
-            this.countPhotos = countPhotos;
-        }
-
-        public Integer getCountPassportCopy() {
-            return countPassportCopy;
-        }
-
-        public void setCountPassportCopy(Integer countPassportCopy) {
-            this.countPassportCopy = countPassportCopy;
-        }
-
-        public Boolean isOriginalMedicalCertificate() {
-            return originalMedicalCertificate;
-        }
-
-        public void setOriginalMedicalCertificate(Boolean originalMedicalCertificate) {
-            this.originalMedicalCertificate = originalMedicalCertificate;
-        }
-
-        public Boolean isCopyMedicalPolicy() {
-            return copyMedicalPolicy;
-        }
-
-        public void setCopyMedicalPolicy(Boolean copyMedicalPolicy) {
-            this.copyMedicalPolicy = copyMedicalPolicy;
-        }
-
-        public Boolean isTookDocuments() {
-            if (tookDocuments == null) {
-                return false;
-            }
-            return tookDocuments;
-        }
-
-        public void setTookDocuments(Boolean tookDocuments) {
-            this.tookDocuments = tookDocuments;
-        }
-
-        public Boolean completeAllDocuments() {
-            return (tookDocuments != null && tookDocuments) ||
-                    ((originalAttestat != null && originalAttestat)
-                    && (attestatInsert != null && attestatInsert)
-                    && (originalEge != null && originalEge)
-                    && (countPhotos != 0)
-                    && (countPassportCopy != 0)
-                    && (originalMedicalCertificate != null && originalMedicalCertificate)
-                    && (copyMedicalPolicy != null && copyMedicalPolicy));
-        }
-
-        public String printToString() {
-            String str = "\t";
-
-            if (originalAttestat != null) {
-                if (originalAttestat) {
-                    str += "Оригинал аттестата\n";
-                } else {
-                    str += "Копия аттестата\n";
-                }
-            }
-            if (attestatInsert != null && attestatInsert) {
-                str += "\tВкладыш аттестата\n";
-            }
-            if (originalEge != null && originalEge) {
-                str += "\tОригиналы ЕГЭ\n";
-            }
-            if (countPhotos != 0) {
-                str += "\tФотографии: " + countPhotos + " шт.\n";
-            }
-            if (countPassportCopy != 0) {
-                str += "\tКопии паспорта: " + countPassportCopy + " шт.\n";
-            }
-            if (originalMedicalCertificate != null && originalMedicalCertificate) {
-                str += "\tОригинал медицинской справки\n";
-            }
-            if (copyMedicalPolicy != null && copyMedicalPolicy) {
-                str += "\tКопия медицинского полиса\n";
-            }
-
-            return str;
-        }
-
-        @Override
-        public String toString() {
-            return "Documents{" +
-                    "originalAttestat=" + originalAttestat +
-                    ", attestatInsert=" + attestatInsert +
-                    ", originalEge=" + originalEge +
-                    ", countPhotos=" + countPhotos +
-                    ", countPassportCopy=" + countPassportCopy +
-                    ", originalMedicalCertificate=" + originalMedicalCertificate +
-                    ", copyMedicalPolicy=" + copyMedicalPolicy +
-                    ", tookDocuments=" + tookDocuments +
-                    '}';
-        }
-    }
-
     public String printToString() {
         String str = "Рег. № " + receiptNumber + " от " + filingDate + "\n" +
                 name + "\n\n";
@@ -418,19 +268,61 @@ public class Matriculant extends Person {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Matriculant that = (Matriculant) obj;
+
+        return super.equals(that) &&
+                Objects.equal(this.receiptNumber, that.receiptNumber) &&
+                Objects.equal(this.filingDate, that.filingDate) &&
+                Objects.equal(this.mother, that.mother) &&
+                Objects.equal(this.father, that.father) &&
+                Objects.equal(this.entranceCategory, that.entranceCategory) &&
+                Objects.equal(this.speciality, that.speciality) &&
+                Objects.equal(this.balls, that.balls) &&
+                Objects.equal(this.documents, that.documents) &&
+                Objects.equal(this.schoolName, that.schoolName) &&
+                Objects.equal(this.info, that.info);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(
+                super.hashCode(),
+                receiptNumber,
+                filingDate,
+                mother,
+                father,
+                entranceCategory,
+                speciality,
+                balls,
+                documents,
+                schoolName,
+                info
+        );
+    }
+
+    @Override
     public String toString() {
-        return "Matriculant{" +
-                "id=" + id +
-                ", receiptNumber='" + receiptNumber + '\'' +
-                ", filingDate=" + filingDate +
-                ", father=" + father +
-                ", mother=" + mother +
-                ", entranceCategory=" + entranceCategory +
-                ", speciality=" + speciality +
-                ", balls=" + balls +
-                ", documents=" + documents +
-                ", schoolName='" + schoolName + '\'' +
-                ", info='" + info + '\'' +
-                '}';
+        return Objects.toStringHelper(this)
+                .addValue(super.toString())
+                .add("receiptNumber", receiptNumber)
+                .add("filingDate", filingDate)
+                .add("mother", mother)
+                .add("father", father)
+                .add("entranceCategory", entranceCategory)
+                .add("speciality", speciality)
+                .add("balls", balls)
+                .add("documents", documents)
+                .add("schoolName", schoolName)
+                .add("info", info)
+                .toString();
     }
 }

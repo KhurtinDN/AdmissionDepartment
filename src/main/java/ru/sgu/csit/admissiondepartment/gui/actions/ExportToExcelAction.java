@@ -8,9 +8,7 @@ import ru.sgu.csit.admissiondepartment.gui.dialogs.ExportToExcelDialog;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.iEXCEL16;
-import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.tEXPORT_TO_EXCEL;
-import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.tEXPORT_TO_EXCEL_DESCRIPTION;
+import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.*;
 
 /**
  * Date: Jun 27, 2010
@@ -18,12 +16,11 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author : xx & hd
  */
-@Component("exportToExcelAction")
+@Component
 public class ExportToExcelAction extends AbstractAction {
+
     @Autowired
-    private JFrame owner;
-    
-    private JDialog exportDialog;
+    private ExportToExcelDialog exportDialog;
 
     public ExportToExcelAction() {
         super(tEXPORT_TO_EXCEL, iEXCEL16);
@@ -34,9 +31,6 @@ public class ExportToExcelAction extends AbstractAction {
     @Secured("ROLE_VIEWER")
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (exportDialog == null) {
-            exportDialog = new ExportToExcelDialog(owner);
-        }
         exportDialog.setVisible(true);
     }
 }

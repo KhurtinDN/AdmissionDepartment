@@ -11,6 +11,7 @@ import java.io.File;
  * @author xx & hd
  */
 public class ExcelFileChooser extends JFileChooser {
+
     public ExcelFileChooser() {
         UIManager.put("FileChooser.openButtonText", "Открыть");
         UIManager.put("FileChooser.saveButtonText", "Сохранить");
@@ -38,14 +39,17 @@ public class ExcelFileChooser extends JFileChooser {
     @Override
     public File getSelectedFile() {
         File file = super.getSelectedFile();
+
         if (file == null) {
-            return file;
+            return null;
         }
 
         String fileName = file.getPath().toLowerCase();
+
         if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
             return file;
         }
+
         return new File(fileName + ".xls");
     }
 }

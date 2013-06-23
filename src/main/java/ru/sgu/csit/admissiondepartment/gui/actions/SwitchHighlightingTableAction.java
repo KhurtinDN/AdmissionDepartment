@@ -17,8 +17,9 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author : xx & hd
  */
-@Component("switchHighlightingTableAction")
+@Component
 public class SwitchHighlightingTableAction extends AbstractAction {
+
     @Autowired
     private MatriculantTable matriculantTable;
 

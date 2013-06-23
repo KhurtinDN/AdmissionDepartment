@@ -9,5 +9,4 @@ import javax.swing.*;
  * @author xx & hd
  */
 public class PreferencesDialog extends JDialog {
-    ;
 }

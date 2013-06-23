@@ -13,6 +13,7 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.MessageUtil.showErrorMes
  * @author xx & hd
  */
 public class SomeUtils {
+
     public static void openExcelViewer(File file) {
         if (Desktop.isDesktopSupported()) {
             try {

@@ -1,11 +1,12 @@
 package ru.sgu.csit.admissiondepartment.gui;
 
+import com.google.common.collect.Lists;
 import ru.sgu.csit.admissiondepartment.gui.utils.GBConstraints;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Date: Jun 17, 2010
@@ -14,13 +15,12 @@ import java.util.LinkedList;
  * @author xx & hd
  */
 public class StatusBar extends JPanel {
-    private LinkedList<JLabel> labels;
-    public StatusBar() {
-        labels = new LinkedList<JLabel>();
 
+    private final List<JLabel> labels = Lists.newArrayList();
+
+    public StatusBar() {
         setLayout(new GridBagLayout());
         setBorder(new EtchedBorder());
-//        setBorder(new BevelBorder(BevelBorder.LOWERED));
     }
 
     public void addLabel(JLabel label) {
@@ -33,12 +33,11 @@ public class StatusBar extends JPanel {
 
         removeAll();
 
-        int i = 0;
-        for (JLabel label : labels) {
-            add(label, new GBConstraints(i, 0));
-            i++;
+        for (int i = 0; i < labels.size(); ++i) {
+            add(labels.get(i), new GBConstraints(i, 0));
         }
-        add(new JLabel(), new GBConstraints(i, 0, true));
+
+        add(new JLabel(), new GBConstraints(labels.size(), 0, true));
 
         setVisible(true);
     }

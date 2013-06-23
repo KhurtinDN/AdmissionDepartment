@@ -1,5 +1,6 @@
 package ru.sgu.csit.admissiondepartment.gui.dialogs;
 
+import com.google.common.collect.Lists;
 import ru.sgu.csit.admissiondepartment.gui.MatriculantTable;
 import ru.sgu.csit.admissiondepartment.gui.actions.CloseAction;
 import ru.sgu.csit.admissiondepartment.gui.dialogs.panels.SortColumnPanel;
@@ -18,6 +19,7 @@ import java.util.List;
  * @author xx & hd
  */
 public class SortDialog extends JDialog {
+
     private Action sortAction = new SortAction();
     private Action closeAction = new CloseAction(this);
 
@@ -53,13 +55,15 @@ public class SortDialog extends JDialog {
     private JPanel createSelectSortColumnPanel() {
         List<MatriculantTable.ColumnInfo> columnInfoList = matriculantTable.getColumns();
 
-        List<String> columnList = new ArrayList<String>();
+        List<String> columnList = Lists.newArrayList();
+
         for (int i = 1, n = columnInfoList.size(); i < n; ++i) {
             MatriculantTable.ColumnInfo columnInfo = columnInfoList.get(i);
             if (columnInfo.isVisible()) {
                 columnList.add(columnInfo.getColumnName());
             }
         }
+
         sortColumnPanel = new SortColumnPanel(columnList);
 
         return sortColumnPanel;
@@ -83,7 +87,7 @@ public class SortDialog extends JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             List<String> columnNames = sortColumnPanel.getColumnNameList();
-            List<Integer> columnIndexList = new ArrayList<Integer>();
+            List<Integer> columnIndexList = Lists.newArrayList();
 
             for (String columnName : columnNames) {
                 for (int index = 0, n = matriculantTable.getColumns().size(); index < n; ++index) {

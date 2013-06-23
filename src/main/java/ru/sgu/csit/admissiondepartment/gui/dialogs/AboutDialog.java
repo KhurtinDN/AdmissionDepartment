@@ -1,12 +1,15 @@
 package ru.sgu.csit.admissiondepartment.gui.dialogs;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import ru.sgu.csit.admissiondepartment.gui.actions.CloseAction;
 
 import javax.swing.*;
-
 import java.awt.*;
 
-import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.*;
+import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.iAPP48;
+import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.tTITLE_OF_ABOUT;
 
 /**
  * Date: May 4, 2010
@@ -14,9 +17,11 @@ import static ru.sgu.csit.admissiondepartment.gui.utils.ResourcesForApplication.
  *
  * @author xx & hd
  */
+@Component
 public class AboutDialog extends JDialog {
 
-    public AboutDialog(JFrame owner) {
+    @Autowired
+    public AboutDialog(@Qualifier("mainFrame") JFrame owner) {
         super(owner, tTITLE_OF_ABOUT, true);
         setSize(600, 300);
         setLayout(new GridLayout());

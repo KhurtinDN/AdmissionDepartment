@@ -1,9 +1,8 @@
 package ru.sgu.csit.admissiondepartment.common;
 
+import com.google.common.base.Objects;
+
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 /**
  * Date: Apr 19, 2010
@@ -11,26 +10,9 @@ import javax.persistence.Id;
  * @author xx & hd
  */
 @Entity
-public class ReceiptExamine {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+public class ReceiptExamine extends PersistentItem {
+
     private String name;
-
-    public ReceiptExamine() {
-    }
-
-    public ReceiptExamine(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -41,10 +23,31 @@ public class ReceiptExamine {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || this.getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Person that = (Person) obj;
+
+        return super.equals(that) &&
+                Objects.equal(this.name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), name);
+    }
+
+    @Override
     public String toString() {
-        return "ReceiptExamine{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+        return Objects.toStringHelper(this)
+                .addValue(super.toString())
+                .add("name", name)
+                .toString();
     }
 }
